@@ -90,5 +90,36 @@ body{
   background:#fff!important;
   border-bottom:1px solid var(--simve-border)!important;
 }
+/* =========================================================
+   RESPONSIVIDADE BASE
+   ========================================================= */
 
+@media(max-width:1200px){
+
+  #appArea .layout{
+    grid-template-columns:1fr!important;
+  }
+
+  #appArea .sidebar{
+    position:relative!important;
+    width:100%!important;
+    min-width:0!important;
+    height:auto!important;
+  }
+
+  #appArea .topbar{
+    height:auto!important;
+    min-height:76px!important;
+    align-items:flex-start!important;
+    flex-direction:column!important;
+    gap:12px!important;
+    padding:16px!important;
+  }
+
+  #appArea .topbar-profile{
+    width:100%!important;
+    min-width:0!important;
+  }
+
+}
 </style>
