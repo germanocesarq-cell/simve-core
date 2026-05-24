@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 18px;
+        color: #1f2937;
+      }
+      .titulo {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      .sub {
+        margin-bottom: 12px;
+      }
+      .barra-externa {
+        width: 100%;
+        height: 22px;
+        background: #e5e7eb;
+        border-radius: 999px;
+        overflow: hidden;
+        margin: 12px 0;
+      }
+      .barra-interna {
+        height: 100%;
+        width: 0%;
+        background: #2563eb;
+        transition: width 0.25s ease;
+      }
+      .percentual {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 8px 0;
+      }
+      .mensagem {
+        font-size: 13px;
+        color: #374151;
+        min-height: 36px;
+      }
+      .ok {
+        color: #065f46;
+        font-weight: bold;
+        margin-top: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="titulo">Atualização de Bases</div>
+    <div class="sub" id="subtitulo">Preparando...</div>
+
+    <div class="barra-externa">
+      <div class="barra-interna" id="barra"></div>
+    </div>
+
+    <div class="percentual" id="percentual">0%</div>
+    <div class="mensagem" id="mensagem">Iniciando processo...</div>
+    <div class="ok" id="final"></div>
+
+    <script>
+      const TIPO = "<?= tipo ?>";
+      let estado = null;
+
+      function iniciar() {
+        google.script.run
+          .withSuccessHandler((resp) => {
+            estado = resp;
+            if (TIPO === "TODAS") {
+              document.getElementById("subtitulo").textContent = "Atualizando bases ESCOLAR e INFANTIL...";
+              processarEtapa(0, 0);
+            } else {
+              document.getElementById("subtitulo").textContent = "Atualizando base " + TIPO + "...";
+              processarArquivo(0);
+            }
+          })
+          .prepararAtualizacao(TIPO);
+      }
+
+      function processarArquivo(indiceArquivo) {
+        google.script.run
+          .withSuccessHandler((resp) => {
+            atualizarTela(resp.percentual, `${resp.indiceArquivo} de ${resp.total} arquivos processados`, resp.mensagem);
+
+            if (resp.concluido) {
+              finalizar(TIPO);
+            } else {
+              processarArquivo(resp.indiceArquivo);
+            }
+          })
+          .processarProximoArquivo(TIPO, 0, indiceArquivo);
+      }
+
+      function processarEtapa(indiceEtapa, indiceArquivo) {
+        const etapa = estado.etapas[indiceEtapa];
+        document.getElementById("subtitulo").textContent = "Atualizando base " + etapa.tipo + "...";
+
+        google.script.run
+          .withSuccessHandler((resp) => {
+            const percentualGlobal = calcularPercentualGlobal(indiceEtapa, resp.indiceArquivo, etapa.total);
+            atualizarTela(percentualGlobal, `${resp.tipoBase}: ${resp.indiceArquivo} de ${resp.total} arquivos`, resp.mensagem);
+
+            if (resp.concluido) {
+              const proximaEtapa = indiceEtapa + 1;
+              if (proximaEtapa < estado.etapas.length) {
+                processarEtapa(proximaEtapa, 0);
+              } else {
+                finalizar("TODAS");
+              }
+            } else {
+              processarEtapa(indiceEtapa, resp.indiceArquivo);
+            }
+          })
+          .processarProximoArquivo(TIPO, indiceEtapa, indiceArquivo);
+      }
+
+      function calcularPercentualGlobal(indiceEtapa, indiceArquivoAtual, totalDaEtapaAtual) {
+        let totalArquivos = 0;
+        let processados = 0;
+
+        estado.etapas.forEach((e, i) => {
+          totalArquivos += e.total;
+          if (i < indiceEtapa) {
+            processados += e.total;
+          } else if (i === indiceEtapa) {
+            processados += indiceArquivoAtual;
+          }
+        });
+
+        return Math.round((processados / totalArquivos) * 100);
+      }
+
+      function atualizarTela(percentual, textoAndamento, mensagem) {
+        document.getElementById("barra").style.width = percentual + "%";
+        document.getElementById("percentual").textContent = percentual + "%";
+        document.getElementById("mensagem").textContent = textoAndamento + " — " + (mensagem || "");
+      }
+
+      function finalizar(tipo) {
+        google.script.run
+          .withSuccessHandler((msg) => {
+            document.getElementById("barra").style.width = "100%";
+            document.getElementById("percentual").textContent = "100%";
+            document.getElementById("mensagem").textContent = "Processamento finalizado.";
+            document.getElementById("final").textContent = msg;
+          })
+          .finalizarAtualizacao(tipo);
+      }
+
+      iniciar();
+    </script>
+  </body>
+</html>

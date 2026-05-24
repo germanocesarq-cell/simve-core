@@ -1,0 +1,312 @@
+<style>
+/* =========================================================
+   SIMVE — SidebarStyles.html
+   Etapa 1B segura: organiza apenas menu lateral, topbar e perfil.
+   Não altera login, ranking, situação vacinal, tabelas ou gráficos.
+   ========================================================= */
+
+#appArea {
+  --simve-sidebar-bg: #ffffff;
+  --simve-sidebar-text: #082B67;
+  --simve-sidebar-muted: #64748B;
+  --simve-sidebar-border: #D9E7F7;
+  --simve-sidebar-blue: #075BD8;
+  --simve-sidebar-soft: #F4F8FF;
+  --simve-sidebar-hover: #EEF6FF;
+}
+
+#appArea .layout {
+  display: grid !important;
+  grid-template-columns: 282px minmax(0, 1fr) !important;
+  min-height: 100vh !important;
+  background: #F4F8FF !important;
+}
+
+#appArea .sidebar {
+  width: 282px !important;
+  min-width: 282px !important;
+  height: 100vh !important;
+  position: sticky !important;
+  top: 0 !important;
+  overflow-y: auto !important;
+  background: var(--simve-sidebar-bg) !important;
+  color: var(--simve-sidebar-text) !important;
+  padding: 24px 18px 18px !important;
+  border-right: 1px solid var(--simve-sidebar-border) !important;
+  box-shadow: 8px 0 28px rgba(8,43,103,.055) !important;
+}
+
+#appArea .sidebar h2 {
+  height: 74px !important;
+  margin: 0 0 22px !important;
+  padding: 0 0 18px !important;
+  border-bottom: 1px solid #E7F0FA !important;
+  display: grid !important;
+  grid-template-columns: 52px 1fr !important;
+  align-items: center !important;
+  gap: 12px !important;
+  font-size: 0 !important;
+  color: transparent !important;
+}
+
+#appArea .sidebar h2::before {
+  content: "" !important;
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 16px !important;
+  background: #EAF5FF !important;
+  background-image: url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M32 6L52 14V29C52 43 43.5 55 32 59C20.5 55 12 43 12 29V14L32 6Z' fill='%23EAF5FF' stroke='%23075BD8' stroke-width='4'/%3E%3Cpath d='M24 32L30 38L42 24' stroke='%230AA463' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: 42px 42px !important;
+  border: 1px solid #D7E8FB !important;
+}
+
+#appArea .sidebar h2::after {
+  content: "SIMVE\A Monitoramento Vacinal\A Escolar" !important;
+  white-space: pre-line !important;
+  color: var(--simve-sidebar-text) !important;
+  font-size: 12px !important;
+  line-height: 1.15 !important;
+  font-weight: 950 !important;
+  letter-spacing: -.25px !important;
+}
+
+#appArea .sidebar .user-box {
+  display: none !important;
+}
+
+#appArea .menu-btn {
+  width: 100% !important;
+  min-height: 52px !important;
+  display: grid !important;
+  grid-template-columns: 38px minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin: 0 0 10px !important;
+  padding: 10px 13px !important;
+  border: 1px solid transparent !important;
+  border-radius: 15px !important;
+  background: transparent !important;
+  color: var(--simve-sidebar-text) !important;
+  text-align: left !important;
+  font-size: 14px !important;
+  line-height: 1.2 !important;
+  font-weight: 900 !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  transition: background .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease !important;
+}
+
+#appArea .menu-btn::before {
+  content: "" !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 13px !important;
+  background-color: var(--simve-sidebar-hover) !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: 20px 20px !important;
+  flex: 0 0 38px !important;
+}
+
+#appArea .menu-btn:hover {
+  background: #F7FBFF !important;
+  border-color: #D7E8FB !important;
+}
+
+#appArea .menu-btn.active {
+  background: var(--simve-sidebar-blue) !important;
+  color: #fff !important;
+  border-color: var(--simve-sidebar-blue) !important;
+  box-shadow: 0 12px 26px rgba(7,91,216,.22) !important;
+}
+
+#appArea .menu-btn.active::before {
+  background-color: rgba(255,255,255,.18) !important;
+  filter: brightness(0) invert(1) !important;
+}
+
+/* Ícones por posição do menu */
+#appArea .menu-btn:nth-of-type(1)::before { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23075BD8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 10.5 12 3l9 7.5'/%3E%3Cpath d='M5 10v10h14V10'/%3E%3Cpath d='M9 20v-6h6v6'/%3E%3C/svg%3E") !important; }
+#appArea .menu-btn:nth-of-type(2)::before { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23075BD8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 4h16v16H4z'/%3E%3Cpath d='M8 8h8M8 12h8M8 16h5'/%3E%3C/svg%3E") !important; }
+#appArea .menu-btn:nth-of-type(3)::before { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23075BD8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 3v18M8 7h8M7 12h10M9 17h6'/%3E%3Cpath d='M4 12a8 8 0 1 0 16 0'/%3E%3C/svg%3E") !important; }
+#appArea .menu-btn:nth-of-type(4)::before { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23075BD8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 21V10M16 21V3M4 21h16'/%3E%3C/svg%3E") !important; }
+#appArea .menu-btn:nth-of-type(5)::before { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23075BD8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 .6 1.65 1.65 0 0 0-.4 1.08V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 8.6 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-.6-1H4a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 3.9l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-.6V4a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 .51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.21.35.33.74.33 1.15H20a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-.51.85Z'/%3E%3C/svg%3E") !important; }
+#appArea .menu-btn:nth-of-type(n+6)::before { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23075BD8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpath d='M14 2v6h6M8 13h8M8 17h5'/%3E%3C/svg%3E") !important; }
+
+#appArea .sidebar-footer {
+  margin-top: auto !important;
+  padding-top: 16px !important;
+  border-top: 1px solid #E7F0FA !important;
+  color: var(--simve-sidebar-muted) !important;
+  font-size: 12px !important;
+  line-height: 1.45 !important;
+}
+
+#appArea .content {
+  min-width: 0 !important;
+  background: #F4F8FF !important;
+}
+
+#appArea .topbar {
+  min-height: 82px !important;
+  padding: 14px 22px !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid var(--simve-sidebar-border) !important;
+  box-shadow: 0 8px 22px rgba(8,43,103,.045) !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 16px !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 50 !important;
+}
+
+#appArea .topbar-title h1 {
+  margin: 0 !important;
+  color: var(--simve-sidebar-text) !important;
+  font-size: 23px !important;
+  line-height: 1.12 !important;
+  font-weight: 950 !important;
+  letter-spacing: -.45px !important;
+}
+
+#appArea .topbar-title p {
+  margin: 5px 0 0 !important;
+  color: var(--simve-sidebar-muted) !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+  font-weight: 700 !important;
+}
+
+#appArea .page-body {
+  padding: 18px 22px 24px !important;
+  background: #F4F8FF !important;
+}
+
+#appArea .topbar-profile {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: 42px auto 20px !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-width: 238px !important;
+  padding: 11px 15px !important;
+  border-radius: 18px !important;
+  background: #FBFDFF !important;
+  border: 1px solid #D6E5F7 !important;
+  box-shadow: 0 10px 24px rgba(8,43,103,.05) !important;
+  cursor: pointer !important;
+  color: #082B67 !important;
+}
+
+#appArea .topbar-profile-icon {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 50% !important;
+  background: #EEF6FF !important;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23075BD8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 21a8 8 0 0 0-16 0'/%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3C/svg%3E") !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: 23px 23px !important;
+  border: 1px solid #D8E8FA !important;
+}
+
+#appArea .topbar-profile-icon.small {
+  width: 36px !important;
+  height: 36px !important;
+  background-size: 20px 20px !important;
+}
+
+#appArea .topbar-profile-text {
+  text-align: left !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+}
+
+#appArea .topbar-profile-text strong {
+  font-weight: 900 !important;
+}
+
+#appArea .topbar-profile-arrow {
+  font-size: 21px !important;
+  color: #082B67 !important;
+  transform: translateY(-2px) !important;
+}
+
+#appArea .topbar-profile-menu {
+  position: absolute !important;
+  top: calc(100% + 8px) !important;
+  right: 0 !important;
+  width: 268px !important;
+  background: #fff !important;
+  border: 1px solid #D6E5F7 !important;
+  border-radius: 18px !important;
+  box-shadow: 0 18px 45px rgba(8,43,103,.16) !important;
+  padding: 14px !important;
+  z-index: 9999 !important;
+}
+
+#appArea .topbar-profile-menu-head {
+  display: grid !important;
+  grid-template-columns: 36px 1fr !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 6px 4px 14px !important;
+  border-bottom: 1px solid #E6EEF8 !important;
+  color: #082B67 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+}
+
+#appArea .topbar-profile-logout {
+  width: 100% !important;
+  margin-top: 10px !important;
+  min-height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  color: #082B67 !important;
+  font-size: 14px !important;
+  font-weight: 850 !important;
+  cursor: pointer !important;
+  padding: 10px 12px !important;
+}
+
+#appArea .topbar-profile-logout:hover {
+  background: #F1F7FF !important;
+}
+
+@media (max-width: 1200px) {
+  #appArea .layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  #appArea .sidebar {
+    position: relative !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    display: block !important;
+  }
+
+  #appArea .topbar {
+    position: relative !important;
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+
+  #appArea .topbar-profile {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+</style>

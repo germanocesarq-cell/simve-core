@@ -1,0 +1,347 @@
+<style>
+/* =========================================================
+   SIMVE — AJUSTE RESPONSIVO REAL DA TELA DE LOGIN
+   Corrige redimensionamento do fundo e posição do card.
+   ========================================================= */
+
+.auth-wrapper.simve-login-vue.simve-bg-final {
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+
+  background-image: url('https://raw.githubusercontent.com/imunizacaoitaitinga-cmyk/simve-assets/main/fundo-login.webp?v=6') !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+}
+
+.simve-login-screen,
+.simve-login-layer {
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+/* Card do login: posição proporcional e mais estável */
+.simve-card-final {
+  position: absolute !important;
+  top: 50% !important;
+  right: clamp(48px, 7vw, 132px) !important;
+  transform: translateY(-50%) !important;
+
+  width: clamp(360px, 26vw, 430px) !important;
+  max-width: min(430px, calc(100vw - 48px)) !important;
+  min-width: 0 !important;
+
+  background: rgba(255,255,255,.965) !important;
+  border: 1px solid rgba(218,228,242,.9) !important;
+  border-radius: 26px !important;
+  padding: clamp(24px, 2vw, 30px) clamp(28px, 2.2vw, 34px) 24px !important;
+  box-shadow: 0 24px 60px rgba(8,43,103,.16) !important;
+  z-index: 5 !important;
+}
+
+/* Redução proporcional dos elementos internos */
+.simve-card-final .simve-login-avatar {
+  width: clamp(82px, 6vw, 98px) !important;
+  height: clamp(82px, 6vw, 98px) !important;
+  margin-bottom: 12px !important;
+}
+
+.simve-card-final .simve-login-avatar img {
+  width: 86% !important;
+  height: 86% !important;
+  object-fit: contain !important;
+}
+
+.simve-card-final h1 {
+  margin: 0 0 7px !important;
+  font-size: clamp(25px, 2vw, 29px) !important;
+  line-height: 1.08 !important;
+}
+
+.simve-card-final .simve-login-sub {
+  margin-bottom: 18px !important;
+  font-size: clamp(13px, 1vw, 14.5px) !important;
+  line-height: 1.35 !important;
+}
+
+.simve-card-final .simve-field {
+  margin-bottom: 12px !important;
+}
+
+.simve-card-final .simve-field label {
+  font-size: 13.5px !important;
+  margin-bottom: 6px !important;
+}
+
+.simve-card-final .simve-input {
+  min-height: 47px !important;
+  border-radius: 11px !important;
+}
+
+.simve-card-final .simve-input input,
+.simve-card-final .simve-input select {
+  min-height: 45px !important;
+  font-size: 14px !important;
+}
+
+.simve-card-final .simve-actions {
+  margin-bottom: 13px !important;
+  font-size: 12.8px !important;
+}
+
+.simve-card-final .simve-btn-primary {
+  min-height: 50px !important;
+  font-size: 16px !important;
+}
+
+.simve-about-login-btn {
+  min-height: 42px !important;
+  margin-top: 10px !important;
+  font-size: 13px !important;
+}
+
+/* Notebook comum: evita o card invadir a imagem central */
+@media (max-width: 1450px) {
+  .auth-wrapper.simve-login-vue.simve-bg-final {
+    background-position: center center !important;
+  }
+
+  .simve-card-final {
+    right: clamp(34px, 5.5vw, 86px) !important;
+    width: clamp(350px, 28vw, 405px) !important;
+    transform: translateY(-50%) !important;
+  }
+}
+
+/* Telas com pouca altura: diminui o card sem deslocar */
+@media (max-height: 760px) {
+  .simve-card-final {
+    transform: translateY(-50%) scale(.92) !important;
+    transform-origin: center right !important;
+  }
+}
+
+@media (max-height: 680px) {
+  .simve-card-final {
+    transform: translateY(-50%) scale(.84) !important;
+    transform-origin: center right !important;
+  }
+}
+
+/* Tablet/celular: prioriza o login centralizado */
+@media (max-width: 900px) {
+  .auth-wrapper.simve-login-vue.simve-bg-final {
+    background-size: cover !important;
+    background-position: center center !important;
+  }
+
+  .simve-card-final {
+    top: 50% !important;
+    right: 50% !important;
+    transform: translate(50%, -50%) scale(.94) !important;
+    transform-origin: center center !important;
+    width: min(400px, calc(100vw - 28px)) !important;
+    max-width: calc(100vw - 28px) !important;
+  }
+}
+
+/* Monitor muito largo: não deixa o card fugir para fora da composição */
+@media (min-width: 1800px) {
+  .simve-card-final {
+    right: 8.5vw !important;
+  }
+}
+</style>
+
+<style id="simve-login-fundo-ajuste-definitivo-v2">
+/* =========================================================
+   SIMVE — AJUSTE DEFINITIVO DO LOGIN
+   Este bloco precisa ficar no FINAL do arquivo para vencer CSS antigo.
+   ========================================================= */
+
+html,
+body,
+#app {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+}
+
+/* Tela do login */
+.auth-wrapper.simve-login-vue.simve-bg-final {
+  position: relative !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+
+  background-image: url("https://raw.githubusercontent.com/imunizacaoitaitinga-cmyk/simve-assets/main/fundo-login.webp?v=8") !important;
+  background-repeat: no-repeat !important;
+
+  /* Como a imagem já é uma arte de tela inteira, aqui NÃO usamos cover */
+  background-size: 100% 100% !important;
+  background-position: center center !important;
+}
+
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-login-screen,
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-login-layer {
+  position: relative !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: block !important;
+}
+
+/* Remove qualquer coluna/estrutura antiga do login que possa interferir */
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-login-shell,
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-login-left,
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-login-main,
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-footer,
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-hero-zone,
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-brand-html,
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-benefits,
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-intro,
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-brand-line {
+  display: none !important;
+}
+
+/* Card do login: fica dentro da área branca da arte */
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-card-final {
+  position: absolute !important;
+  top: 50% !important;
+  left: auto !important;
+  right: 6.8vw !important;
+  transform: translateY(-50%) !important;
+  transform-origin: center right !important;
+
+  width: 25.2vw !important;
+  min-width: 365px !important;
+  max-width: 430px !important;
+
+  max-height: 88dvh !important;
+  overflow: visible !important;
+
+  background: rgba(255,255,255,.965) !important;
+  border: 1px solid rgba(218,228,242,.9) !important;
+  border-radius: 28px !important;
+  padding: 26px 32px 24px !important;
+  box-shadow: 0 22px 56px rgba(8,43,103,.16) !important;
+  z-index: 20 !important;
+}
+
+/* Compactação interna do card */
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-card-final .simve-login-avatar {
+  width: 88px !important;
+  height: 88px !important;
+  margin: 0 auto 12px !important;
+}
+
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-card-final .simve-login-avatar img {
+  width: 78px !important;
+  height: 78px !important;
+  object-fit: contain !important;
+}
+
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-card-final h1 {
+  margin: 0 0 7px !important;
+  font-size: 27px !important;
+  line-height: 1.08 !important;
+  font-weight: 900 !important;
+}
+
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-card-final .simve-login-sub {
+  margin: 0 0 18px !important;
+  font-size: 13.6px !important;
+  line-height: 1.35 !important;
+}
+
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-card-final .simve-field {
+  margin-bottom: 11px !important;
+}
+
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-card-final .simve-field label {
+  font-size: 13.2px !important;
+  margin-bottom: 6px !important;
+}
+
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-card-final .simve-input {
+  min-height: 46px !important;
+  border-radius: 11px !important;
+  padding: 0 13px !important;
+}
+
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-card-final .simve-input input,
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-card-final .simve-input select {
+  min-height: 44px !important;
+  font-size: 13.6px !important;
+}
+
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-card-final .simve-actions {
+  margin: 0 0 13px !important;
+  font-size: 12.6px !important;
+}
+
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-card-final .simve-btn-primary {
+  min-height: 49px !important;
+  font-size: 16px !important;
+}
+
+.auth-wrapper.simve-login-vue.simve-bg-final .simve-about-login-btn {
+  min-height: 41px !important;
+  margin-top: 10px !important;
+  font-size: 13px !important;
+}
+
+/* Notebooks e monitores menores */
+@media (max-width: 1500px) {
+  .auth-wrapper.simve-login-vue.simve-bg-final .simve-card-final {
+    right: 6.1vw !important;
+    width: 26vw !important;
+    min-width: 350px !important;
+    max-width: 405px !important;
+    padding: 24px 30px 22px !important;
+  }
+}
+
+/* Altura menor: reduz o card */
+@media (max-height: 760px) {
+  .auth-wrapper.simve-login-vue.simve-bg-final .simve-card-final {
+    transform: translateY(-50%) scale(.88) !important;
+  }
+}
+
+@media (max-height: 680px) {
+  .auth-wrapper.simve-login-vue.simve-bg-final .simve-card-final {
+    transform: translateY(-50%) scale(.78) !important;
+  }
+}
+
+/* Celular/tablet */
+@media (max-width: 900px) {
+  .auth-wrapper.simve-login-vue.simve-bg-final {
+    background-size: cover !important;
+    background-position: center center !important;
+  }
+
+  .auth-wrapper.simve-login-vue.simve-bg-final .simve-card-final {
+    top: 50% !important;
+    right: 50% !important;
+    transform: translate(50%, -50%) scale(.92) !important;
+    width: calc(100vw - 32px) !important;
+    min-width: 0 !important;
+    max-width: 400px !important;
+  }
+}
+</style>

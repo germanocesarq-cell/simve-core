@@ -1,0 +1,439 @@
+<style>
+/* =========================================================
+   SIMVE — CadastralStyles.html
+   Etapa 1F: organização visual da Situação Cadastral.
+   Seguro: não remove regras antigas; apenas centraliza overrides.
+   ========================================================= */
+
+.simve-cadastral-v10 {
+  --cad-blue:#0b5bd3;
+  --cad-navy:#082b67;
+  --cad-border:#d9e7fb;
+  --cad-soft:#f8fbff;
+  --cad-red:#ef4444;
+  --cad-green:#16a34a;
+  --cad-orange:#f59e0b;
+}
+
+.simve-cadastral-v10 .cad-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  margin-bottom:18px;
+}
+
+.simve-cadastral-v10 .cad-header h1 {
+  margin:0 0 6px;
+  color:var(--cad-navy);
+  font-size:28px;
+  font-weight:950;
+  letter-spacing:-.6px;
+}
+
+.simve-cadastral-v10 .cad-header p {
+  margin:0;
+  color:#52647f;
+  font-weight:700;
+}
+
+.cad-kpis,
+.cad-kpis-v10 {
+  display:grid;
+  grid-template-columns:repeat(4, minmax(170px, 1fr));
+  gap:14px;
+  margin-bottom:16px;
+}
+
+.cad-kpi {
+  background:#fff;
+  border:1px solid var(--cad-border, #d9e3f0);
+  border-radius:18px;
+  padding:18px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  box-shadow:0 10px 26px rgba(8,43,103,.055);
+  min-height:94px;
+}
+
+.cad-kpi.blue { border-left:4px solid var(--cad-blue, #0b5bd3); }
+.cad-kpi.red { border-left:4px solid var(--cad-red, #ef4444); }
+.cad-kpi.orange { border-left:4px solid var(--cad-orange, #f59e0b); }
+.cad-kpi.green { border-left:4px solid var(--cad-green, #16a34a); }
+
+.cad-kpi .icon {
+  width:54px;
+  height:54px;
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
+  flex:0 0 54px;
+  background:#eef6ff;
+}
+
+.cad-kpi.red .icon { background:#fff1f1; color:#dc2626; }
+.cad-kpi.orange .icon { background:#fff7e6; color:#d97706; }
+.cad-kpi.green .icon { background:#eefcf3; color:#15803d; }
+.cad-kpi.blue .icon { background:#e8f2ff; color:#1d6fd1; }
+
+.cad-kpi .label {
+  color:#334155;
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:5px;
+}
+
+.cad-kpi .value {
+  color:#0f2744;
+  font-size:30px;
+  font-weight:950;
+  line-height:1;
+}
+
+.cad-kpi .sub {
+  margin-top:8px;
+  color:#64748b;
+  font-size:12px;
+  font-weight:700;
+}
+
+.cad-filters,
+.cad-filters-v10 {
+  background:#fff;
+  border:1px solid var(--cad-border, #d9e3f0);
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:16px;
+  box-shadow:0 10px 28px rgba(8,43,103,.055);
+}
+
+.cad-filters-v10::before {
+  content:'Filtros';
+  display:block;
+  color:var(--cad-navy, #082b67);
+  font-size:18px;
+  font-weight:950;
+  margin:0 0 12px;
+}
+
+.cad-filter-grid,
+.cad-filter-grid-v10 {
+  display:grid;
+  grid-template-columns:minmax(160px,.75fr) minmax(210px,.95fr) minmax(280px,1.2fr) minmax(180px,.8fr) auto;
+  gap:16px;
+  align-items:end;
+}
+
+.cad-filter-buttons-v10,
+.cad-export-actions-v7,
+.cad-search-row {
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.cad-filter-buttons-v10 .btn-secondary,
+.cad-list-card-v10 .cad-search-row .btn-secondary,
+.cad-print-btn-v7 {
+  width:auto;
+  min-height:42px;
+  padding:10px 18px;
+  border-radius:12px;
+  border:1px solid #c8dcff;
+  color:var(--cad-blue, #0b5bd3);
+  background:#fff;
+  font-weight:950;
+}
+
+.cad-print-btn-v7 {
+  border-color:#b7ddc7;
+  color:#0f7a3c;
+  background:#f4fff8;
+}
+
+.cad-card,
+.cad-list-card-v10 {
+  background:#fff;
+  border:1px solid var(--cad-border, #d9e3f0);
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 10px 26px rgba(8,43,103,.055);
+}
+
+.cad-card-title,
+.cad-list-header,
+.cad-list-header-v10 {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+}
+
+.cad-card-title h2,
+.cad-list-header-v10 h2 {
+  margin:0;
+  color:var(--cad-navy, #082b67);
+  font-size:21px;
+  font-weight:950;
+}
+
+.cad-table-wrapper {
+  width:100%;
+  overflow-x:auto;
+}
+
+.cad-table,
+.cad-table-v10 {
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+
+.cad-table th,
+.cad-table-v10 th {
+  text-align:left;
+  background:#f4f8ff;
+  color:var(--cad-navy, #082b67);
+  padding:12px 14px;
+  border-bottom:1px solid #d9e3f0;
+  font-size:13px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.cad-table td,
+.cad-table-v10 td {
+  padding:12px 14px;
+  border-bottom:1px solid #e8f0fb;
+  color:#0f2744;
+  font-weight:700;
+  vertical-align:middle;
+}
+
+.cad-table-v10 th.cad-sortable-th {
+  cursor:pointer;
+  user-select:none;
+}
+
+.cad-table-v10 th.cad-sortable-th:hover {
+  color:#0b5bd3;
+  background:#eaf3ff;
+}
+
+.cad-sort-indicator {
+  display:inline-flex;
+  margin-left:6px;
+  color:#0b5bd3;
+  font-size:11px;
+  font-weight:950;
+}
+
+.cad-badge,
+.cad-status-pill {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:6px 11px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:950;
+  white-space:nowrap;
+}
+
+.cad-badge.red,
+.cad-status-pendente { background:#ffe5e5; color:#dc2626; }
+.cad-badge.orange { background:#fff4dc; color:#d97706; }
+.cad-badge.blue { background:#e8f2ff; color:#2563eb; }
+.cad-badge.purple { background:#f3e8ff; color:#7e22ce; }
+.cad-status-ok { background:#e7f8ed; color:#15803d; }
+.cad-status-loading { background:#eaf2ff; color:#1f64cf; }
+
+.cad-cpf-input {
+  width:100%;
+  max-width:185px;
+  min-height:38px;
+  padding:8px 10px;
+  border:1px solid #cfd8e3;
+  border-radius:9px;
+  font-weight:900;
+  color:#0f2744;
+  background:#fff;
+  outline:none;
+}
+
+.cad-cpf-input:focus {
+  border-color:#1f64cf;
+  box-shadow:0 0 0 3px rgba(31,100,207,.10);
+}
+
+.cad-cpf-save {
+  min-width:118px;
+  min-height:38px;
+  border:1px solid #83c7a0;
+  border-radius:10px;
+  padding:8px 10px;
+  background:#ffffff;
+  color:#15803d;
+  font-weight:950;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+
+.cad-cpf-save:hover { background:#f0fff6; }
+.cad-cpf-save:disabled { opacity:.55; cursor:not-allowed; }
+
+.cad-row-saving {
+  background:#f4f8ff;
+  box-shadow:inset 4px 0 0 var(--cad-blue, #0b5bd3);
+}
+
+.cad-row-saved {
+  background:#f0fff6;
+  outline:1px solid #9bd7b5;
+  outline-offset:-1px;
+}
+
+.cad-spinner {
+  width:14px;
+  height:14px;
+  border:2px solid rgba(31,100,207,.25);
+  border-top-color:#1f64cf;
+  border-radius:50%;
+  display:inline-block;
+  vertical-align:-2px;
+  margin-right:6px;
+  animation:cadSpin .75s linear infinite;
+}
+
+@keyframes cadSpin { to { transform:rotate(360deg); } }
+
+.cad-pagination {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
+  margin-top:14px;
+  color:#334155;
+  font-size:13px;
+  font-weight:800;
+}
+
+.cad-page-controls {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.cad-page-size,
+.cad-page-btn {
+  border:1px solid #d3dfef;
+  background:#fff;
+  color:#0f2744;
+  padding:8px 10px;
+  border-radius:8px;
+  font-weight:800;
+  outline:none;
+}
+
+.cad-page-btn {
+  cursor:pointer;
+  min-width:38px;
+  font-weight:900;
+}
+
+.cad-page-btn:disabled { opacity:.45; cursor:not-allowed; }
+.cad-page-btn.active { background:#2563eb; color:#fff; border-color:#2563eb; }
+
+.cad-cpf-toast {
+  position:fixed;
+  left:50%;
+  bottom:34px;
+  transform:translateX(-50%);
+  z-index:9999;
+  width:min(620px, calc(100vw - 48px));
+  background:#fff;
+  border:1px solid #cfe7d8;
+  border-radius:18px;
+  box-shadow:0 22px 60px rgba(8,43,103,.20);
+  padding:18px 22px 14px;
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
+  color:#0f6b35;
+}
+
+.cad-cpf-toast-icon {
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:#16a34a;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:950;
+  flex:0 0 38px;
+}
+
+.cad-cpf-toast-content strong {
+  display:block;
+  color:#0f6b35;
+  font-size:16px;
+  font-weight:950;
+  margin-bottom:4px;
+}
+
+.cad-cpf-toast-content small {
+  display:block;
+  color:#0f6b35;
+  font-size:13px;
+  font-weight:800;
+}
+
+.cad-cpf-toast-close {
+  border:0;
+  background:transparent;
+  color:#15803d;
+  font-size:24px;
+  line-height:1;
+  cursor:pointer;
+  padding:0 4px;
+}
+
+@media (max-width:1250px) {
+  .cad-filter-grid,
+  .cad-filter-grid-v10 { grid-template-columns:1fr 1fr; }
+  .cad-kpis,
+  .cad-kpis-v10 { grid-template-columns:repeat(2, minmax(170px, 1fr)); }
+  .cad-table-v10.cad-table-cpf-operacional { min-width:920px; }
+}
+
+@media (max-width:760px) {
+  .cad-filter-grid,
+  .cad-filter-grid-v10,
+  .cad-kpis,
+  .cad-kpis-v10 { grid-template-columns:1fr; }
+}
+
+@media print {
+  .sidebar,
+  .topbar,
+  .cad-filters,
+  .cad-kpis,
+  .cad-analytics-v10,
+  .cad-pagination,
+  .cad-export-actions-v7,
+  .top-message { display:none !important; }
+}
+</style>

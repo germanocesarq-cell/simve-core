@@ -1,0 +1,3256 @@
+<script>
+const { createApp, nextTick, markRaw } = Vue;
+
+    createApp({
+      data() {
+        return {
+          loading: false,
+          mostrarSenha: false,
+          mostrarSobre: false,
+          lembrarUsuario: true,
+          profileMenuOpen: false,
+          assets: {
+            heroCriancasEscola: "https://coruscating-chimera-5e0732.netlify.app/hero-criancas-escola.png",
+            loginAvatarEscola: "https://coruscating-chimera-5e0732.netlify.app/login-avatar-escola.svg",
+            iconeProtecao: "https://coruscating-chimera-5e0732.netlify.app/icone-protecao.svg",
+            iconeMonitoramento: "https://coruscating-chimera-5e0732.netlify.app/icone-monitoramento.svg",
+            iconeEscolaSaude: "https://coruscating-chimera-5e0732.netlify.app/icone-escola-saude.svg",
+            iconeRodapeEscudo: "https://coruscating-chimera-5e0732.netlify.app/icone-rodape-escudo.svg",
+            iconeRodapePredio: "https://coruscating-chimera-5e0732.netlify.app/icone-rodape-predio.svg",
+            iconeRodapeGrupo: "https://coruscating-chimera-5e0732.netlify.app/icone-rodape-grupo.svg",
+            iconeCadeado: "https://coruscating-chimera-5e0732.netlify.app/icone-cadeado.svg",
+            logoSimveHorizontal: "https://coruscating-chimera-5e0732.netlify.app/simve_logo_horizontal.svg",
+            logoSimveIcone: "https://coruscating-chimera-5e0732.netlify.app/logo_simve_icone.svg",
+            logoItaitinga34: "https://coruscating-chimera-5e0732.netlify.app/logo-itaitinga34.png",
+            seloUnicef: "https://coruscating-chimera-5e0732.netlify.app/selo_unicef.png",
+            logoSimvePrincipal: "https://coruscating-chimera-5e0732.netlify.app/logo_simve_principal.svg"
+          },
+
+          authView: "login",
+          currentView: "ranking",
+          rankingHistorico: { labels: [], values: [], datasets: [], titulo: "Evolução mensal da cobertura vacinal" },
+          rankingAutoRetry: 0,
+
+          sessionToken: "",
+          sessionInfo: null,
+
+          cadastralNovo: {
+            atualizadoEm: "",
+            perfilInicio: "GESTAO",
+            titulo: "Situação Cadastral dos Alunos",
+            filtros: { base: "TODOS", escola: "TODAS", turma: "TODAS", tipo: "TODOS", busca: "" },
+            ordenacao: { campo: "turmaNome", direcao: "asc" },
+            pagina: 1,
+            porPagina: 10,
+            filtrosDisponiveis: { escolas: [], turmas: [], tipos: ["TODOS", "Sem CPF", "Sem endereço", "Sem CPF e endereço"] },
+            resumo: { totalAlunos: 0, semCpf: 0, semEndereco: 0, totalInconsistencias: 0 },
+            topEscolas: [],
+            topTurmas: [],
+            lista: []
+          },
+
+          cadCpfFeedback: {
+            visible: false,
+            mensagem: ""
+          },
+
+          inicioPerfil: {
+            atualizadoEm: "",
+            perfilInicio: "GESTAO",
+            titulo: "Início",
+            subtitulo: "",
+            contexto: {},
+            resumo: {
+              totalAlunos: 0,
+              coberturaGeral: 0,
+              alunosAtraso: 0,
+              alunosSemInfo: 0,
+              escolasCriticas: 0,
+              unidades: 0,
+              escolas: 0
+            },
+            alertas: {
+              escolasCriticas: 0,
+              unidadesComPendencia: 0,
+              vacinaMaisCritica: "-",
+              vacinaMaisCriticaCobertura: 0,
+              alunosSemInfo: 0
+            },
+            rankingEscolas: [],
+            rankingUnidades: [],
+            vacinasCriticas: [],
+            turmasCriticas: [],
+            acoes: []
+          },
+
+          loginForm: {
+            perfil: "",
+            usuario: "",
+            senha: ""
+          },
+
+          primeiroAcessoForm: {
+            senha1: "",
+            senha2: ""
+          },
+
+          recuperacaoForm: {
+            perfil: "",
+            usuario: ""
+          },
+
+          codigoForm: {
+            perfil: "",
+            usuario: "",
+            codigo: "",
+            senha1: "",
+            senha2: ""
+          },
+
+          loginMsg: "",
+          primeiroMsg: "",
+          recMsg: "",
+          recMsgOk: "",
+          codigoMsg: "",
+
+          topError: "",
+          topSuccess: "",
+
+          suppressWatchers: false,
+
+          homeResumo: {
+            base: "-",
+            totalAlunos: 0,
+            alunosEmAtraso: 0,
+            coberturaGeral: 0,
+            inconsistencias: 0,
+            alunosSemCpf: 0,
+            alunosSemEndereco: 0
+          },
+
+          vacinal: {
+            form: {
+              escola: "",
+              segmento: "TODOS",
+              turma: "TODAS",
+              vacina: "TODAS",
+              vacinaAtraso: "TODAS",
+              vacinaEvolucao: "TODAS"
+            },
+            filtros: {
+              escolas: [],
+              segmentosDisponiveis: ["TODOS"],
+              turmas: [],
+              vacinas: [],
+              vacinasCobertura: [],
+              vacinasAtraso: []
+            },
+            indicadores: {
+              totalAlunos: 0,
+              alunosEmAtraso: 0,
+              coberturaGeral: 0,
+              escolasAbaixo80: []
+            },
+            graficos: {
+              atrasoPorEscola: { labels: [], values: [] },
+              atrasoPorTurma: { labels: [], values: [] },
+              coberturaVacinas: { labels: [], values: [] },
+              coberturaVacinasInfantil: { labels: [], values: [] },
+              coberturaVacinasEscolar: { labels: [], values: [] },
+              situacaoVacinalCompleta: { labels: [], vacinados: [], naoVacinados: [], semInfo: [], denominador: [] },
+              alertasQualidade: [],
+              rankingOperacionalVacinas: []
+            },
+            historico: {
+              labels: [],
+              values: [],
+              datasets: [],
+              titulo: "Evolução mensal da cobertura vacinal",
+              inicioSerie: "Abril"
+            },
+            tabela: [],
+            alunoSelecionado: null,
+            modalAluno: null,
+            atualizadoEm: "",
+            busca: "",
+            acesso: {
+              escolaTravada: false,
+              escolasPermitidas: []
+            },
+            sort: {
+              key: "nome",
+              dir: "asc"
+            },
+            pagination: {
+              page: 1,
+              perPage: 5
+            },
+            resumoSegmentos: {
+              infantil: { disponivel: false, totalAlunos: 0, alunosEmAtraso: 0, coberturaGeral: 0 },
+              escolar: { disponivel: false, totalAlunos: 0, alunosEmAtraso: 0, coberturaGeral: 0 }
+            },
+            diagnostico: {},
+            _metaEscolas: []
+          },
+
+          cadastral: {
+            form: {
+              base: "ESCOLAR",
+              escola: "TODAS",
+              turma: "TODAS"
+            },
+            filtros: {
+              escolas: [],
+              turmas: []
+            },
+            indicadores: {
+              totalAlunos: 0,
+              alunosSemCpf: 0,
+              alunosSemEndereco: 0
+            },
+            graficos: {
+              semCpfPorEscola: { labels: [], values: [] },
+              semCpfPorTurma: { labels: [], values: [] },
+              semEnderecoPorEscola: { labels: [], values: [] }
+            },
+            tabela: [],
+            busca: "",
+            acesso: {
+              escolaTravada: false,
+              escolasPermitidas: []
+            },
+            sort: {
+              key: "nome",
+              dir: "asc"
+            },
+            pagination: {
+              page: 1,
+              perPage: 20
+            },
+            resumoSegmentos: {
+              infantil: { disponivel: false, totalAlunos: 0, alunosEmAtraso: 0, coberturaGeral: 0 },
+              escolar: { disponivel: false, totalAlunos: 0, alunosEmAtraso: 0, coberturaGeral: 0 }
+            },
+            diagnostico: {},
+            _metaEscolas: []
+          },
+
+          gatilhoHistorico: {
+            ativo: false,
+            mensagem: ""
+          },
+
+          admin: {
+            gatilhoAtivo: false,
+            quantidadeGatilhos: 0,
+            ultimaMensagem: "",
+            ultimoResultado: null
+          },
+
+          monitoramentoAcessos: {
+            atualizadoEm: "",
+            resumo: {
+              ultimoAcesso: "-",
+              ultimoDestino: "-",
+              acessosUltimos7: 0,
+              unidadesSemAcesso: 0,
+              escolasSemAcesso: 0
+            },
+            unidadesSemAcesso: [],
+            escolasSemAcesso: [],
+            ultimosAcessos: []
+          },
+
+          ranking: {
+            atualizadoEm: "",
+            modalAberto: false,
+            modalTipo: "",
+            modalTitulo: "",
+            modalIcone: "",
+            modalPagina: 1,
+            modalPorPagina: 10,
+            resumo: {
+              escolasMonitoradas: 0,
+              unidadesMonitoradas: 0,
+              escolasCriticas: 0,
+              unidadeMaisCritica: "-",
+              coberturaUnidadeMaisCritica: 0
+            },
+            escolasPorCobertura: [],
+            unidadesPorCobertura: [],
+            unidadesMaiorPendencia: []
+          },
+
+          gestao: {
+            resumo: {
+              escolasMonitoradas: 0,
+              escolasCriticas: 0,
+              vacinaMaisCritica: "-",
+              menorCobertura: 0,
+              maiorQueda: "-"
+            },
+            rankingEscolas: [],
+            vacinasCriticas: [],
+            alertasQueda: [],
+            evolucaoMunicipal: { labels: [], values: [] },
+            prioridades: []
+          },
+
+          documentos: [],
+
+          feedback: {
+            tipo: "",
+            mensagem: ""
+          },
+          feedbackMsg: "",
+          feedbackErro: "",
+
+          charts: {
+            vacChartEscola: null,
+            vacChartTurma: null,
+            vacChartVacina: null,
+            vacChartVacinaInfantil: null,
+            vacChartVacinaEscolar: null,
+            vacChartSituacaoCompleta: null,
+            vacChartEvolucao: null,
+            cadChartCpfEscola: null,
+            cadChartCpfTurma: null,
+            cadChartEndereco: null,
+            gestaoEvolucaoMunicipal: null,
+            rankingEvolucaoChart: null
+          },
+
+          vacinalDebug: {
+            atrasoPorTurma: {
+              labelsRecebidos: [],
+              valuesRecebidos: [],
+              labelsFallback: [],
+              valuesFallback: [],
+              labelsUsados: [],
+              valuesUsados: [],
+              totalTabela: 0,
+              turmasAmostra: [],
+              canvasEncontrado: false,
+              chartCriado: false,
+              erro: ""
+            }
+          }
+        };
+      },
+
+      mounted() {
+        const usuarioSalvo = localStorage.getItem("simve_usuario") || "";
+        const perfilSalvo = localStorage.getItem("simve_perfil") || "";
+        if (usuarioSalvo) this.loginForm.usuario = usuarioSalvo;
+        if (perfilSalvo) this.loginForm.perfil = perfilSalvo;
+      },
+
+      computed: {
+
+        cadastralTotalPaginas() {
+          const total = (this.cadastralNovo.lista || []).length;
+          const porPagina = Number(this.cadastralNovo.porPagina || 25);
+          return Math.max(1, Math.ceil(total / porPagina));
+        },
+
+        cadastralListaOrdenada() {
+          return this.aplicarOrdenacaoCadastral(this.cadastralNovo.lista || []);
+        },
+
+        cadastralListaPaginada() {
+          const pagina = Math.min(Math.max(1, Number(this.cadastralNovo.pagina || 1)), this.cadastralTotalPaginas);
+          const porPagina = Number(this.cadastralNovo.porPagina || 25);
+          const inicio = (pagina - 1) * porPagina;
+          return (this.cadastralListaOrdenada || []).slice(inicio, inicio + porPagina);
+        },
+
+        cadastralInicioPagina() {
+          if (!(this.cadastralNovo.lista || []).length) return 0;
+          return ((Number(this.cadastralNovo.pagina || 1) - 1) * Number(this.cadastralNovo.porPagina || 25)) + 1;
+        },
+
+        cadastralFimPagina() {
+          return Math.min((this.cadastralNovo.lista || []).length, Number(this.cadastralNovo.pagina || 1) * Number(this.cadastralNovo.porPagina || 25));
+        },
+
+
+        isAuthenticated() {
+          return !!this.sessionToken && !!this.sessionInfo;
+        },
+
+        isGestor() {
+          const perfil = String(this.sessionInfo?.perfil || "").toUpperCase();
+          return perfil === "SAUDE" || perfil === "ADM";
+        },
+
+        isAdmin() {
+          return String(this.sessionInfo?.perfil || "").toUpperCase() === "ADM";
+        },
+
+        escolasPermitidasLabel() {
+          const lista = this.sessionInfo?.escolasPermitidas || [];
+          return lista.length ? lista : ["Todas as escolas permitidas pela base"];
+        },
+
+        pageSubtitle() {
+          const map = {
+            inicio: "Visão geral do sistema",
+            vacinal: "Consulta e acompanhamento da situação vacinal",
+            gestao: "Resumo executivo para tomada de decisão",
+            ranking: this.isGestor ? "Central de desempenho e análise comparativa" : "Início da escola",
+            acessos: "Acompanhe os acessos das unidades e escolas ao sistema",
+            admin: "Configurações administrativas do histórico",
+            cadastral: "Acompanhe e corrija as inconsistências cadastrais dos alunos",
+            documentos: "Documentos e materiais de apoio",
+            feedback: "Canal de comunicação do sistema"
+          };
+          return map[this.currentView] || "Painel";
+        },
+
+        currentBaseLabel() {
+          if (this.currentView === "vacinal") return this.vacinal.form.segmento || "-";
+          if (this.currentView === "ranking") return this.isGestor ? "RANKING" : "DESEMPENHO";
+          if (this.currentView === "acessos") return "ACESSOS";
+          if (this.currentView === "admin") return "ADMIN";
+          if (this.currentView === "cadastral") return this.cadastral.form.base;
+          return this.homeResumo.base || this.sessionInfo?.base || "-";
+        },
+
+
+
+
+        rankingModalLista() {
+          if (!this.ranking.modalTipo) return [];
+          if (this.ranking.modalTipo === "escolas") return this.ranking.escolasPorCobertura || [];
+          if (this.ranking.modalTipo === "unidades") return this.ranking.unidadesPorCobertura || [];
+          if (this.ranking.modalTipo === "pendencias") return this.ranking.unidadesMaiorPendencia || [];
+          return [];
+        },
+
+        rankingModalTotalPages() {
+          const total = this.rankingModalLista.length;
+          const porPagina = Number(this.ranking.modalPorPagina || 10);
+          return Math.max(1, Math.ceil(total / porPagina));
+        },
+
+        rankingModalPageItems() {
+          const page = Math.min(Math.max(1, Number(this.ranking.modalPagina || 1)), this.rankingModalTotalPages);
+          const porPagina = Number(this.ranking.modalPorPagina || 10);
+          const start = (page - 1) * porPagina;
+          return this.rankingModalLista.slice(start, start + porPagina);
+        },
+
+        rankingModalStart() {
+          if (!this.rankingModalLista.length) return 0;
+          return ((Number(this.ranking.modalPagina || 1) - 1) * Number(this.ranking.modalPorPagina || 10)) + 1;
+        },
+
+        rankingModalEnd() {
+          return Math.min(this.rankingModalLista.length, Number(this.ranking.modalPagina || 1) * Number(this.ranking.modalPorPagina || 10));
+        },
+
+        top5EscolasRanking() {
+          return (this.ranking.escolasPorCobertura || []).slice(0, 5);
+        },
+
+        top5UnidadesRanking() {
+          return (this.ranking.unidadesPorCobertura || []).slice(0, 5);
+        },
+
+        top5PendenciasRanking() {
+          return (this.ranking.unidadesMaiorPendencia || []).slice(0, 5);
+        },
+
+        rankingTotalEscolas() {
+          return (this.ranking.escolasPorCobertura || []).length;
+        },
+
+        rankingEscolaUsuarioNome() {
+          const direta = String(this.sessionInfo?.escola || "").trim();
+          if (direta) return direta;
+          const lista = this.sessionInfo?.escolasPermitidas || [];
+          return lista.length ? String(lista[0] || "").trim() : "";
+        },
+
+        rankingEscolasComPosicao() {
+          const alvo = this.normalizarComparacao(this.rankingEscolaUsuarioNome);
+          return (this.ranking.escolasPorCobertura || []).map((item, index) => {
+            const nome = String(item.nome || "").trim();
+            return Object.assign({}, item, {
+              posicao: index + 1,
+              ehMinhaEscola: alvo && this.normalizarComparacao(nome) === alvo
+            });
+          });
+        },
+
+        minhaEscolaRanking() {
+          if (this.isGestor) return this.rankingEscolasComPosicao[0] || null;
+          return this.rankingEscolasComPosicao.find(item => item.ehMinhaEscola) || null;
+        },
+
+        naoElegiveisMinhaEscola() {
+          const item = this.minhaEscolaRanking;
+          if (!item) return 0;
+          const total = Number(item.total || item.totalAlunos || 0);
+          const vacinados = Number(item.vacinados || 0);
+          const atrasos = Number(item.atrasos || 0);
+          return Math.max(0, total - vacinados - atrasos);
+        },
+
+        rankingMediaMunicipal() {
+          const lista = this.ranking.escolasPorCobertura || [];
+          const elegiveis = lista.reduce((acc, item) => acc + Number(item.elegiveis || 0), 0);
+          const vacinados = lista.reduce((acc, item) => acc + Number(item.vacinados || 0), 0);
+          return elegiveis ? Number(((vacinados / elegiveis) * 100).toFixed(1)) : 0;
+        },
+
+        rankingDiferencaMedia() {
+          const cobertura = this.minhaEscolaRanking ? Number(this.minhaEscolaRanking.cobertura || 0) : 0;
+          return Number((cobertura - Number(this.rankingMediaMunicipal || 0)).toFixed(1));
+        },
+
+        rankingComparacaoMediaTexto() {
+          if (!this.minhaEscolaRanking) return "-";
+          const diff = Math.abs(Number(this.rankingDiferencaMedia || 0)).toFixed(1).replace(".", ",");
+          if (Number(this.rankingDiferencaMedia || 0) === 0) return "Igual à média";
+          return Number(this.rankingDiferencaMedia || 0) > 0
+            ? diff + "% acima"
+            : diff + "% abaixo";
+        },
+
+        rankingHistoricoTemDados() {
+          return Array.isArray(this.rankingHistorico?.labels) && this.rankingHistorico.labels.length > 0 &&
+            Array.isArray(this.rankingHistorico?.values) && this.rankingHistorico.values.some(v => v !== null && v !== undefined && v !== "");
+        },
+
+        rankingEscolasDestaque() {
+          const lista = this.rankingEscolasComPosicao || [];
+          const minha = this.minhaEscolaRanking;
+          const mapa = new Map();
+
+          lista.slice(0, 5).forEach(item => mapa.set(item.posicao, item));
+          if (minha) {
+            const pos = Number(minha.posicao || 0);
+            [pos - 1, pos, pos + 1].forEach(p => {
+              const item = lista.find(x => Number(x.posicao) === p);
+              if (item) mapa.set(item.posicao, item);
+            });
+          }
+
+          return Array.from(mapa.values()).sort((a, b) => Number(a.posicao || 0) - Number(b.posicao || 0)).slice(0, 7);
+        },
+
+        rankingMensagemLeitura() {
+          const minha = this.minhaEscolaRanking;
+          if (!minha) return "Assim que a escola for identificada, o sistema mostrará a leitura da cobertura.";
+          const cobertura = Number(minha.cobertura || 0);
+          if (cobertura >= 95) return "Sua escola está dentro da meta recomendada. Mantenha o acompanhamento para não perder desempenho.";
+          if (cobertura >= 85) return "Sua escola está em atenção. Poucos alunos atualizados podem aproximar a cobertura da meta de 95%.";
+          return "Sua escola está em faixa crítica. Priorize a busca ativa dos alunos em atraso e revise registros sem informação.";
+        },
+
+        totalSemInformacaoVacinal() {
+          const s = this.vacinal?.graficos?.situacaoVacinalCompleta || {};
+          return (s.semInfo || []).reduce((acc, v) => acc + Number(v || 0), 0);
+        },
+
+        totalEscolasFiltro() {
+          const escolas = new Set();
+          (this.vacinal?.tabela || []).forEach(item => {
+            if (item.escola) escolas.add(item.escola);
+          });
+          if (escolas.size) return escolas.size;
+          return this.vacinal?.form?.escola ? 1 : 0;
+        },
+
+        vacinalEscolaLabel() {
+          return this.vacinal.form.escola || "-";
+        },
+
+        vacinalSegmentoLabel() {
+          return this.vacinal.form.segmento === "TODOS" ? "Todos" : this.vacinal.form.segmento;
+        },
+
+        vacinalTurmaLabel() {
+          return this.vacinal.form.turma === "TODAS" ? "Todas" : this.vacinal.form.turma;
+        },
+
+        vacinalVacinaLabel() {
+          return this.vacinal.form.vacina === "TODAS" ? "Todas" : this.vacinal.form.vacina;
+        },
+
+        cadastralEscolaLabel() {
+          return this.cadastral.form.escola === "TODAS" ? "Todas" : this.cadastral.form.escola;
+        },
+
+        cadastralTurmaLabel() {
+          return this.cadastral.form.turma === "TODAS" ? "Todas" : this.cadastral.form.turma;
+        },
+
+        vacinalVacinasDisponiveis() {
+          const mapa = new Map();
+          (this.vacinal.tabela || []).forEach(item => {
+            const texto = String(item.vacinasAtraso || "").trim();
+            if (!texto) return;
+            texto.split(",").map(v => v.trim()).filter(Boolean).forEach(v => {
+              const chave = this.normalizeText(v);
+              if (chave && !mapa.has(chave)) mapa.set(chave, v);
+            });
+          });
+          return Array.from(mapa.values()).sort((a, b) => a.localeCompare(b, "pt-BR"));
+        },
+
+        vacinalSortedFiltered() {
+          let lista = this.getSortedFilteredList(
+            this.vacinal.tabela,
+            this.vacinal.busca,
+            this.vacinal.sort.key,
+            this.vacinal.sort.dir
+          );
+
+          if (this.vacinal.form.vacinaAtraso && this.vacinal.form.vacinaAtraso !== "TODAS") {
+            const vacinaFiltro = this.normalizeText(this.vacinal.form.vacinaAtraso);
+            lista = lista.filter(item => {
+              const vacinas = String(item.vacinasAtraso || "")
+                .split(",")
+                .map(v => this.normalizeText(v))
+                .filter(Boolean);
+              return vacinas.includes(vacinaFiltro);
+            });
+          }
+
+          return lista;
+        },
+
+        cadastralSortedFiltered() {
+          return this.getSortedFilteredList(
+            this.cadastral.tabela,
+            this.cadastral.busca,
+            this.cadastral.sort.key,
+            this.cadastral.sort.dir
+          );
+        },
+
+        vacinalTotalPages() {
+          return Math.max(1, Math.ceil(this.vacinalSortedFiltered.length / this.vacinal.pagination.perPage));
+        },
+
+        cadastralTotalPages() {
+          return Math.max(1, Math.ceil(this.cadastralSortedFiltered.length / this.cadastral.pagination.perPage));
+        },
+
+        vacinalPageItems() {
+          return this.getPageItems(this.vacinalSortedFiltered, this.vacinal.pagination);
+        },
+
+        cadastralPageItems() {
+          return this.getPageItems(this.cadastralSortedFiltered, this.cadastral.pagination);
+        },
+
+        vacinalPageStart() {
+          if (!this.vacinalSortedFiltered.length) return 0;
+          return (this.vacinal.pagination.page - 1) * this.vacinal.pagination.perPage + 1;
+        },
+
+        vacinalPageEnd() {
+          return Math.min(
+            this.vacinal.pagination.page * this.vacinal.pagination.perPage,
+            this.vacinalSortedFiltered.length
+          );
+        },
+
+        cadastralPageStart() {
+          if (!this.cadastralSortedFiltered.length) return 0;
+          return (this.cadastral.pagination.page - 1) * this.cadastral.pagination.perPage + 1;
+        },
+
+        cadastralPageEnd() {
+          return Math.min(
+            this.cadastral.pagination.page * this.cadastral.pagination.perPage,
+            this.cadastralSortedFiltered.length
+          );
+        },
+
+        vacinalVisiblePages() {
+          return this.getVisiblePages(this.vacinal.pagination.page, this.vacinalTotalPages);
+        },
+
+        cadastralVisiblePages() {
+          return this.getVisiblePages(this.cadastral.pagination.page, this.cadastralTotalPages);
+        },
+
+        vacinalPagination() {
+          return this.vacinal.pagination;
+        },
+
+        cadastralPagination() {
+          return this.cadastral.pagination;
+        }
+      },
+
+      watch: {
+        'vacinal.busca'() {
+          this.vacinal.pagination.page = 1;
+        },
+        'cadastral.busca'() {
+          this.cadastral.pagination.page = 1;
+        },
+        vacinalSortedFiltered() {
+          if (this.vacinal.pagination.page > this.vacinalTotalPages) {
+            this.vacinal.pagination.page = this.vacinalTotalPages;
+          }
+        },
+        cadastralSortedFiltered() {
+          if (this.cadastral.pagination.page > this.cadastralTotalPages) {
+            this.cadastral.pagination.page = this.cadastralTotalPages;
+          }
+        },
+
+        sessionInfo: {
+          deep: true,
+          handler(novo) {
+            if (!novo || this.isGestor) return;
+            if (this.currentView !== "ranking") this.currentView = "ranking";
+            const temDados = Array.isArray(this.ranking?.escolasPorCobertura) && this.ranking.escolasPorCobertura.length > 0;
+            if (!temDados) {
+              setTimeout(() => {
+                if (this.isAuthenticated && !this.isGestor && this.currentView === "ranking") this.carregarRanking();
+              }, 500);
+            }
+          }
+        },
+        currentView(novo) {
+          if (novo !== "ranking" || this.isGestor || !this.isAuthenticated) return;
+          const temDados = Array.isArray(this.ranking?.escolasPorCobertura) && this.ranking.escolasPorCobertura.length > 0;
+          if (!temDados) {
+            setTimeout(() => {
+              if (this.isAuthenticated && !this.isGestor && this.currentView === "ranking") this.carregarRanking();
+            }, 350);
+          }
+        },
+        'vacinal.form.escola': async function(novo, antigo) {
+          if (!this.isAuthenticated || this.suppressWatchers || novo === antigo || this.currentView !== 'vacinal' || !novo) return;
+          this.vacinal.form.turma = "TODAS";
+          await this.carregarVacinal();
+        },
+        'vacinal.form.turma': async function(novo, antigo) {
+          if (!this.isAuthenticated || this.suppressWatchers || novo === antigo || this.currentView !== 'vacinal') return;
+          await this.carregarVacinal();
+        },
+        'vacinal.form.vacinaAtraso': function(novo, antigo) {
+          if (!this.isAuthenticated || this.suppressWatchers || novo === antigo || this.currentView !== 'vacinal') return;
+          this.vacinal.pagination.page = 1;
+        },
+        'vacinal.form.vacinaEvolucao': async function(novo, antigo) {
+          if (!this.isAuthenticated || this.suppressWatchers || novo === antigo || this.currentView !== 'vacinal') return;
+          await this.carregarHistoricoEvolucao();
+        },
+        'cadastral.form.base': async function(novo, antigo) {
+          if (!this.isAuthenticated || this.suppressWatchers || novo === antigo || this.currentView !== 'cadastral') return;
+          this.cadastral.form.escola = "TODAS";
+          this.cadastral.form.turma = "TODAS";
+          this.cadastral.busca = "";
+          await this.carregarCadastral();
+        },
+        'cadastral.form.escola': async function(novo, antigo) {
+          if (!this.isAuthenticated || this.suppressWatchers || novo === antigo || this.currentView !== 'cadastral') return;
+          this.cadastral.form.turma = "TODAS";
+          await this.carregarCadastral();
+        },
+        'cadastral.form.turma': async function(novo, antigo) {
+          if (!this.isAuthenticated || this.suppressWatchers || novo === antigo || this.currentView !== 'cadastral') return;
+          await this.carregarCadastral();
+        }
+      },
+
+      methods: {
+
+        vacinasAtrasoFormatadasInline(item) {
+          const texto = String(
+            (item && (item.vacinasAtraso || item.principaisPendencias || item.pendenciasVacinais)) || ""
+          ).trim();
+
+          if (!texto) return "-";
+
+          return texto
+            .split(/,|;|\n|\+/)
+            .map(function(v) { return String(v || "").trim(); })
+            .filter(function(v) { return v && !/^\d+\s*pend/i.test(v); })
+            .join(" • ");
+        },
+
+
+        abrirModalAluno(item) {
+          this.vacinal.modalAluno = item || null;
+          this.vacinal.alunoSelecionado = null;
+        },
+
+        fecharModalAlunoVacinal() {
+          this.vacinal.modalAluno = null;
+        },
+
+        selecionarAlunoVacinal(item) {
+          this.vacinal.alunoSelecionado = (this.vacinal.alunoSelecionado === item) ? null : (item || null);
+        },
+
+        obterAlunoSelecionadoVacinal() {
+          return this.vacinal.alunoSelecionado || null;
+        },
+
+        vacinalPercentual(valor) {
+          const total = Number(this.vacinal?.indicadores?.totalAlunos || 0);
+          if (!total) return '0';
+          return ((Number(valor || 0) / total) * 100).toFixed(1).replace('.', ',');
+        },
+
+
+        turmaResumidaVacinal(turma) {
+          const texto = String(turma || '').trim();
+          if (!texto) return '-';
+          let t = texto
+            .replace(/ENSINO FUNDAMENTAL/gi, '')
+            .replace(/REGULAR/gi, '')
+            .replace(/\|/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+
+          const ano = (t.match(/\d+º\s*ANO/i) || t.match(/\d+o\s*ANO/i) || [''])[0].toUpperCase();
+          const turno = /INTEGRAL/i.test(t) ? 'INTEGRAL' : (/MANH[ÃA]/i.test(t) ? 'MANHÃ' : (/TARDE/i.test(t) ? 'TARDE' : ''));
+          const letra = (t.match(/-\s*([A-Z])\b/i) || t.match(/\b([A-Z])$/i) || [null, ''])[1];
+
+          const partes = [ano, turno, letra].filter(Boolean);
+          return partes.length ? partes.join(' • ') : (texto.length > 38 ? texto.slice(0, 38) + '…' : texto);
+        },
+
+        primeiraPendenciaVacinal(item) {
+          const partes = String(item?.vacinasAtraso || "").split(",").map(x => x.trim()).filter(Boolean);
+          return partes.length ? partes[0] : "-";
+        },
+
+        demaisPendenciasVacinal(item) {
+          const partes = String(item?.vacinasAtraso || "").split(",").map(x => x.trim()).filter(Boolean);
+          return partes.length > 1 ? "+ " + (partes.length - 1) + " pendência(s)" : "";
+        },
+
+        vacinalPrincipalPendencia() {
+          const mapa = {};
+          const fonte = Array.isArray(this.vacinalSortedFiltered) && this.vacinalSortedFiltered.length
+            ? this.vacinalSortedFiltered
+            : (Array.isArray(this.vacinal?.tabela) ? this.vacinal.tabela : []);
+
+          fonte.forEach(item => {
+            String(item?.vacinasAtraso || "")
+              .split(",")
+              .map(x => x.trim())
+              .filter(Boolean)
+              .forEach(v => {
+                mapa[v] = (mapa[v] || 0) + 1;
+              });
+          });
+
+          const ordenado = Object.keys(mapa).sort((a,b) => mapa[b] - mapa[a]);
+          return ordenado.length ? ordenado[0] : "Sem pendência";
+        },
+
+        vacinalFaltamMetaEstimado() {
+          const total = Number(this.vacinal?.indicadores?.totalAlunos || 0);
+          const emDia = Number(this.vacinalEmDiaEstimado() || 0);
+          if (!total) return 0;
+          return Math.max(0, Math.ceil(total * 0.95) - emDia);
+        },
+
+        vacinalStatusCurto(situacao) {
+          const s = this.normalizeText(String(situacao || ""));
+          if (s === "SIM") return "Em dia";
+          if (s === "NAO" || s === "NÃO") return "Pendente";
+          if (s.indexOf("NAO TEM IDADE") !== -1 || s.indexOf("NÃO TEM IDADE") !== -1) return "Não elegível";
+          if (!s || s === "EM BRANCO") return "Sem info";
+          return situacao || "Sem info";
+        },
+
+        vacinalEmDiaEstimado() {
+          const total = Number(this.vacinal?.indicadores?.totalAlunos || 0);
+          const atraso = Number(this.vacinal?.indicadores?.alunosEmAtraso || 0);
+          const naoEleg = this.vacinalNaoElegiveisEstimado();
+          return Math.max(0, total - atraso - naoEleg);
+        },
+
+        vacinalNaoVacinadosEstimado() {
+          const s = this.vacinal?.graficos?.situacaoVacinalCompleta || {};
+          return (s.naoVacinados || []).reduce((acc, v) => acc + Number(v || 0), 0);
+        },
+
+        vacinalNaoElegiveisEstimado() {
+          const lista = this.vacinal?.tabela || [];
+          let total = 0;
+          lista.forEach(item => {
+            const flags = item.coberturaFlags || {};
+            Object.keys(flags).forEach(k => {
+              if (flags[k] && flags[k].foraIdade) total++;
+            });
+          });
+          return total;
+        },
+
+        vacinalTabelaVacinasAluno(item) {
+          if (!item) return [];
+          const flags = item.coberturaFlags || {};
+          const nomesAtraso = String(item.vacinasAtraso || '').split(',').map(v => this.normalizeText(v)).filter(Boolean);
+          const nomesElegiveis = Array.isArray(item.vacinasElegiveis) ? item.vacinasElegiveis : [];
+          const mapaLabels = {};
+          [...nomesElegiveis, ...String(item.vacinasAtraso || '').split(',')].forEach(v => {
+            const nome = String(v || '').trim();
+            if (nome) mapaLabels[this.normalizeText(nome)] = nome;
+          });
+
+          const porFlags = Object.keys(flags).map(key => {
+            const f = flags[key] || {};
+            let nome = mapaLabels[this.normalizeText(key)] || String(key || '').toUpperCase();
+            Object.keys(mapaLabels).forEach(k => {
+              if (k.indexOf(this.normalizeText(key)) !== -1 || this.normalizeText(key).indexOf(k) !== -1) nome = mapaLabels[k];
+            });
+            let situacao = 'Em branco';
+            let interpretacao = 'Sem informação';
+            if (f.foraIdade) { situacao = 'NÃO TEM IDADE'; interpretacao = 'Fora da faixa etária'; }
+            else if (f.tomou) { situacao = 'SIM'; interpretacao = 'Em dia'; }
+            else if (f.semInfo) { situacao = 'Em branco'; interpretacao = 'Sem informação'; }
+            else if (f.emAtraso || nomesAtraso.includes(this.normalizeText(nome))) { situacao = 'NÃO'; interpretacao = 'Pendente'; }
+            return { nome, situacao, interpretacao };
+          });
+
+          if (porFlags.length) return porFlags;
+
+          return String(item.vacinasAtraso || '').split(',').map(v => v.trim()).filter(Boolean).map(v => ({
+            nome: v,
+            situacao: 'NÃO',
+            interpretacao: 'Pendente'
+          }));
+        },
+
+        situacaoBadgeClasse(situacao) {
+          const s = this.normalizeText(situacao || '');
+          if (s === 'SIM') return 'ok';
+          if (s.indexOf('NAO TEM IDADE') !== -1 || s.indexOf('NÃO TEM IDADE') !== -1) return 'fora';
+          if (s.indexOf('BRANCO') !== -1) return 'branco';
+          return 'pendente';
+        },
+
+
+
+
+        irPaginaCadastral(pagina) {
+          const total = this.cadastralTotalPaginas || 1;
+          this.cadastralNovo.pagina = Math.min(Math.max(1, Number(pagina || 1)), total);
+        },
+
+        mudarPorPaginaCadastral() {
+          this.cadastralNovo.pagina = 1;
+        },
+
+        ordenarCadastralPor(campo, vindoDoSelect) {
+          if (!this.cadastralNovo.ordenacao) {
+            this.cadastralNovo.ordenacao = { campo: "turmaNome", direcao: "asc" };
+          }
+
+          if (!vindoDoSelect && this.cadastralNovo.ordenacao.campo === campo) {
+            this.cadastralNovo.ordenacao.direcao = this.cadastralNovo.ordenacao.direcao === "asc" ? "desc" : "asc";
+          } else {
+            this.cadastralNovo.ordenacao.campo = campo || "turmaNome";
+            this.cadastralNovo.ordenacao.direcao = "asc";
+          }
+
+          this.cadastralNovo.pagina = 1;
+        },
+
+        indicadorOrdenacaoCadastral(campo) {
+          const ord = this.cadastralNovo.ordenacao || { campo: "turmaNome", direcao: "asc" };
+          if (ord.campo !== campo) return "↕";
+          return ord.direcao === "asc" ? "A→Z" : "Z→A";
+        },
+
+        labelOrdenacaoCadastral() {
+          const ord = this.cadastralNovo.ordenacao || { campo: "turmaNome", direcao: "asc" };
+          const nomes = {
+            turmaNome: "Turma + Nome do aluno",
+            turma: "Turma",
+            nome: "Nome do aluno",
+            matricula: "MAT.",
+            cpf: "CPF",
+            situacao: "Situação"
+          };
+          const direcao = ord.direcao === "desc" ? "Z→A" : "A→Z";
+          return (nomes[ord.campo] || "Turma + Nome do aluno") + " (" + direcao + ")";
+        },
+
+        valorOrdenacaoCadastral(item, campo) {
+          if (!item) return "";
+          if (campo === "turmaNome") return String(item.turma || "") + " " + String(item.nome || "");
+          if (campo === "matricula") return String(item.matricula || "").replace(/\D/g, "").padStart(20, "0") || String(item.matricula || "");
+          if (campo === "nome") return String(item.nome || "");
+          if (campo === "turma") return String(item.turma || "");
+          if (campo === "cpf") return String(item.cpfMascarado || item.cpf || item.cpfNovo || "");
+          if (campo === "situacao") return item.semCpf ? "Sem CPF" : "CPF atualizado";
+          return String(item.nome || "");
+        },
+
+        aplicarOrdenacaoCadastral(lista) {
+          const ord = this.cadastralNovo.ordenacao || { campo: "turmaNome", direcao: "asc" };
+          const campo = ord.campo || "turmaNome";
+          const direcao = ord.direcao === "desc" ? -1 : 1;
+          return (lista || []).slice().sort((a, b) => {
+            const va = this.normalizeForSort(this.valorOrdenacaoCadastral(a, campo));
+            const vb = this.normalizeForSort(this.valorOrdenacaoCadastral(b, campo));
+            if (va < vb) return -1 * direcao;
+            if (va > vb) return 1 * direcao;
+
+            const na = this.normalizeForSort(String(a.nome || ""));
+            const nb = this.normalizeForSort(String(b.nome || ""));
+            if (na < nb) return -1;
+            if (na > nb) return 1;
+            return 0;
+          });
+        },
+
+        prioridadeClasseCad(prioridade) {
+          const p = String(prioridade || "").toUpperCase();
+          if (p === "ALTA") return "red";
+          if (p === "MÉDIA" || p === "MEDIA") return "orange";
+          return "blue";
+        },
+
+        tipoClasseCad(tipo) {
+          const t = String(tipo || "").toUpperCase();
+          if (t.indexOf("CPF") !== -1 && t.indexOf("ENDERE") !== -1) return "red";
+          if (t.indexOf("CPF") !== -1) return "red";
+          if (t.indexOf("ENDERE") !== -1) return "orange";
+          return "purple";
+        },
+
+        resumirTurmaCadastral(turma) {
+          const txt = String(turma || "-").trim();
+          if (!txt || txt === "-") return "-";
+          let t = txt
+            .replace(/\s*\|\s*/g, " • ")
+            .replace(/ENSINO FUNDAMENTAL/gi, "")
+            .replace(/EDUCAÇÃO INFANTIL/gi, "ED. INF.")
+            .replace(/EDUCACAO INFANTIL/gi, "ED. INF.")
+            .replace(/REGULAR/gi, "")
+            .replace(/INTEGRAL \(45H\)/gi, "INT")
+            .replace(/INTEGRAL \(40H\)/gi, "INT")
+            .replace(/INTEGRAL/gi, "INT")
+            .replace(/\s+•\s+•\s+/g, " • ")
+            .replace(/^\s*•\s*|\s*•\s*$/g, "")
+            .replace(/\s{2,}/g, " ")
+            .trim();
+          return t.length > 38 ? t.slice(0, 37) + "…" : t;
+        },
+
+        resumirEscolaCadastral(escola) {
+          const txt = String(escola || "").trim();
+          if (!txt) return "";
+          return txt.replace(/ESCOLA DE ENSINO FUNDAMENTAL/gi, "ESCOLA").replace(/ENSINO FUNDAMENTAL/gi, "").replace(/\s{2,}/g, " ").trim();
+        },
+
+        percentualBarraCadastral(total) {
+          const lista = this.cadastralNovo.topTurmas || [];
+          const max = Math.max(1, ...lista.map(x => Number(x.total || 0)));
+          return Math.min(100, Math.max(4, (Number(total || 0) / max) * 100));
+        },
+
+        maskCpfCadastral(value) {
+          const n = this.onlyNumbers(value).slice(0, 11);
+          if (n.length <= 3) return n;
+          if (n.length <= 6) return n.replace(/(\d{3})(\d+)/, "$1.$2");
+          if (n.length <= 9) return n.replace(/(\d{3})(\d{3})(\d+)/, "$1.$2.$3");
+          return n.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, "$1.$2.$3-$4");
+        },
+
+        async salvarCpfCadastral(item) {
+          this.clearTopMessages();
+
+          if (!item || !item.matricula) {
+            this.topError = "Não é seguro salvar sem MAT. do aluno.";
+            return;
+          }
+
+          const cpfNumeros = this.onlyNumbers(item.cpfNovo);
+          if (cpfNumeros.length !== 11) {
+            this.topError = "Informe um CPF com 11 dígitos.";
+            return;
+          }
+
+          item.cpfSalvando = true;
+          try {
+            const res = await this.gas("salvarCpfAlunoCadastral", this.sessionToken, {
+              base: item.base,
+              escola: item.escola,
+              matricula: item.matricula,
+              nome: item.nome,
+              cpfNovo: item.cpfNovo
+            });
+
+            item.cpf = res?.cpfMascarado || "CPF atualizado";
+            item.cpfMascarado = res?.cpfMascarado || "";
+            item.cpfNovo = "";
+            item.semCpf = false;
+            item.podeEditarCpf = false;
+            item.cpfSalvo = true;
+            item.cpfSalvando = false;
+            item.horaSalvo = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+            item.motivoBloqueioCpf = "CPF atualizado. A edição foi bloqueada.";
+
+            this.cadCpfFeedback.visible = true;
+            this.cadCpfFeedback.mensagem = "CPF atualizado com sucesso!";
+            this.topSuccess = "";
+
+            const chave = [item.base, item.escola, item.matricula].map(v => String(v || '').toUpperCase()).join('|');
+            window.setTimeout(() => {
+              this.cadastralNovo.lista = (this.cadastralNovo.lista || []).filter(x => {
+                const k = [x.base, x.escola, x.matricula].map(v => String(v || '').toUpperCase()).join('|');
+                return k !== chave;
+              });
+              if (this.cadastralNovo.resumo) {
+                this.cadastralNovo.resumo.semCpf = Math.max(0, Number(this.cadastralNovo.resumo.semCpf || 0) - 1);
+                this.cadastralNovo.resumo.totalInconsistencias = Math.max(0, Number(this.cadastralNovo.resumo.totalInconsistencias || 0) - 1);
+              }
+              if (this.cadastralNovo.pagina > this.cadastralTotalPaginas) this.cadastralNovo.pagina = this.cadastralTotalPaginas;
+            }, 4500);
+          } catch (err) {
+            this.handleError(err);
+          } finally {
+            if (item) item.cpfSalvando = false;
+          }
+        },
+
+        async carregarCadastralNovo() {
+          this.clearTopMessages();
+          this.loading = true;
+
+          try {
+            const data = await this.gas("getPainelCadastralAlunos", this.sessionToken, this.cadastralNovo.filtros);
+            const paginacaoCad = {
+              pagina: 1,
+              porPagina: this.cadastralNovo.porPagina || 10
+            };
+            this.cadastralNovo = Object.assign({}, this.cadastralNovo, data || {}, {
+              filtros: this.cadastralNovo.filtros,
+              ordenacao: this.cadastralNovo.ordenacao || { campo: "turmaNome", direcao: "asc" },
+              pagina: paginacaoCad.pagina,
+              porPagina: paginacaoCad.porPagina
+            });
+          } catch (err) {
+            this.handleError(err);
+          } finally {
+            this.loading = false;
+          }
+        },
+
+        limparFiltrosCadastralNovo() {
+          this.cadastralNovo.filtros.base = "TODOS";
+          this.cadastralNovo.filtros.escola = "TODAS";
+          this.cadastralNovo.filtros.turma = "TODAS";
+          this.cadastralNovo.filtros.tipo = "TODOS";
+          this.cadastralNovo.filtros.busca = "";
+          this.carregarCadastralNovo();
+        },
+
+        classeInicioCobertura(cobertura) {
+          const v = Number(cobertura || 0);
+          if (v >= 95) return "inicio-good";
+          if (v >= 85) return "inicio-warning";
+          return "inicio-danger";
+        },
+
+        async carregarInicioPerfil() {
+          this.clearTopMessages();
+          this.loading = true;
+
+          try {
+            const data = await this.gas("getPainelInicioPorPerfil", this.sessionToken);
+            this.inicioPerfil = Object.assign({}, this.inicioPerfil, data || {});
+          } catch (err) {
+            this.handleError(err);
+          } finally {
+            this.loading = false;
+          }
+        },
+
+
+        gas(method, ...args) {
+          return new Promise((resolve, reject) => {
+            google.script.run
+              .withSuccessHandler(resolve)
+              .withFailureHandler(reject)[method](...args);
+          });
+        },
+
+        onlyNumbers(value) {
+          return String(value || "").replace(/\D/g, "");
+        },
+
+        abrirSobre() {
+          this.mostrarSobre = true;
+        },
+
+        fecharSobre() {
+          this.mostrarSobre = false;
+        },
+
+        formatNumero(valor) {
+          return Number(valor || 0).toLocaleString("pt-BR");
+        },
+
+        normalizeText(value) {
+          return String(value || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .trim();
+        },
+
+        normalizeForSort(value) {
+          if (value === null || value === undefined) return "";
+          const text = String(value).trim();
+          const number = Number(String(value).replace(",", "."));
+          if (!Number.isNaN(number) && text !== "") return number;
+          return this.normalizeText(text);
+        },
+
+        clearTopMessages() {
+          this.topError = "";
+          this.topSuccess = "";
+        },
+
+        resetAuthMessages() {
+          this.loginMsg = "";
+          this.primeiroMsg = "";
+          this.recMsg = "";
+          this.recMsgOk = "";
+          this.codigoMsg = "";
+        },
+
+        abrirRecuperacao() {
+          this.resetAuthMessages();
+          this.authView = "recuperacao";
+        },
+
+        voltarLogin() {
+          this.resetAuthMessages();
+          this.authView = "login";
+        },
+
+        async fazerLogin() {
+          this.resetAuthMessages();
+          this.clearTopMessages();
+
+          const perfil = this.loginForm.perfil;
+          const usuario = String(this.loginForm.usuario || "").trim();
+          const senha = String(this.loginForm.senha || "").trim();
+
+          this.loginForm.usuario = usuario;
+          this.loading = true;
+
+          try {
+            const res = await this.gas("validarLogin", perfil, usuario, senha);
+
+            if (!res.ok) {
+              this.loginMsg = res.mensagem || "Erro no login.";
+              return;
+            }
+
+            this.sessionToken = res.token;
+            this.sessionInfo = res;
+
+            if (this.lembrarUsuario) {
+              localStorage.setItem("simve_usuario", usuario);
+              localStorage.setItem("simve_perfil", perfil);
+            } else {
+              localStorage.removeItem("simve_usuario");
+              localStorage.removeItem("simve_perfil");
+            }
+
+            if (res.primeiroAcesso) {
+              this.authView = "primeiroAcesso";
+              return;
+            }
+
+            this.configurarFiltrosPorPerfil();
+            if (String(res.perfil || "").toUpperCase() === "EDUCACAO") {
+              const inicioAplicado = await this.aplicarInicioEscolaDoLogin(res.inicioEscola);
+              if (!inicioAplicado) await this.inicializarInicioEscolaAposLogin();
+            } else {
+              this.currentView = "inicio";
+              await this.carregarInicioPerfil();
+            }
+          } catch (err) {
+            this.loginMsg = err?.message || "Erro no login.";
+          } finally {
+            this.loading = false;
+          }
+        },
+
+        async salvarPrimeiroAcesso() {
+          this.primeiroMsg = "";
+          this.clearTopMessages();
+          this.loading = true;
+
+          try {
+            await this.gas(
+              "redefinirSenhaPrimeiroAcesso",
+              this.sessionToken,
+              this.primeiroAcessoForm.senha1,
+              this.primeiroAcessoForm.senha2
+            );
+
+            if (this.sessionInfo) {
+              this.sessionInfo.primeiroAcesso = false;
+            }
+
+            this.primeiroAcessoForm = { senha1: "", senha2: "" };
+            this.configurarFiltrosPorPerfil();
+            if (String(this.sessionInfo?.perfil || "").toUpperCase() === "EDUCACAO") {
+              const inicioAplicado = await this.aplicarInicioEscolaDoLogin(this.sessionInfo?.inicioEscola);
+              if (!inicioAplicado) await this.inicializarInicioEscolaAposLogin();
+            } else {
+              this.currentView = "inicio";
+              await this.carregarInicioPerfil();
+            }
+            this.topSuccess = "Senha atualizada com sucesso.";
+          } catch (err) {
+            this.primeiroMsg = err?.message || "Erro ao redefinir senha.";
+          } finally {
+            this.loading = false;
+          }
+        },
+
+        async solicitarRecuperacao() {
+          this.recMsg = "";
+          this.recMsgOk = "";
+          this.clearTopMessages();
+
+          const perfil = this.recuperacaoForm.perfil;
+          const usuario = String(this.recuperacaoForm.usuario || "").trim();
+          this.recuperacaoForm.usuario = usuario;
+
+          this.loading = true;
+
+          try {
+            const res = await this.gas("solicitarRecuperacaoSenha", perfil, usuario);
+
+            if (!res.ok) {
+              this.recMsg = res.mensagem || "Erro na recuperação.";
+              return;
+            }
+
+            this.recMsgOk = res.mensagem || "Código enviado.";
+            this.codigoForm.perfil = perfil;
+            this.codigoForm.usuario = usuario;
+            this.authView = "codigo";
+          } catch (err) {
+            this.recMsg = err?.message || "Erro na recuperação.";
+          } finally {
+            this.loading = false;
+          }
+        },
+
+        async confirmarRecuperacao() {
+          this.codigoMsg = "";
+          this.clearTopMessages();
+
+          this.codigoForm.usuario = this.onlyNumbers(this.codigoForm.usuario);
+          this.codigoForm.codigo = this.onlyNumbers(this.codigoForm.codigo);
+
+          this.loading = true;
+
+          try {
+            const res = await this.gas(
+              "redefinirSenhaPorCodigo",
+              this.codigoForm.perfil,
+              this.codigoForm.usuario,
+              this.codigoForm.codigo,
+              this.codigoForm.senha1,
+              this.codigoForm.senha2
+            );
+
+            if (!res.ok) {
+              this.codigoMsg = res.mensagem || "Erro ao redefinir senha.";
+              return;
+            }
+
+            this.topSuccess = "Senha redefinida com sucesso. Faça login novamente.";
+            this.authView = "login";
+
+            this.codigoForm = {
+              perfil: "",
+              usuario: "",
+              codigo: "",
+              senha1: "",
+              senha2: ""
+            };
+          } catch (err) {
+            this.codigoMsg = err?.message || "Erro ao redefinir senha.";
+          } finally {
+            this.loading = false;
+          }
+        },
+
+        configurarFiltrosPorPerfil() {
+          if (!this.sessionInfo) return;
+
+          if (this.sessionInfo.perfil === "EDUCACAO") {
+            this.vacinal.form.base = this.sessionInfo.base;
+            this.cadastral.form.base = this.sessionInfo.base;
+          }
+        },
+
+        async carregarResumoInicial() {
+          this.clearTopMessages();
+
+          const baseInicial = this.sessionInfo?.perfil === "EDUCACAO"
+            ? this.sessionInfo.base
+            : "ESCOLAR";
+
+          this.suppressWatchers = true;
+
+          this.vacinal.form.escola = "";
+          this.vacinal.form.segmento = "TODOS";
+          this.vacinal.form.turma = "TODAS";
+          this.vacinal.form.vacina = "TODAS";
+          this.vacinal.form.vacinaAtraso = "TODAS";
+          this.vacinal.form.vacinaEvolucao = "TODAS";
+          this.vacinal.busca = "";
+          this.vacinal.pagination.page = 1;
+
+          this.cadastral.form.base = baseInicial;
+          this.cadastral.form.escola = "TODAS";
+          this.cadastral.form.turma = "TODAS";
+          this.cadastral.busca = "";
+          this.cadastral.pagination.page = 1;
+
+          const [vacinalData, cadastralData] = await Promise.all([
+            this.gas("getDashboardData", this.sessionToken, baseInicial, "TODAS", "TODAS"),
+            this.gas("getSituacaoCadastral", this.sessionToken, this.cadastral.form.base, this.cadastral.form.escola, this.cadastral.form.turma)
+          ]);
+
+          vacinalData.historico = { labels: [], values: [], titulo: "Evolução mensal da cobertura vacinal" };
+          this.aplicarDadosVacinal(vacinalData, false);
+          this.aplicarDadosCadastral(cadastralData, false);
+
+          this.homeResumo = {
+            base: baseInicial,
+            totalAlunos: vacinalData?.indicadores?.totalAlunos || 0,
+            alunosEmAtraso: vacinalData?.indicadores?.alunosEmAtraso || 0,
+            coberturaGeral: vacinalData?.indicadores?.coberturaGeral || 0,
+            inconsistencias: (cadastralData?.tabela || []).length,
+            alunosSemCpf: cadastralData?.indicadores?.alunosSemCpf || 0,
+            alunosSemEndereco: cadastralData?.indicadores?.alunosSemEndereco || 0
+          };
+
+          this.suppressWatchers = false;
+        },
+
+        async recarregarResumoInicial() {
+          this.loading = true;
+          try {
+            await this.carregarInicioPerfil();
+            this.topSuccess = "Resumo inicial atualizado com sucesso.";
+          } catch (err) {
+            this.handleError(err);
+          } finally {
+            this.loading = false;
+          }
+        },
+
+        async setView(view) {
+          this.clearTopMessages();
+          this.currentView = view;
+
+          if (view === "inicio") {
+            if (!this.isGestor) {
+              this.currentView = "ranking";
+              await this.carregarRanking();
+              return;
+            }
+            await this.carregarInicioPerfil();
+          }
+
+          if (view === "cadastral") {
+            await this.carregarCadastralNovo();
+          }
+
+          if (view === "vacinal") {
+            await this.carregarEscolasVacinal();
+            await this.carregarVacinal();
+          }
+
+          if (view === "ranking") {
+            await this.carregarRanking();
+          }
+
+          if (view === "acessos") {
+            if (!this.isAdmin) {
+              this.topError = "Acesso restrito ao perfil ADM.";
+              this.currentView = this.isGestor ? "inicio" : "ranking";
+              return;
+            }
+            await this.carregarMonitoramentoAcessos();
+          }
+
+          if (view === "admin") {
+            if (!this.isAdmin) {
+              this.topError = "Acesso restrito ao perfil ADM.";
+              this.currentView = this.isGestor ? "inicio" : "ranking";
+              return;
+            }
+            await this.carregarStatusGatilho();
+          }
+
+          if (view === "cadastral") {
+            await this.carregarCadastral();
+          }
+
+          if (view === "documentos") {
+            await this.carregarDocumentos();
+          }
+        },
+
+        async carregarEscolasVacinal() {
+          const lista = await this.gas("getEscolasPainelVacinal", this.sessionToken);
+          this.vacinal.filtros.escolas = Array.isArray(lista) ? lista.map(x => x.nome) : [];
+          this.vacinal._metaEscolas = Array.isArray(lista) ? lista : [];
+
+          if (!this.vacinal.form.escola && this.vacinal.filtros.escolas.length) {
+            this.vacinal.form.escola = this.vacinal.filtros.escolas[0];
+          }
+
+          const meta = (this.vacinal._metaEscolas || []).find(x => x.nome === this.vacinal.form.escola);
+          this.vacinal.filtros.segmentosDisponiveis = meta
+            ? [
+                ...(meta.infantil && meta.escolar ? ["TODOS"] : []),
+                ...(meta.infantil ? ["INFANTIL"] : []),
+                ...(meta.escolar ? ["ESCOLAR"] : [])
+              ]
+            : ["TODOS"];
+
+          if (!this.vacinal.filtros.segmentosDisponiveis.includes(this.vacinal.form.segmento)) {
+            this.vacinal.form.segmento = this.vacinal.filtros.segmentosDisponiveis[0] || "TODOS";
+          }
+        },
+
+        limparFiltrosVacinal() {
+          this.suppressWatchers = true;
+          this.vacinal.form.segmento = "TODOS";
+          this.vacinal.form.turma = "TODAS";
+          this.vacinal.form.vacina = "TODAS";
+          this.vacinal.form.vacinaAtraso = "TODAS";
+          this.vacinal.form.vacinaEvolucao = "TODAS";
+          this.vacinal.busca = "";
+          this.vacinal.pagination.page = 1;
+          this.suppressWatchers = false;
+          this.carregarVacinal();
+        },
+
+        limparFiltrosCadastral() {
+          this.suppressWatchers = true;
+          this.cadastral.form.escola = "TODAS";
+          this.cadastral.form.turma = "TODAS";
+          this.cadastral.busca = "";
+          this.cadastral.pagination.page = 1;
+          this.suppressWatchers = false;
+          this.carregarCadastral();
+        },
+
+
+        async carregarHistoricoEvolucao() {
+          if (!this.vacinal.form.escola) return;
+
+          try {
+            const historico = await this.gas(
+              "getHistoricoCobertura",
+              this.sessionToken,
+              this.vacinal.form.escola,
+              this.vacinal.form.segmento,
+              this.vacinal.form.turma,
+              this.vacinal.form.vacinaEvolucao
+            );
+
+            this.vacinal.historico = historico || {
+              labels: [],
+              values: [],
+              datasets: [],
+              titulo: "Evolução mensal da cobertura vacinal",
+              inicioSerie: "Abril"
+            };
+
+            await nextTick();
+            this.renderVacCharts();
+          } catch (err) {
+            this.handleError(err);
+          }
+        },
+
+        async carregarVacinal() {
+          this.clearTopMessages();
+          this.loading = true;
+
+          try {
+            if (!this.vacinal.filtros.escolas.length) {
+              await this.carregarEscolasVacinal();
+            } else {
+              const meta = (this.vacinal._metaEscolas || []).find(x => x.nome === this.vacinal.form.escola);
+              this.vacinal.filtros.segmentosDisponiveis = meta
+                ? [
+                    ...(meta.infantil && meta.escolar ? ["TODOS"] : []),
+                    ...(meta.infantil ? ["INFANTIL"] : []),
+                    ...(meta.escolar ? ["ESCOLAR"] : [])
+                  ]
+                : ["TODOS"];
+              if (!this.vacinal.filtros.segmentosDisponiveis.includes(this.vacinal.form.segmento)) {
+                this.vacinal.form.segmento = this.vacinal.filtros.segmentosDisponiveis[0] || "TODOS";
+              }
+            }
+
+            if (!this.vacinal.form.escola) return;
+
+            const [data, historico] = await Promise.all([
+              this.gas(
+                "getPainelVacinalPorEscola",
+                this.sessionToken,
+                this.vacinal.form.escola,
+                this.vacinal.form.segmento,
+                this.vacinal.form.turma,
+                "TODAS"
+              ),
+              this.gas(
+                "getHistoricoCobertura",
+                this.sessionToken,
+                this.vacinal.form.escola,
+                this.vacinal.form.segmento,
+                this.vacinal.form.turma,
+                this.vacinal.form.vacinaEvolucao
+              )
+            ]);
+
+            data.historico = historico || { labels: [], values: [], titulo: "Evolução mensal da cobertura vacinal" };
+            await this.aplicarDadosVacinal(data, true);
+          } catch (err) {
+            this.handleError(err);
+          } finally {
+            this.loading = false;
+          }
+        },
+
+        async aplicarDadosVacinal(data, renderCharts = true) {
+          this.vacinal.indicadores = data?.indicadores || {
+            totalAlunos: 0,
+            alunosEmAtraso: 0,
+            coberturaGeral: 0,
+            escolasAbaixo80: []
+          };
+
+          this.vacinal.graficos = data?.graficos || {
+            atrasoPorEscola: { labels: [], values: [] },
+            atrasoPorTurma: { labels: [], values: [] },
+            coberturaVacinas: { labels: [], values: [] },
+            coberturaVacinasInfantil: { labels: [], values: [] },
+            coberturaVacinasEscolar: { labels: [], values: [] }
+          };
+
+          this.vacinal.historico = data?.historico || {
+            labels: [],
+            values: [],
+            datasets: [],
+            titulo: "Evolução mensal da cobertura vacinal",
+            inicioSerie: "Abril"
+          };
+
+          this.vacinal.tabela = data?.tabela || [];
+          this.vacinal.atualizadoEm = data?.atualizadoEm || "";
+
+          this.vacinal.acesso = data?.acesso || {
+            escolaTravada: false,
+            escolasPermitidas: []
+          };
+
+          this.vacinal.resumoSegmentos = data?.resumoSegmentos || {
+            infantil: { disponivel: false, totalAlunos: 0, alunosEmAtraso: 0, coberturaGeral: 0 },
+            escolar: { disponivel: false, totalAlunos: 0, alunosEmAtraso: 0, coberturaGeral: 0 }
+          };
+          this.vacinal.diagnostico = data?.diagnostico || {};
+
+          const escolas = data?.filtros?.escolas || [];
+          const turmas = data?.filtros?.turmas || [];
+          const segmentosDisponiveis = data?.filtros?.segmentosDisponiveis || ["TODOS"];
+          const vacinas = data?.filtros?.vacinasDisponiveis || [];
+          const vacinasCobertura = data?.filtros?.vacinasCoberturaDisponiveis || vacinas;
+          const vacinasAtraso = data?.filtros?.vacinasAtrasoDisponiveis || this.vacinalVacinasDisponiveis;
+
+          this.vacinal.filtros.escolas = escolas;
+          this.vacinal.filtros.turmas = turmas;
+          this.vacinal.filtros.segmentosDisponiveis = segmentosDisponiveis;
+          this.vacinal.filtros.vacinas = vacinas;
+          this.vacinal.filtros.vacinasCobertura = vacinasCobertura;
+          this.vacinal.filtros.vacinasAtraso = vacinasAtraso;
+
+          this.suppressWatchers = true;
+
+          if (this.vacinal.form.escola && !escolas.includes(this.vacinal.form.escola)) {
+            this.vacinal.form.escola = escolas[0] || "";
+          }
+
+          if (this.vacinal.form.turma !== "TODAS" && !turmas.includes(this.vacinal.form.turma)) {
+            this.vacinal.form.turma = "TODAS";
+          }
+
+          if (!segmentosDisponiveis.includes(this.vacinal.form.segmento)) {
+            this.vacinal.form.segmento = segmentosDisponiveis[0] || "TODOS";
+          }
+
+          if (this.vacinal.form.vacinaEvolucao !== "TODAS" && !vacinasCobertura.includes(this.vacinal.form.vacinaEvolucao)) {
+            this.vacinal.form.vacinaEvolucao = "TODAS";
+          }
+
+          if (this.vacinal.form.vacinaAtraso !== "TODAS" && !vacinasAtraso.includes(this.vacinal.form.vacinaAtraso)) {
+            this.vacinal.form.vacinaAtraso = "TODAS";
+          }
+
+          this.vacinal.pagination.page = 1;
+          this.suppressWatchers = false;
+
+          if (!escolas.length) {
+            this.topError = "Nenhuma escola foi encontrada para este usuário.";
+          }
+
+          if (renderCharts) {
+            await nextTick();
+            requestAnimationFrame(() => {
+              setTimeout(() => {
+                this.renderVacCharts();
+              }, 80);
+            });
+          }
+        },
+
+        renderVacCharts() {
+          this.destroyChart("vacChartEscola");
+          this.destroyChart("vacChartTurma");
+          this.destroyChart("vacChartVacina");
+          this.destroyChart("vacChartVacinaInfantil");
+          this.destroyChart("vacChartVacinaEscolar");
+          this.destroyChart("vacChartSituacaoCompleta");
+          this.destroyChart("vacChartEvolucao");
+
+          const g = this.vacinal.graficos || {};
+          const h = this.vacinal.historico || {};
+          const tabela = Array.isArray(this.vacinal.tabela) ? this.vacinal.tabela : [];
+
+          const atrasoPorTurmaFallback = (() => {
+            const mapa = {};
+            tabela.forEach(item => {
+              const turma = String(item.turma || "SEM TURMA").trim() || "SEM TURMA";
+              mapa[turma] = (mapa[turma] || 0) + 1;
+            });
+            const entries = Object.entries(mapa).sort((a, b) => b[1] - a[1]);
+            return {
+              labels: entries.map(x => x[0]),
+              values: entries.map(x => x[1])
+            };
+          })();
+
+          const cleanLabels = (arr) => (arr || []).map(label =>
+            String(label || "").replace(/^\s*(INF|ESC)\s*-\s*/i, "").trim()
+          );
+
+          const valueLabelPlugin = {
+            id: "valueLabelPlugin",
+            afterDatasetsDraw(chart) {
+              const { ctx } = chart;
+              ctx.save();
+              ctx.font = "bold 11px Arial";
+              ctx.fillStyle = "#243b5a";
+              ctx.textAlign = "center";
+              ctx.textBaseline = "bottom";
+
+              chart.data.datasets.forEach((dataset, datasetIndex) => {
+                const meta = chart.getDatasetMeta(datasetIndex);
+                meta.data.forEach((element, index) => {
+                  const value = dataset.data[index];
+                  if (value === null || value === undefined || value === "") return;
+                  const pos = element.tooltipPosition();
+                  ctx.fillText(String(value), pos.x, pos.y - 6);
+                });
+              });
+
+              ctx.restore();
+            }
+          };
+
+          const makeBar = (canvasId, labels, values, datasetLabel, suffix = "", maxY = null) => {
+            const el = document.getElementById(canvasId);
+            if (!el || !(labels || []).length) return null;
+            const safeValues = (values || []).map(v => Number(v || 0));
+            return markRaw(new Chart(el, {
+              type: "bar",
+              data: {
+                labels: cleanLabels(labels || []),
+                datasets: [{
+                  label: datasetLabel,
+                  data: safeValues
+                }]
+              },
+              plugins: [valueLabelPlugin],
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: { padding: { top: 22 } },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    ...(maxY !== null ? { max: maxY } : {})
+                  }
+                },
+                plugins: {
+                  legend: { display: false },
+                  tooltip: {
+                    callbacks: {
+                      label: (context) => `${datasetLabel}: ${context.raw}${suffix}`
+                    }
+                  }
+                }
+              }
+            }));
+          };
+
+          const makeLine = (canvasId, labels, values, datasetLabel, datasets = []) => {
+            const el = document.getElementById(canvasId);
+            if (!el || !(labels || []).length) return null;
+
+            const chartDatasets = (datasets && datasets.length)
+              ? datasets.map(ds => ({
+                  label: ds.label || "Cobertura",
+                  data: (ds.data || []).map(v => v === null || v === undefined ? null : Number(v)),
+                  tension: 0.3,
+                  spanGaps: true,
+                  fill: false,
+                  pointRadius: 3,
+                  borderWidth: 3
+                }))
+              : [{
+                  label: datasetLabel,
+                  data: (values || []).map(v => v === null || v === undefined ? null : Number(v)),
+                  tension: 0.3,
+                  spanGaps: true,
+                  fill: false,
+                  pointRadius: 3,
+                  borderWidth: 3
+                }];
+
+            chartDatasets.unshift({
+              label: "Meta ministerial 95%",
+              data: (labels || []).map(() => 95),
+              borderDash: [6, 5],
+              pointRadius: 0,
+              borderWidth: 2,
+              fill: false,
+              tension: 0
+            });
+
+            return markRaw(new Chart(el, {
+              type: "line",
+              data: {
+                labels: labels || [],
+                datasets: chartDatasets
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                  mode: "index",
+                  intersect: false
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    max: 100
+                  }
+                },
+                plugins: {
+                  legend: {
+                    display: true,
+                    position: "bottom"
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: (context) => `${context.dataset.label}: ${context.raw}%`
+                    }
+                  }
+                }
+              }
+            }));
+          };
+
+
+          const makeStacked = (canvasId, dados) => {
+            const el = document.getElementById(canvasId);
+            if (!el || !dados || !(dados.labels || []).length) return null;
+
+            return markRaw(new Chart(el, {
+              type: "bar",
+              data: {
+                labels: dados.labels || [],
+                datasets: [
+                  {
+                    label: "Vacinados",
+                    data: (dados.vacinados || []).map(v => Number(v || 0))
+                  },
+                  {
+                    label: "Não vacinados",
+                    data: (dados.naoVacinados || []).map(v => Number(v || 0))
+                  },
+                  {
+                    label: "Sem informação",
+                    data: (dados.semInfo || []).map(v => Number(v || 0))
+                  }
+                ]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  x: {
+                    stacked: true
+                  },
+                  y: {
+                    stacked: true,
+                    beginAtZero: true
+                  }
+                },
+                plugins: {
+                  legend: {
+                    display: true,
+                    position: "bottom"
+                  },
+                  tooltip: {
+                    callbacks: {
+                      afterBody: (items) => {
+                        const idx = items && items.length ? items[0].dataIndex : null;
+                        if (idx === null) return "";
+                        const den = (dados.denominador || [])[idx] || 0;
+                        return "Elegíveis: " + den;
+                      }
+                    }
+                  }
+                }
+              }
+            }));
+          };
+this.charts.vacChartSituacaoCompleta = makeStacked(
+            "vacChartSituacaoCompleta",
+            g.situacaoVacinalCompleta || { labels: [], vacinados: [], naoVacinados: [], semInfo: [], denominador: [] }
+          );
+
+          const mesesAbrilDezembro = ["ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
+          const normalizarMesGrafico = (valor) => String(valor || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .trim()
+            .toUpperCase();
+          const indicesAbrilDezembro = (h.labels || [])
+            .map((label, index) => ({ label, index }))
+            .filter(item => mesesAbrilDezembro.includes(normalizarMesGrafico(item.label)))
+            .sort((a, b) => mesesAbrilDezembro.indexOf(normalizarMesGrafico(a.label)) - mesesAbrilDezembro.indexOf(normalizarMesGrafico(b.label)))
+            .map(item => item.index);
+          const labelsEvolucao = indicesAbrilDezembro.length
+            ? indicesAbrilDezembro.map(i => (h.labels || [])[i])
+            : (h.labels || []);
+          const valuesEvolucao = indicesAbrilDezembro.length
+            ? indicesAbrilDezembro.map(i => (h.values || [])[i])
+            : (h.values || []);
+          const datasetsEvolucao = Array.isArray(h.datasets)
+            ? h.datasets.map(ds => Object.assign({}, ds, {
+                data: indicesAbrilDezembro.length
+                  ? indicesAbrilDezembro.map(i => (ds.data || [])[i])
+                  : (ds.data || [])
+              }))
+            : [];
+
+          this.charts.vacChartEvolucao = makeLine(
+            "vacChartEvolucao",
+            labelsEvolucao,
+            valuesEvolucao,
+            h.titulo || "Evolução mensal da cobertura vacinal",
+            datasetsEvolucao
+          );
+
+          const labelsRecebidos = Array.isArray(g.atrasoPorTurma?.labels) ? g.atrasoPorTurma.labels : [];
+          const valuesRecebidos = Array.isArray(g.atrasoPorTurma?.values) ? g.atrasoPorTurma.values : [];
+          const turmaLabels = labelsRecebidos.length ? labelsRecebidos : atrasoPorTurmaFallback.labels;
+          const turmaValues = labelsRecebidos.length
+            ? valuesRecebidos.map(v => Number(v || 0))
+            : atrasoPorTurmaFallback.values.map(v => Number(v || 0));
+
+          this.vacinalDebug.atrasoPorTurma = {
+            labelsRecebidos: labelsRecebidos,
+            valuesRecebidos: valuesRecebidos,
+            labelsFallback: atrasoPorTurmaFallback.labels,
+            valuesFallback: atrasoPorTurmaFallback.values,
+            labelsUsados: turmaLabels,
+            valuesUsados: turmaValues,
+            totalTabela: tabela.length,
+            turmasAmostra: tabela.slice(0, 10).map(item => ({
+              nome: item.nome || "",
+              turma: item.turma || "",
+              vacinasAtraso: item.vacinasAtraso || ""
+            })),
+            canvasEncontrado: false,
+            chartCriado: false,
+            erro: ""
+          };
+
+          this.tentarRenderGraficoTurmaComRetry(turmaLabels, turmaValues);
+
+          if (this.vacinal.form.segmento === "TODOS") {
+            this.charts.vacChartVacinaInfantil = makeBar(
+              "vacChartVacinaInfantil",
+              g.coberturaVacinasInfantil?.labels || [],
+              g.coberturaVacinasInfantil?.values || [],
+              "Cobertura",
+              "%",
+              100
+            );
+
+            this.charts.vacChartVacinaEscolar = makeBar(
+              "vacChartVacinaEscolar",
+              g.coberturaVacinasEscolar?.labels || [],
+              g.coberturaVacinasEscolar?.values || [],
+              "Cobertura",
+              "%",
+              100
+            );
+          } else {
+            this.charts.vacChartVacina = makeBar(
+              "vacChartVacina",
+              g.coberturaVacinas?.labels || [],
+              g.coberturaVacinas?.values || [],
+              "Cobertura",
+              "%",
+              100
+            );
+          }
+        },
+
+        exportarVacinal() {
+          this.clearTopMessages();
+
+          const lista = this.vacinalSortedFiltered || [];
+          if (!lista.length) {
+            this.topError = "Não há alunos em atraso para imprimir neste recorte.";
+            return;
+          }
+
+          const escapeHtml = (valor) => String(valor ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+          const hoje = new Date();
+          const dataHora = hoje.toLocaleString("pt-BR");
+          const escolaTexto = this.vacinal.form.escola || this.sessionInfo?.escola || (this.sessionInfo?.escolasPermitidas || [])[0] || "Escola não identificada";
+          const turmaTexto = this.vacinal.form.turma && this.vacinal.form.turma !== "TODAS" ? this.turmaResumidaVacinal(this.vacinal.form.turma) : "Todas";
+          const vacinaTexto = this.vacinal.form.vacinaAtraso && this.vacinal.form.vacinaAtraso !== "TODAS" ? this.vacinal.form.vacinaAtraso : "Todas";
+          const buscaTexto = this.vacinal.busca ? this.vacinal.busca : "Sem busca textual";
+          const ordenacaoCampo = ({ nome:"Nome do aluno", turma:"Turma", idade:"Idade", vacinasAtraso:"Vacinas em atraso" })[this.vacinal.sort.key] || "Nome do aluno";
+          const ordenacaoTexto = ordenacaoCampo + (this.vacinal.sort.dir === "desc" ? " (Z→A)" : " (A→Z)");
+          const totalAtraso = lista.length;
+
+          const vacinasInline = (item) => {
+            const partes = String(item?.vacinasAtraso || "")
+              .split(",")
+              .map(x => x.trim())
+              .filter(Boolean);
+            return partes.length ? partes.join(" • ") : "-";
+          };
+
+          const linhas = lista.map((item, idx) => `
+            <tr>
+              <td class="seq">${idx + 1}</td>
+              <td class="mat">${escapeHtml(item.matricula || item.mat || "-")}</td>
+              <td class="nome">${escapeHtml(item.nome || "NOME NÃO IDENTIFICADO")}</td>
+              <td class="turma">${escapeHtml(this.turmaResumidaVacinal(item.turma || "-"))}</td>
+              <td class="idade">${escapeHtml(item.idade ? item.idade + " anos" : "-")}</td>
+              <td class="vacinas">${escapeHtml(vacinasInline(item))}</td>
+            </tr>`).join("");
+
+          const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIMVE - Lista de alunos em atraso vacinal</title>
+  
+
+
+</head>
+<body>
+  <div class="page">
+    <section class="header">
+      <div class="brand">
+        <div class="brand-mark">✓</div>
+        <div>
+          <div class="logo"><span>SIM</span><strong>VE</strong></div>
+          <small>Sistema de Monitoramento<br>Vacinal Escolar</small>
+        </div>
+      </div>
+      <div class="title">
+        <h1>Relatório de situação vacinal dos alunos</h1>
+        <h2>Lista de alunos em atraso</h2>
+        <p>Relatório operacional para acompanhamento da situação vacinal</p>
+        <p>Emitido em: ${escapeHtml(dataHora)}</p>
+      </div>
+    </section>
+
+    <section class="meta">
+      <div class="filters">
+        <h3>Filtros aplicados</h3>
+        <div class="filter-grid">
+          <div class="filter-item"><strong>Escola:</strong> ${escapeHtml(escolaTexto)}</div>
+          <div class="filter-item"><strong>Turma:</strong> ${escapeHtml(turmaTexto)}</div>
+          <div class="filter-item"><strong>Vacina:</strong> ${escapeHtml(vacinaTexto)}</div>
+          <div class="filter-item"><strong>Situação:</strong> Alunos em atraso</div>
+          <div class="filter-item"><strong>Busca:</strong> ${escapeHtml(buscaTexto)}</div>
+          <div class="filter-item"><strong>Ordenação:</strong> ${escapeHtml(ordenacaoTexto)}</div>
+        </div>
+      </div>
+      <div class="total">
+        <h3>Total do relatório</h3>
+        <div class="num">${totalAtraso}</div>
+        <div class="lbl">aluno(s) em atraso</div>
+      </div>
+    </section>
+
+    <h3 class="section-title">Alunos em atraso (${totalAtraso})</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>MAT.</th>
+          <th>Nome do aluno</th>
+          <th>Turma</th>
+          <th>Idade</th>
+          <th>Vacinas em atraso</th>
+        </tr>
+      </thead>
+      <tbody>${linhas}</tbody>
+    </table>
+
+    <footer class="footer">
+      <div><strong>SIMVE – Sistema de Monitoramento Vacinal Escolar</strong><br>Desenvolvido por Germano César Quirino</div>
+      <div class="center">Relatório gerado automaticamente pelo SIMVE</div>
+      <div class="right"></div>
+    </footer>
+  </div>
+
+  <div class="print-actions">
+    <button class="ghost" onclick="window.close()">Fechar</button>
+    <button onclick="window.print()">Imprimir / Salvar PDF</button>
+  </div>
+</body>
+</html>`;
+
+          const janela = window.open("", "_blank");
+          if (!janela) {
+            this.topError = "O navegador bloqueou a janela de impressão. Autorize pop-ups para o SIMVE.";
+            return;
+          }
+          janela.document.open();
+          janela.document.write(html);
+          janela.document.close();
+          setTimeout(() => janela.focus(), 300);
+        },
+
+        async carregarCadastral() {
+          this.clearTopMessages();
+          this.loading = true;
+
+          try {
+            const data = await this.gas(
+              "getSituacaoCadastral",
+              this.sessionToken,
+              this.cadastral.form.base,
+              this.cadastral.form.escola,
+              this.cadastral.form.turma
+            );
+
+            await this.aplicarDadosCadastral(data, true);
+          } catch (err) {
+            this.handleError(err);
+          } finally {
+            this.loading = false;
+          }
+        },
+
+        async aplicarDadosCadastral(data, renderCharts = true) {
+          this.cadastral.indicadores = data?.indicadores || {
+            totalAlunos: 0,
+            alunosSemCpf: 0,
+            alunosSemEndereco: 0
+          };
+
+          this.cadastral.graficos = data?.graficos || {
+            semCpfPorEscola: { labels: [], values: [] },
+            semCpfPorTurma: { labels: [], values: [] },
+            semEnderecoPorEscola: { labels: [], values: [] }
+          };
+
+          this.cadastral.tabela = data?.tabela || [];
+
+          this.cadastral.acesso = data?.acesso || {
+            escolaTravada: false,
+            escolasPermitidas: []
+          };
+
+          const escolas = (data?.filtros?.escolas && data.filtros.escolas.length)
+            ? data.filtros.escolas
+            : (data?.acesso?.escolasPermitidas || []);
+
+          const turmas = data?.filtros?.turmas || [];
+
+          this.cadastral.filtros.escolas = escolas;
+          this.cadastral.filtros.turmas = turmas;
+
+          this.suppressWatchers = true;
+
+          if (this.cadastral.acesso.escolaTravada && this.cadastral.acesso.escolasPermitidas?.length) {
+            this.cadastral.form.escola = this.cadastral.acesso.escolasPermitidas[0];
+          } else if (this.cadastral.form.escola !== "TODAS" && !escolas.includes(this.cadastral.form.escola)) {
+            this.cadastral.form.escola = "TODAS";
+          }
+
+          if (this.cadastral.form.turma !== "TODAS" && !turmas.includes(this.cadastral.form.turma)) {
+            this.cadastral.form.turma = "TODAS";
+          }
+
+          this.cadastral.pagination.page = 1;
+          this.suppressWatchers = false;
+
+          if (!escolas.length) {
+            this.topError = "Nenhuma escola foi encontrada para esta base no perfil selecionado.";
+          }
+
+          if (renderCharts) {
+            await nextTick();
+            this.renderCadCharts();
+          }
+        },
+
+        renderCadCharts() {
+          this.destroyChart("cadChartCpfEscola");
+          this.destroyChart("cadChartCpfTurma");
+          this.destroyChart("cadChartEndereco");
+
+          const g = this.cadastral.graficos || {};
+
+          const elCpfEscola = document.getElementById("cadChartCpfEscola");
+          const elCpfTurma = document.getElementById("cadChartCpfTurma");
+          const elEndereco = document.getElementById("cadChartEndereco");
+
+          if (elCpfEscola) {
+            this.charts.cadChartCpfEscola = new Chart(elCpfEscola, {
+              type: "bar",
+              data: {
+                labels: g.semCpfPorEscola?.labels || [],
+                datasets: [{
+                  label: "Sem CPF",
+                  data: g.semCpfPorEscola?.values || []
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false
+              }
+            });
+          }
+
+          if (elCpfTurma) {
+            this.charts.cadChartCpfTurma = new Chart(elCpfTurma, {
+              type: "bar",
+              data: {
+                labels: g.semCpfPorTurma?.labels || [],
+                datasets: [{
+                  label: "Sem CPF",
+                  data: g.semCpfPorTurma?.values || []
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false
+              }
+            });
+          }
+
+          if (elEndereco) {
+            this.charts.cadChartEndereco = new Chart(elEndereco, {
+              type: "bar",
+              data: {
+                labels: g.semEnderecoPorEscola?.labels || [],
+                datasets: [{
+                  label: "Sem endereço",
+                  data: g.semEnderecoPorEscola?.values || []
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false
+              }
+            });
+          }
+        },
+
+
+
+
+        async carregarStatusGatilho() {
+          this.clearTopMessages();
+          this.loading = true;
+
+          try {
+            const res = await this.gas("listarGatilhosHistoricoCobertura", this.sessionToken);
+            this.admin.gatilhoAtivo = !!res?.ativo;
+            this.admin.quantidadeGatilhos = res?.quantidade || 0;
+            this.admin.ultimaMensagem = res?.ativo
+              ? "Gatilho automático diário às 18h está ativo."
+              : "Gatilho automático diário às 18h não está ativo.";
+          } catch (err) {
+            this.handleError(err);
+          } finally {
+            this.loading = false;
+          }
+        },
+
+        async criarGatilhoHistorico18h() {
+          if (!this.isGestor) {
+            this.topError = "Acesso restrito ao perfil SAÚDE.";
+            return;
+          }
+          this.clearTopMessages();
+          this.loading = true;
+
+          try {
+            const res = await this.gas("criarGatilhoHistoricoCobertura18h", this.sessionToken);
+            this.gatilhoHistorico.mensagem = res?.mensagem || "Gatilho criado para 18h.";
+            this.admin.ultimaMensagem = this.gatilhoHistorico.mensagem;
+            this.topSuccess = this.gatilhoHistorico.mensagem;
+            await this.carregarStatusGatilho();
+          } catch (err) {
+            this.handleError(err);
+          } finally {
+            this.loading = false;
+          }
+        },
+
+        async excluirGatilhoHistorico18h() {
+          if (!this.isGestor) {
+            this.topError = "Acesso restrito ao perfil SAÚDE.";
+            return;
+          }
+          this.clearTopMessages();
+          this.loading = true;
+
+          try {
+            const res = await this.gas("excluirGatilhoHistoricoCobertura18h", this.sessionToken);
+            this.gatilhoHistorico.mensagem = res?.mensagem || "Gatilho removido.";
+            this.admin.ultimaMensagem = this.gatilhoHistorico.mensagem;
+            this.topSuccess = this.gatilhoHistorico.mensagem;
+            await this.carregarStatusGatilho();
+          } catch (err) {
+            this.handleError(err);
+          } finally {
+            this.loading = false;
+          }
+        },
+
+        async salvarHistoricoAgora() {
+          if (!this.isGestor) {
+            this.topError = "Acesso restrito ao perfil SAÚDE.";
+            return;
+          }
+
+          const confirmar = window.confirm("Deseja atualizar o histórico agora? Essa ação registra a fotografia atual das coberturas.");
+          if (!confirmar) return;
+
+          this.clearTopMessages();
+          this.loading = true;
+
+          try {
+            const res = await this.gas("salvarHistoricoCoberturaAgora", this.sessionToken);
+            this.gatilhoHistorico.mensagem = res?.mensagem || "Histórico atualizado.";
+            this.admin.ultimaMensagem = this.gatilhoHistorico.mensagem;
+            this.admin.ultimoResultado = res || null;
+            this.topSuccess = this.gatilhoHistorico.mensagem;
+            await this.carregarStatusGatilho();
+          } catch (err) {
+            this.handleError(err);
+          } finally {
+            this.loading = false;
+          }
+        },
+
+
+
+
+        abrirModalRanking(tipo) {
+          this.ranking.modalTipo = tipo;
+          this.ranking.modalPagina = 1;
+          this.ranking.modalAberto = true;
+
+          if (tipo === "escolas") {
+            this.ranking.modalTitulo = "Todas as Escolas por Cobertura";
+            this.ranking.modalIcone = "🏫";
+          } else if (tipo === "unidades") {
+            this.ranking.modalTitulo = "Todas as Unidades por Cobertura";
+            this.ranking.modalIcone = "🏥";
+          } else if (tipo === "pendencias") {
+            this.ranking.modalTitulo = "Todas as Unidades com Maior Pendência";
+            this.ranking.modalIcone = "⚠️";
+          }
+        },
+
+        fecharModalRanking() {
+          this.ranking.modalAberto = false;
+        },
+
+        irPaginaModalRanking(page) {
+          const total = this.rankingModalTotalPages || 1;
+          this.ranking.modalPagina = Math.min(Math.max(1, Number(page || 1)), total);
+        },
+
+        normalizarComparacao(valor) {
+          return String(valor || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .trim()
+            .toUpperCase();
+        },
+
+        statusRankingLabel(cobertura) {
+          const v = Number(cobertura || 0);
+          if (v >= 95) return "Bom";
+          if (v >= 85) return "Atenção";
+          return "Crítico";
+        },
+
+        statusRankingClass(cobertura) {
+          const v = Number(cobertura || 0);
+          if (v >= 95) return "status-good";
+          if (v >= 85) return "status-warning";
+          return "status-danger";
+        },
+
+        classeBarraRanking(cobertura) {
+          const v = Number(cobertura || 0);
+          if (v >= 95) return "rank-good";
+          if (v >= 85) return "rank-warning";
+          return "rank-danger";
+        },
+
+        larguraPendenciaRanking(item) {
+          const lista = this.ranking.unidadesMaiorPendencia || [];
+          const maior = lista.length ? Number(lista[0].atrasos || 0) : 0;
+          if (!maior) return "2%";
+          return Math.max(2, Math.min(100, (Number(item.atrasos || 0) / maior) * 100)) + "%";
+        },
+
+        classeFaixaRanking(cobertura) {
+          const v = Number(cobertura || 0);
+          if (v >= 95) return "bar-good";
+          if (v >= 85) return "bar-warning";
+          return "bar-danger";
+        },
+
+        async aplicarInicioEscolaDoLogin(payload) {
+          this.currentView = "ranking";
+          this.clearTopMessages();
+          this.rankingAutoRetry = 0;
+
+          if (!payload || payload.erro) {
+            if (payload && payload.erro) console.warn("Início da escola não veio no login:", payload.erro);
+            return false;
+          }
+
+          const rankingRecebido = payload.ranking || null;
+          const historicoRecebido = payload.historico || null;
+
+          if (rankingRecebido && Array.isArray(rankingRecebido.escolasPorCobertura)) {
+            const flagsRanking = {
+              modalAberto: this.ranking.modalAberto,
+              modalTipo: this.ranking.modalTipo,
+              modalTitulo: this.ranking.modalTitulo,
+              modalIcone: this.ranking.modalIcone,
+              modalPagina: this.ranking.modalPagina || 1,
+              modalPorPagina: this.ranking.modalPorPagina || 10
+            };
+
+            this.ranking = Object.assign({
+              atualizadoEm: "",
+              resumo: {
+                escolasMonitoradas: 0,
+                unidadesMonitoradas: 0,
+                escolasCriticas: 0,
+                unidadeMaisCritica: "-",
+                coberturaUnidadeMaisCritica: 0
+              },
+              escolasPorCobertura: [],
+              unidadesPorCobertura: [],
+              unidadesMaiorPendencia: []
+            }, rankingRecebido || {}, flagsRanking);
+          }
+
+          if (historicoRecebido) {
+            this.rankingHistorico = historicoRecebido;
+          }
+
+          await nextTick();
+          this.renderRankingEvolucaoChart();
+
+          const temRanking = Array.isArray(this.ranking?.escolasPorCobertura) && this.ranking.escolasPorCobertura.length > 0;
+          if (!temRanking) {
+            // Ainda assim deixa uma tentativa automática, mas sem depender do usuário trocar de aba.
+            setTimeout(() => this.carregarRanking(), 700);
+          }
+
+          return temRanking;
+        },
+
+        async inicializarInicioEscolaAposLogin() {
+          // Garante que a sessão já existe, a tela já foi renderizada e só então busca os dados.
+          this.currentView = "ranking";
+          this.clearTopMessages();
+          this.rankingAutoRetry = 0;
+          await nextTick();
+
+          // Pequena espera evita a corrida entre criação da sessão no Apps Script e leitura do painel.
+          await new Promise(resolve => setTimeout(resolve, 450));
+          await this.carregarRanking();
+
+          await nextTick();
+          const temDados = Array.isArray(this.ranking?.escolasPorCobertura) && this.ranking.escolasPorCobertura.length > 0;
+
+          // Reforço automático: se a primeira leitura vier vazia, tenta novamente sem o usuário trocar de aba.
+          if (!temDados) {
+            setTimeout(async () => {
+              if (!this.isAuthenticated || this.isGestor || this.currentView !== "ranking") return;
+              await this.carregarRanking();
+            }, 1200);
+
+            setTimeout(async () => {
+              if (!this.isAuthenticated || this.isGestor || this.currentView !== "ranking") return;
+              const aindaSemDados = !Array.isArray(this.ranking?.escolasPorCobertura) || !this.ranking.escolasPorCobertura.length;
+              if (aindaSemDados) await this.carregarRanking();
+            }, 2500);
+          }
+        },
+
+        agendarRecarregamentoInicioEscola() {
+          if (this.isGestor || this.currentView !== "ranking") return;
+          const tentativa = Number(this.rankingAutoRetry || 0);
+          if (tentativa >= 4) return;
+          this.rankingAutoRetry = tentativa + 1;
+
+          setTimeout(async () => {
+            if (!this.isAuthenticated || this.isGestor || this.currentView !== "ranking") return;
+            const temDados = Array.isArray(this.ranking?.escolasPorCobertura) && this.ranking.escolasPorCobertura.length > 0;
+            if (!temDados && !this.loading) {
+              await this.carregarRanking();
+            }
+          }, 900);
+        },
+
+        async carregarRanking() {
+          this.clearTopMessages();
+          this.loading = true;
+
+          try {
+            const data = await this.gas("getPainelRankingVacinal", this.sessionToken);
+            const flagsRanking = {
+              modalAberto: this.ranking.modalAberto,
+              modalTipo: this.ranking.modalTipo,
+              modalTitulo: this.ranking.modalTitulo,
+              modalIcone: this.ranking.modalIcone,
+              modalPagina: this.ranking.modalPagina || 1,
+              modalPorPagina: this.ranking.modalPorPagina || 10
+            };
+
+            this.ranking = Object.assign({
+              atualizadoEm: "",
+              resumo: {
+                escolasMonitoradas: 0,
+                unidadesMonitoradas: 0,
+                escolasCriticas: 0,
+                unidadeMaisCritica: "-",
+                coberturaUnidadeMaisCritica: 0
+              },
+              escolasPorCobertura: [],
+              unidadesPorCobertura: [],
+              unidadesMaiorPendencia: []
+            }, data || {}, flagsRanking);
+
+            if (Array.isArray(this.ranking.escolasPorCobertura) && this.ranking.escolasPorCobertura.length) {
+              this.rankingAutoRetry = 0;
+            }
+
+            await nextTick();
+            if (!this.isGestor) {
+              await this.carregarHistoricoRanking();
+              if (!Array.isArray(this.ranking.escolasPorCobertura) || !this.ranking.escolasPorCobertura.length) {
+                this.agendarRecarregamentoInicioEscola();
+              }
+            }
+          } catch (err) {
+            this.handleError(err);
+          } finally {
+            this.loading = false;
+          }
+        },
+
+        async carregarHistoricoRanking() {
+          this.rankingHistorico = {
+            labels: [],
+            values: [],
+            datasets: [],
+            historico: [],
+            titulo: "Evolução da cobertura da sua escola",
+            mensagem: "Carregando histórico de desempenho da escola..."
+          };
+          this.destroyChart("rankingEvolucaoChart");
+
+          const escola = this.minhaEscolaRanking ? String(this.minhaEscolaRanking.nome || "").trim() : "";
+          if (!escola) {
+            this.rankingHistorico.mensagem = "Escola ainda não identificada para carregar o histórico.";
+            return;
+          }
+
+          try {
+            // IMPORTANTE: esta tela de Início usa histórico próprio.
+            // Não usar getHistoricoCobertura aqui, pois essa função alimenta a aba Situação Vacinal
+            // e pode ter metodologia diferente da cobertura atual exibida nos cards.
+            const historico = await this.gas(
+              "getHistoricoDesempenhoEscola",
+              this.sessionToken,
+              escola
+            );
+
+            this.rankingHistorico = historico || {
+              labels: [],
+              values: [],
+              datasets: [],
+              historico: [],
+              titulo: "Evolução da cobertura da sua escola",
+              mensagem: "Ainda não há histórico de desempenho registrado para esta escola."
+            };
+
+            await nextTick();
+            this.renderRankingEvolucaoChart();
+          } catch (err) {
+            console.warn("Histórico de desempenho da escola não carregado:", err);
+            this.rankingHistorico = {
+              labels: [],
+              values: [],
+              datasets: [],
+              historico: [],
+              titulo: "Evolução da cobertura da sua escola",
+              mensagem: "Não foi possível carregar o histórico de desempenho da escola."
+            };
+          }
+        },
+
+        renderRankingEvolucaoChart() {
+          this.destroyChart("rankingEvolucaoChart");
+
+          const el = document.getElementById("rankingEvolucaoChart");
+          const dados = this.rankingHistorico || { labels: [], values: [] };
+          const labels = dados.labels || [];
+          const values = (dados.values || []).map(v => v === null || v === undefined || v === "" ? null : Number(v));
+
+          if (!el || !labels.length || !values.some(v => v !== null && !isNaN(v))) return;
+
+          this.charts.rankingEvolucaoChart = markRaw(new Chart(el, {
+            type: "line",
+            data: {
+              labels: labels,
+              datasets: [{
+                label: "Cobertura da escola (%)",
+                data: values,
+                tension: 0.35,
+                fill: false,
+                spanGaps: true
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  max: 100,
+                  ticks: { callback: value => value + "%" }
+                }
+              },
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  callbacks: {
+                    label: context => "Cobertura: " + context.raw + "%"
+                  }
+                }
+              }
+            }
+          }));
+        },
+
+        async carregarGestao() {
+          this.clearTopMessages();
+          this.loading = true;
+
+          try {
+            const data = await this.gas("getPainelGestaoVacinal", this.sessionToken);
+            this.gestao = data || this.gestao;
+
+            await nextTick();
+            this.renderGestaoCharts();
+          } catch (err) {
+            this.handleError(err);
+          } finally {
+            this.loading = false;
+          }
+        },
+
+        renderGestaoCharts() {
+          this.destroyChart("gestaoEvolucaoMunicipal");
+
+          const el = document.getElementById("gestaoEvolucaoMunicipal");
+          const dados = this.gestao.evolucaoMunicipal || { labels: [], values: [] };
+
+          if (!el || !dados.labels.length) return;
+
+          this.charts.gestaoEvolucaoMunicipal = markRaw(new Chart(el, {
+            type: "line",
+            data: {
+              labels: dados.labels,
+              datasets: [{
+                label: "Cobertura municipal média (%)",
+                data: (dados.values || []).map(v => Number(v || 0)),
+                tension: 0.3,
+                fill: false
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  max: 100
+                }
+              },
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  callbacks: {
+                    label: (context) => `Cobertura média: ${context.raw}%`
+                  }
+                }
+              }
+            }
+          }));
+        },
+
+        async carregarDocumentos() {
+          this.clearTopMessages();
+          this.loading = true;
+
+          try {
+            const lista = await this.gas("getDocumentos", this.sessionToken);
+            this.documentos = Array.isArray(lista) ? lista : [];
+          } catch (err) {
+            this.handleError(err);
+          } finally {
+            this.loading = false;
+          }
+        },
+
+        async enviarFeedback() {
+          this.feedbackMsg = "";
+          this.feedbackErro = "";
+          this.clearTopMessages();
+          this.loading = true;
+
+          try {
+            await this.gas(
+              "enviarFeedback",
+              this.sessionToken,
+              this.feedback.tipo,
+              String(this.feedback.mensagem || "").trim()
+            );
+
+            this.feedbackMsg = "Mensagem enviada com sucesso.";
+            this.feedback = {
+              tipo: "",
+              mensagem: ""
+            };
+          } catch (err) {
+            this.feedbackErro = err?.message || "Erro ao enviar feedback.";
+          } finally {
+            this.loading = false;
+          }
+        },
+
+        async sair() {
+          try {
+            if (this.sessionToken) {
+              await this.gas("encerrarSessao", this.sessionToken);
+            }
+          } catch (_) {
+          } finally {
+            Object.keys(this.charts || {}).forEach(nome => this.destroyChart(nome));
+            this.sessionToken = "";
+            this.sessionInfo = null;
+            this.authView = "login";
+            this.currentView = "ranking";
+            this.profileMenuOpen = false;
+            this.loading = false;
+            this.topError = "";
+            this.topSuccess = "";
+            this.loginMsg = "";
+            this.rankingHistorico = { labels: [], values: [], datasets: [], titulo: "Evolução mensal da cobertura vacinal" };
+          }
+        },
+
+        getSortedFilteredList(lista, busca, sortKey, sortDir) {
+          const termo = this.normalizeText(busca);
+          let filtered = Array.isArray(lista) ? [...lista] : [];
+
+          if (termo) {
+            filtered = filtered.filter(item => {
+              const alvo = [item.nome, item.cpf, item.cns, item.escola, item.turma].map(v => this.normalizeText(v)).join(' ');
+              return alvo.includes(termo);
+            });
+          }
+
+          filtered.sort((a, b) => {
+            const av = this.normalizeForSort(a?.[sortKey]);
+            const bv = this.normalizeForSort(b?.[sortKey]);
+
+            if (typeof av === "number" && typeof bv === "number") {
+              return sortDir === "asc" ? av - bv : bv - av;
+            }
+
+            if (av < bv) return sortDir === "asc" ? -1 : 1;
+            if (av > bv) return sortDir === "asc" ? 1 : -1;
+            return 0;
+          });
+
+          return filtered;
+        },
+
+        getPageItems(lista, pagination) {
+          const start = (pagination.page - 1) * pagination.perPage;
+          const end = start + pagination.perPage;
+          return lista.slice(start, end);
+        },
+
+        getVisiblePages(current, total) {
+          const pages = [];
+          const start = Math.max(1, current - 2);
+          const end = Math.min(total, current + 2);
+          for (let i = start; i <= end; i++) pages.push(i);
+          return pages;
+        },
+
+        goToPage(module, page) {
+          if (module === "vacinal") {
+            const safe = Math.min(Math.max(1, page), this.vacinalTotalPages);
+            this.vacinal.pagination.page = safe;
+          } else {
+            const safe = Math.min(Math.max(1, page), this.cadastralTotalPages);
+            this.cadastral.pagination.page = safe;
+          }
+        },
+
+        toggleSort(module, key) {
+          const target = module === "vacinal" ? this.vacinal : this.cadastral;
+
+          if (target.sort.key === key) {
+            target.sort.dir = target.sort.dir === "asc" ? "desc" : "asc";
+          } else {
+            target.sort.key = key;
+            target.sort.dir = "asc";
+          }
+
+          target.pagination.page = 1;
+        },
+
+        getSortIndicator(module, key) {
+          const target = module === "vacinal" ? this.vacinal : this.cadastral;
+          if (target.sort.key !== key) return "↕";
+          return target.sort.dir === "asc" ? "▲" : "▼";
+        },
+
+        exportCsv(filename, rows, columns) {
+          if (!rows.length) {
+            this.topError = "Não há dados para exportar.";
+            return;
+          }
+
+          const escapeCsv = (value) => {
+            const text = String(value ?? "");
+            return `"${text.replace(/"/g, '""')}"`;
+          };
+
+          const header = columns.map(col => escapeCsv(col.label)).join(";");
+          const body = rows.map(row =>
+            columns.map(col => escapeCsv(row[col.key])).join(";")
+          );
+
+          const csvContent = [header, ...body].join("\n");
+          const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+          const url = URL.createObjectURL(blob);
+
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+
+          this.topSuccess = "CSV exportado com sucesso.";
+        },
+
+        exportarCsvVacinal() {
+          const rows = this.vacinalSortedFiltered.map(item => ({
+            nome: item.nome,
+            base: item.base || "",
+            cpf: item.cpf || "",
+            idade: item.idade,
+            escola: item.escola,
+            turma: item.turma,
+            situacao: "Em atraso",
+            vacinasAtraso: item.vacinasAtraso || ""
+          }));
+
+          this.exportCsv(
+            `vacinal_${String(this.vacinal.form.segmento || 'todos').toLowerCase()}.csv`,
+            rows,
+            [
+              { key: "nome", label: "Nome" },
+              { key: "base", label: "Base" },
+              { key: "cpf", label: "CPF" },
+              { key: "idade", label: "Idade" },
+              { key: "escola", label: "Escola" },
+              { key: "turma", label: "Turma" },
+              { key: "situacao", label: "Situação" },
+              { key: "vacinasAtraso", label: "Vacinas em atraso" }
+            ]
+          );
+        },
+
+
+        exportarListaCadastralCpf() {
+          const rows = (this.cadastralListaOrdenada || []).map(item => ({
+            matricula: item.matricula || "",
+            nome: item.nome || "",
+            turma: item.turma || "",
+            cpf: item.cpfNovo || item.cpf || "",
+            situacao: item.semCpf ? "Sem CPF" : "CPF atualizado",
+            escola: item.escola || "",
+            base: item.base || ""
+          }));
+
+          this.exportCsv(
+            `lista_cadastral_cpf_${new Date().toISOString().slice(0, 10)}.csv`,
+            rows,
+            [
+              { key: "matricula", label: "MAT." },
+              { key: "nome", label: "Nome do aluno" },
+              { key: "turma", label: "Turma" },
+              { key: "cpf", label: "CPF" },
+              { key: "situacao", label: "Situação" },
+              { key: "escola", label: "Escola" },
+              { key: "base", label: "Base" }
+            ]
+          );
+        },
+
+
+
+        imprimirListaCadastralCpf() {
+          const listaBase = this.cadastralListaOrdenada || [];
+
+          const cpfPossuiOnzeDigitos = (valor) => {
+            const n = this.onlyNumbers(valor || "");
+            return n.length === 11;
+          };
+
+          // Para o PDF, a proposta aprovada é a lista nominal de pendências de CPF.
+          // Portanto, remove da impressão alunos que já possuem CPF informado/válido na lista do sistema.
+          const lista = listaBase.filter(item => {
+            if (item.cpfSalvo) return false;
+            if (item.semCpf === true) return true;
+            const cpfAtual = item.cpfMascarado || item.cpf || item.cpfNovo || "";
+            return !cpfPossuiOnzeDigitos(cpfAtual);
+          });
+
+          if (!lista.length) {
+            this.topError = "Não há alunos sem CPF para imprimir neste recorte.";
+            return;
+          }
+
+          const escapeHtml = (valor) => String(valor ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+          const hoje = new Date();
+          const dataHora = hoje.toLocaleString("pt-BR");
+          const filtros = this.cadastralNovo.filtros || {};
+          const mostrarEscola = this.cadastralNovo.perfilInicio !== "ESCOLA" && String(filtros.escola || "TODAS") === "TODAS";
+
+          const escolaSessao = this.sessionInfo?.escola || (this.sessionInfo?.escolasPermitidas || [])[0] || "";
+          const escolaTexto = this.cadastralNovo.perfilInicio === "ESCOLA"
+            ? (escolaSessao || "Escola não identificada")
+            : (filtros.escola && filtros.escola !== "TODAS" ? filtros.escola : "Todas as escolas");
+          const turmaTexto = filtros.turma && filtros.turma !== "TODAS" ? this.resumirTurmaCadastral(filtros.turma) : "Todas";
+          const tipoTexto = "Sem CPF";
+          const buscaTexto = filtros.busca ? filtros.busca : "Sem busca textual";
+          const ordenacaoTexto = this.labelOrdenacaoCadastral();
+
+          const linhas = lista.map((item) => {
+            const cpf = "-";
+            const escolaTd = mostrarEscola ? `<td class="escola">${escapeHtml(this.resumirEscolaCadastral(item.escola || "-"))}</td>` : "";
+            return `
+              <tr>
+                <td class="mat">${escapeHtml(item.matricula || "-")}</td>
+                <td class="nome">${escapeHtml(item.nome || "NOME NÃO IDENTIFICADO")}</td>
+                ${escolaTd}
+                <td class="turma">${escapeHtml(this.resumirTurmaCadastral(item.turma || "-"))}</td>
+                <td class="cpf">${escapeHtml(cpf)}</td>
+                <td class="center"><span class="status">Sem CPF</span></td>
+              </tr>`;
+          }).join("");
+
+          const escolaTh = mostrarEscola ? "<th>Escola</th>" : "";
+          const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIMVE - Lista nominal de inconsistências cadastrais</title>
+  
+</head>
+<body>
+  <div class="page">
+    <section class="header">
+      <div class="brand">
+        <div class="logo"><span>SIM</span><strong>VE</strong></div>
+        <small>Sistema de Monitoramento Vacinal Escolar</small>
+      </div>
+      <div class="title">
+        <h1>Lista nominal de inconsistências cadastrais</h1>
+        <p>Relatório operacional para saneamento cadastral</p>
+        <p>Emitido em: ${escapeHtml(dataHora)}</p>
+      </div>
+    </section>
+
+    <section class="meta">
+      <div class="box">
+        <h2>Filtros aplicados</h2>
+        <div class="grid">
+          <div class="item"><strong>Escola:</strong> ${escapeHtml(escolaTexto)}</div>
+          <div class="item"><strong>Turma:</strong> ${escapeHtml(turmaTexto)}</div>
+          <div class="item"><strong>Inconsistência:</strong> ${escapeHtml(tipoTexto)}</div>
+          <div class="item"><strong>Busca:</strong> ${escapeHtml(buscaTexto)}</div>
+          <div class="item"><strong>Ordenação:</strong> ${escapeHtml(ordenacaoTexto)}</div>
+        </div>
+      </div>
+      <div class="box">
+        <h2>Total do relatório</h2>
+        <div class="total-number">${lista.length}</div>
+        <div class="total-label">aluno(s) sem CPF</div>
+      </div>
+    </section>
+
+    <table>
+      <thead>
+        <tr>
+          <th>MAT.</th>
+          <th>Nome do aluno</th>
+          ${escolaTh}
+          <th>Turma</th>
+          <th>CPF</th>
+          <th>Situação</th>
+        </tr>
+      </thead>
+      <tbody>${linhas}</tbody>
+    </table>
+
+    <footer class="footer">
+      <div class="credits">
+        <strong>SIMVE – Sistema de Monitoramento Vacinal Escolar</strong><br>
+        Desenvolvido por Germano César Quirino
+      </div>
+      <div>Relatório gerado automaticamente pelo SIMVE</div>
+    </footer>
+  </div>
+
+  <div class="print-actions">
+    <button class="ghost" onclick="window.close()">Fechar</button>
+    <button onclick="window.print()">Imprimir / Salvar PDF</button>
+  </div>
+</body>
+</html>`;
+
+          const janela = window.open("", "_blank");
+          if (!janela) {
+            this.topError = "O navegador bloqueou a janela de impressão. Autorize pop-ups para o SIMVE.";
+            return;
+          }
+          janela.document.open();
+          janela.document.write(html);
+          janela.document.close();
+          setTimeout(() => janela.focus(), 300);
+        },
+
+
+        exportarCsvCadastral() {
+          const rows = this.cadastralSortedFiltered.map(item => ({
+            nome: item.nome,
+            idade: item.idade,
+            escola: item.escola,
+            turma: item.turma,
+            cpf: item.cpf || "",
+            endereco: item.endereco || "",
+            tipoInconsistencia: item.tipoInconsistencia || ""
+          }));
+
+          this.exportCsv(
+            `cadastral_${this.cadastral.form.base.toLowerCase()}.csv`,
+            rows,
+            [
+              { key: "nome", label: "Nome" },
+              { key: "idade", label: "Idade" },
+              { key: "escola", label: "Escola" },
+              { key: "turma", label: "Turma" },
+              { key: "cpf", label: "CPF" },
+              { key: "endereco", label: "Endereço" },
+              { key: "tipoInconsistencia", label: "Tipo" }
+            ]
+          );
+        },
+
+
+        async tentarRenderGraficoTurmaComRetry(labels, values, tentativas = 8, intervalo = 150) {
+          let ultimoErro = "";
+          for (let i = 0; i < tentativas; i++) {
+            await nextTick();
+            await new Promise(resolve => setTimeout(resolve, intervalo));
+
+            const canvas = this.$refs?.vacChartTurmaCanvas || document.getElementById("vacChartTurma");
+            this.vacinalDebug.atrasoPorTurma.canvasEncontrado = !!canvas;
+
+            if (!canvas) {
+              ultimoErro = "Canvas ainda não disponível na tentativa " + (i + 1);
+              this.vacinalDebug.atrasoPorTurma.erro = ultimoErro;
+              continue;
+            }
+
+            try {
+              this.destroyChart("vacChartTurma");
+
+              this.charts.vacChartTurma = markRaw(new Chart(canvas, {
+                type: "bar",
+                data: {
+                  labels: (labels || []).map(label =>
+                    String(label || "").replace(/^\s*(INF|ESC)\s*-\s*/i, "").trim()
+                  ),
+                  datasets: [{
+                    label: "Alunos em atraso",
+                    data: (values || []).map(v => Number(v || 0))
+                  }]
+                },
+                plugins: [{
+                  id: "valueLabelPluginRetry",
+                  afterDatasetsDraw(chart) {
+                    const { ctx } = chart;
+                    ctx.save();
+                    ctx.font = "bold 11px Arial";
+                    ctx.fillStyle = "#243b5a";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "bottom";
+
+                    chart.data.datasets.forEach((dataset, datasetIndex) => {
+                      const meta = chart.getDatasetMeta(datasetIndex);
+                      meta.data.forEach((element, index) => {
+                        const value = dataset.data[index];
+                        if (value === null || value === undefined || value === "") return;
+                        const pos = element.tooltipPosition();
+                        ctx.fillText(String(value), pos.x, pos.y - 6);
+                      });
+                    });
+
+                    ctx.restore();
+                  }
+                }],
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  layout: { padding: { top: 22 } },
+                  scales: {
+                    y: { beginAtZero: true }
+                  },
+                  plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                      callbacks: {
+                        label: (context) => `Alunos em atraso: ${context.raw}`
+                      }
+                    }
+                  }
+                }
+              }));
+
+              this.charts.vacChartTurma.resize();
+              this.charts.vacChartTurma.update();
+              this.vacinalDebug.atrasoPorTurma.chartCriado = true;
+              this.vacinalDebug.atrasoPorTurma.erro = "";
+              return true;
+            } catch (e) {
+              ultimoErro = e?.message || String(e);
+              this.vacinalDebug.atrasoPorTurma.erro = ultimoErro;
+            }
+          }
+
+          this.vacinalDebug.atrasoPorTurma.chartCriado = false;
+          if (!this.vacinalDebug.atrasoPorTurma.erro) {
+            this.vacinalDebug.atrasoPorTurma.erro = ultimoErro || "Não foi possível renderizar o gráfico após várias tentativas.";
+          }
+          return false;
+        },
+
+        handleError(error) {
+          console.error(error);
+          this.topError = error?.message || "Ocorreu um erro.";
+        },
+
+        destroyChart(name) {
+          if (this.charts[name]) {
+            this.charts[name].destroy();
+            this.charts[name] = null;
+          }
+        }
+      }
+    }).mount("#app");
+</script>

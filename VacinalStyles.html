@@ -1,0 +1,1329 @@
+<style>
+/* =========================================================
+   SIMVE — VacinalStyles.html
+   Etapa 1G: organização visual da aba Situação Vacinal.
+   Seguro: não remove regras antigas; apenas centraliza e reforça overrides.
+   ========================================================= */
+
+/* Regras base usadas pela aba Situação Vacinal */
+.vacina-filter-select { min-width: 220px; }
+.tabela-vacinal-centralizada thead th,
+.tabela-vacinal-centralizada tbody td { text-align: center; vertical-align: middle; }
+.tabela-vacinal-centralizada th:first-child,
+.tabela-vacinal-centralizada td:first-child,
+.tabela-vacinal-centralizada th:last-child,
+.tabela-vacinal-centralizada td:last-child { text-align: left; }
+
+
+
+/* Bloco operacional Vacinal — versão compacta inicial */
+.simve-vacinal-v2{
+  --azul:#075BD8;
+  --azul-escuro:#082B67;
+  --texto:#09245C;
+  --borda:#D9E7F7;
+  --fundo:#F5F9FF;
+}
+.simve-vacinal-v2 .vacv2-header{
+  align-items:center;
+  margin-bottom:12px;
+}
+.simve-vacinal-v2 .vacv2-header h1{
+  font-size:25px;
+  letter-spacing:-.35px;
+}
+.simve-vacinal-v2 .vacv2-header p{
+  font-size:13px;
+}
+.vacv2-header-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.vacv2-last-update{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  color:#082B67;
+  font-size:12px;
+  font-weight:800;
+  background:#fff;
+  border:1px solid #D9E7F7;
+  border-radius:12px;
+  padding:8px 12px;
+}
+.vacv2-last-update span{font-size:18px;color:#64748B}.vacv2-last-update small{display:block;color:#64748B;font-size:11px;font-weight:800}.vacv2-last-update strong{display:block;color:#082B67;font-size:12px}.vacv2-help{min-height:38px;border-radius:10px;background:#fff}.vacv2-grid-main{grid-template-columns:minmax(0,1fr) 480px;gap:20px}.vacv2-side{position:sticky;top:88px;min-width:0}.vacv2-filters-card,.vacv2-card,.vacv2-side-card{border-radius:16px;box-shadow:0 10px 28px rgba(12,45,80,.055)}.vacv2-filters-card{padding:14px}.vacv2-filters-grid{grid-template-columns:1.25fr 1fr 1.15fr .8fr .9fr .85fr .85fr auto auto;gap:12px}.vacv2-filter-actions{grid-column:auto;display:grid;grid-template-columns:1fr;gap:7px}.vacv2-check{font-size:12px;white-space:nowrap}.vacv2-btn{border-radius:9px;min-height:36px;padding:8px 14px}.vacv2-kpis{grid-template-columns:repeat(5,minmax(130px,1fr));gap:12px}.vacv2-kpi{min-height:82px;border-radius:14px;padding:14px}.vacv2-kpi .kpi-icon{width:50px;height:50px;flex-basis:50px}.vacv2-kpi .kpi-value{font-size:27px}.vacv2-exec-strip{display:grid;grid-template-columns:1.2fr .8fr .8fr 1fr;gap:12px;margin:0 0 14px}.vacv2-exec-strip>div{background:#fff;border:1px solid #D9E7F7;border-radius:14px;padding:13px 16px;box-shadow:0 8px 20px rgba(12,45,80,.045)}.vacv2-exec-strip span{display:block;color:#64748B;font-size:11px;font-weight:950;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}.vacv2-exec-strip strong{display:block;color:#082B67;font-size:18px;font-weight:950}.vacv2-exec-strip .danger{background:#FFF8F8;border-color:#FFCACA}.vacv2-exec-strip .danger strong{color:#DC2626}.vacv2-card{padding:15px}.vacv2-card-head h2{font-size:19px}.vacv2-table-wrap{border:1px solid #E4EEF9;border-radius:12px;overflow:auto}.vacv2-table{min-width:820px}.vacv2-table thead th{padding:11px 10px;background:#F5F8FD!important;font-size:12px}.vacv2-table tbody td{padding:11px 10px}.vacv2-table tbody tr{transition:.15s ease}.vacv2-table tbody tr.selected{box-shadow:inset 4px 0 0 #075BD8;background:#F6FAFF}.vacv2-table td:nth-child(2){min-width:230px}.vacv2-table td:nth-child(3){min-width:150px}.vacv2-table strong{line-height:1.25}.vacv2-pendencias strong{color:#D90429;font-size:13px}.vacv2-pendencias small{display:inline-flex;margin-top:5px;background:#FFF1F2;color:#BE123C;border-radius:999px;padding:3px 8px;font-weight:900}.vacv2-pagination{padding:2px 2px 0}.vacv2-chart-filters{grid-template-columns:1.5fr .8fr .8fr}.vacv2-evolucao-grid.full{display:grid;grid-template-columns:1fr;gap:14px}.vacv2-chart-wrap{height:240px}.vacv2-history-box{padding:12px;border-radius:13px}.vacv2-history-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}.vacv2-history-head h3{margin:0;font-size:14px}.vacv2-history-head h3 span{font-size:12px;color:#64748B}.vacv2-history-box table{table-layout:auto}.vacv2-history-box th,.vacv2-history-box td{font-size:12px;padding:9px 10px}.vacv2-side-card{padding:18px}.vacv2-side-card h2{font-size:18px;line-height:1.2}.vacv2-side-card>p{font-size:12px}.vacv2-student-box,.vacv2-vaccine-box,.vacv2-interpretar{border-radius:14px;padding:14px}.vacv2-student-grid{grid-template-columns:1fr 1fr;gap:12px 16px}.vacv2-student-grid div:nth-child(1),.vacv2-student-grid div:nth-child(5){grid-column:1/-1}.vacv2-student-grid strong{line-height:1.25}.vacv2-alert-aluno{display:grid;gap:4px;border-radius:14px}.vacv2-vaccine-box table{border:1px solid #E5EEF8;border-radius:12px;overflow:hidden;display:table}.vacv2-vaccine-box th{background:#F5F8FD}.vacv2-vaccine-box th,.vacv2-vaccine-box td{padding:10px 9px;font-size:12px}.vacv2-vaccine-box td.pendente,.vacv2-vaccine-box td.fora,.vacv2-vaccine-box td.ok,.vacv2-vaccine-box td.branco{background:transparent!important}.vacv2-vac-badge{border-radius:999px;padding:5px 9px}.vacv2-vac-badge.ok{background:#E7F8ED;color:#09834B}.vacv2-vac-badge.pendente{background:#FFE5E5;color:#D90429}.vacv2-vac-badge.fora{background:#FFF4DC;color:#D97706}.vacv2-vac-badge.branco{background:#EEF2F7;color:#475569}.vacv2-interpretar li{margin-bottom:4px}.layout{grid-template-columns:286px 1fr}.sidebar{background:#FFFFFF!important;color:#082B67!important;border-right:1px solid #D9E7F7;box-shadow:4px 0 22px rgba(12,45,80,.04)}.sidebar h2{display:none}.user-box{display:none}.menu-btn{background:transparent!important;color:#082B67!important;border-radius:14px;min-height:50px;font-weight:900;display:flex;align-items:center;gap:12px;padding:12px 14px}.menu-btn:hover{background:#F1F6FF!important}.menu-btn.active{background:#075BD8!important;color:#fff!important;box-shadow:0 10px 24px rgba(7,91,216,.22)}.sidebar-footer{color:#64748B;border-top:1px solid #E5EEF8;margin-top:auto;padding-top:18px}.topbar{padding:14px 22px}.topbar-title h1{font-size:24px;color:#082B67}.topbar-title p{font-size:13px}.page-body{padding:14px 20px 22px;background:#F4F8FF}@media(max-width:1600px){.vacv2-grid-main{grid-template-columns:minmax(0,1fr) 455px}.vacv2-filters-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.vacv2-filter-actions{grid-column:span 4;display:flex;justify-content:flex-end}.vacv2-check{min-height:38px}.vacv2-kpis{grid-template-columns:repeat(5,minmax(120px,1fr))}.vacv2-kpi{padding:12px}.vacv2-kpi .kpi-icon{width:46px;height:46px;flex-basis:46px}.vacv2-kpi .kpi-label{font-size:11px}.vacv2-kpi .kpi-value{font-size:25px}}@media(max-width:1350px){.vacv2-grid-main{grid-template-columns:1fr}.vacv2-side{position:static}.vacv2-exec-strip{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.vacv2-header{flex-direction:column;align-items:flex-start}.vacv2-header-actions{justify-content:flex-start}.vacv2-filters-grid,.vacv2-chart-filters,.vacv2-exec-strip{grid-template-columns:1fr}.vacv2-filter-actions{grid-column:auto;justify-content:flex-start}.vacv2-kpis{grid-template-columns:1fr}.vacv2-card-head,.vacv2-history-head{flex-direction:column;align-items:flex-start}.vacv2-student-grid{grid-template-columns:1fr}.layout{grid-template-columns:1fr}.topbar{position:relative}}
+
+
+
+/* =========================================================
+   SIMVE v4 — Refinamento premium da aba Situação Vacinal
+   Implementa: topo compacto, filtros mais legíveis, meta visual,
+   chips suaves e painel lateral mais limpo.
+   ========================================================= */
+.topbar.topbar-vacinal-compact{
+  min-height:64px!important;
+  padding:8px 22px!important;
+  justify-content:flex-end!important;
+  background:#ffffff!important;
+  border-bottom:1px solid #D9E7F7!important;
+}
+.topbar.topbar-vacinal-compact .topbar-title{
+  display:none!important;
+}
+.topbar.topbar-vacinal-compact .topbar-profile{
+  margin-left:auto!important;
+}
+.simve-vacinal-v2{
+  margin-top:0!important;
+}
+.simve-vacinal-v2 .vacv2-header{
+  margin-bottom:12px!important;
+  padding:0!important;
+  align-items:center!important;
+}
+.simve-vacinal-v2 .vacv2-header h1{
+  font-size:29px!important;
+  letter-spacing:-.8px!important;
+  line-height:1.05!important;
+}
+.simve-vacinal-v2 .vacv2-header p{
+  font-size:13px!important;
+  margin-top:6px!important;
+}
+.vacv2-header-actions{
+  gap:10px!important;
+}
+.vacv2-last-update{
+  border-radius:14px!important;
+  background:#fff!important;
+  border:1px solid #D9E7F7!important;
+  padding:9px 13px!important;
+  min-height:42px!important;
+}
+.vacv2-help{
+  min-height:42px!important;
+  padding:8px 14px!important;
+  border:1px solid #CFE0F7!important;
+  color:#075BD8!important;
+  font-weight:950!important;
+}
+.vacv2-grid-main{
+  grid-template-columns:minmax(0,1fr) 470px!important;
+  gap:18px!important;
+}
+.vacv2-filters-card{
+  padding:14px!important;
+  border:1px solid #D9E7F7!important;
+  background:#fff!important;
+}
+.vacv2-filters-grid{
+  display:grid!important;
+  grid-template-columns:1.55fr 1.05fr 1.2fr .85fr 1.05fr .9fr .95fr auto auto!important;
+  gap:10px 12px!important;
+  align-items:end!important;
+}
+.vacv2-filters-grid .field label{
+  font-size:12px!important;
+  line-height:1.08!important;
+  color:#082B67!important;
+  font-weight:950!important;
+  margin-bottom:6px!important;
+}
+.vacv2-filters-grid select,
+.vacv2-search-box{
+  min-height:40px!important;
+  height:40px!important;
+  border-radius:11px!important;
+  border:1px solid #CFE0F7!important;
+  background:#fff!important;
+  box-shadow:0 4px 12px rgba(12,45,80,.035)!important;
+}
+.vacv2-search-box input{
+  font-size:13px!important;
+  font-weight:800!important;
+}
+.vacv2-filters-grid select{
+  padding:0 12px!important;
+  color:#082B67!important;
+  font-weight:850!important;
+  font-size:13px!important;
+  cursor:pointer!important;
+}
+.vacv2-filters-grid select:hover,
+.vacv2-search-box:hover{
+  border-color:#9BC4FF!important;
+}
+.vacv2-filters-grid select:focus,
+.vacv2-search-box:focus-within{
+  outline:none!important;
+  border-color:#075BD8!important;
+  box-shadow:0 0 0 3px rgba(7,91,216,.10)!important;
+}
+.vacv2-check{
+  align-self:end!important;
+  min-height:40px!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:7px!important;
+  padding:0 4px!important;
+  font-size:12px!important;
+  color:#082B67!important;
+  font-weight:950!important;
+  white-space:nowrap!important;
+}
+.vacv2-check input{
+  width:15px!important;
+  height:15px!important;
+  accent-color:#075BD8!important;
+}
+.vacv2-filter-actions{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:6px!important;
+  min-width:126px!important;
+}
+.vacv2-btn{
+  min-height:34px!important;
+  border-radius:9px!important;
+  font-size:12px!important;
+  font-weight:950!important;
+  padding:8px 12px!important;
+}
+.vacv2-btn.primary{
+  background:#075BD8!important;
+  border-color:#075BD8!important;
+}
+.vacv2-btn.ghost{
+  background:#fff!important;
+  color:#075BD8!important;
+  border:1px solid #CFE0F7!important;
+}
+.vacv2-kpis{
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:12px!important;
+  margin:12px 0!important;
+}
+.vacv2-kpi{
+  min-height:94px!important;
+  padding:14px 16px!important;
+  border-radius:16px!important;
+  box-shadow:0 8px 22px rgba(12,45,80,.045)!important;
+}
+.vacv2-kpi .kpi-label{
+  font-size:12px!important;
+  line-height:1.15!important;
+}
+.vacv2-kpi .kpi-value{
+  font-size:28px!important;
+  line-height:1!important;
+}
+.vacv2-kpi .kpi-sub{
+  font-size:12px!important;
+  margin-top:5px!important;
+}
+.vacv2-kpi.purple .kpi-label{color:#37206D!important;}
+.vacv2-exec-strip{
+  grid-template-columns:1.15fr .72fr 1.08fr 1fr!important;
+  gap:10px!important;
+  margin:0 0 12px!important;
+}
+.vacv2-exec-strip>div{
+  min-height:70px!important;
+  border-radius:14px!important;
+  padding:13px 16px!important;
+  background:#fff!important;
+}
+.vacv2-exec-strip span{
+  font-size:10.5px!important;
+  color:#5E718E!important;
+}
+.vacv2-exec-strip strong{
+  font-size:18px!important;
+  color:#082B67!important;
+}
+.vacv2-pendencia-box strong{
+  color:#D90429!important;
+}
+.vacv2-pendencia-box em{
+  display:inline-flex!important;
+  margin-left:8px!important;
+  transform:translateY(-2px)!important;
+  padding:4px 8px!important;
+  border-radius:999px!important;
+  background:#FFE5E5!important;
+  color:#D90429!important;
+  font-size:11px!important;
+  font-weight:950!important;
+  font-style:normal!important;
+}
+.vacv2-meta-track{
+  width:100%!important;
+  height:7px!important;
+  border-radius:999px!important;
+  background:#E8EEF7!important;
+  margin-top:8px!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+.vacv2-meta-track:after{
+  content:"Meta 95%";
+  position:absolute;
+  right:0;
+  top:-18px;
+  color:#64748B;
+  font-size:10px;
+  font-weight:900;
+}
+.vacv2-meta-track i{
+  display:block!important;
+  height:100%!important;
+  border-radius:999px!important;
+  background:linear-gradient(90deg,#075BD8,#23A6F0)!important;
+  min-width:3px!important;
+}
+.vacv2-card{
+  border-radius:16px!important;
+  border:1px solid #D9E7F7!important;
+  padding:15px!important;
+  box-shadow:0 10px 28px rgba(12,45,80,.05)!important;
+}
+.vacv2-card-head{
+  margin-bottom:12px!important;
+}
+.vacv2-card-head h2{
+  font-size:19px!important;
+}
+.vacv2-table-wrap{
+  border:1px solid #E3EDF9!important;
+  border-radius:14px!important;
+  overflow:auto!important;
+}
+.vacv2-table thead th{
+  background:#F5F8FD!important;
+  color:#082B67!important;
+  font-size:12px!important;
+  padding:12px 11px!important;
+}
+.vacv2-table tbody td{
+  padding:12px 11px!important;
+}
+.vacv2-table tbody tr.selected{
+  background:#F4F9FF!important;
+  box-shadow:inset 4px 0 0 #075BD8!important;
+}
+.vacv2-table tbody tr:hover{
+  background:#F8FBFF!important;
+}
+.vacv2-pendencias strong{
+  color:#D90429!important;
+  font-weight:950!important;
+}
+.vacv2-pendencias small{
+  background:#FFF1F2!important;
+  color:#D90429!important;
+  border:1px solid #FFD0D6!important;
+}
+.vacv2-evolucao{
+  margin-top:12px!important;
+}
+.vacv2-evolucao-grid.full{
+  grid-template-columns:1.15fr .85fr!important;
+  align-items:start!important;
+  gap:14px!important;
+}
+.vacv2-chart-wrap{
+  height:215px!important;
+}
+.vacv2-history-box{
+  min-height:215px!important;
+  border-radius:14px!important;
+  background:#F8FBFF!important;
+}
+.vacv2-history-box th,
+.vacv2-history-box td{
+  font-size:11.5px!important;
+  padding:8px!important;
+}
+.vacv2-side{
+  top:78px!important;
+}
+.vacv2-side-card{
+  padding:18px!important;
+  border-radius:18px!important;
+  border:1px solid #D9E7F7!important;
+  box-shadow:0 14px 34px rgba(12,45,80,.07)!important;
+}
+.vacv2-side-card h2{
+  font-size:19px!important;
+  margin-top:4px!important;
+}
+.vacv2-student-box,
+.vacv2-vaccine-box,
+.vacv2-interpretar{
+  border-radius:15px!important;
+  border:1px solid #DDE9F7!important;
+  background:#fff!important;
+  padding:14px!important;
+}
+.vacv2-student-grid{
+  gap:11px 16px!important;
+}
+.vacv2-vaccine-box table{
+  border-collapse:separate!important;
+  border-spacing:0!important;
+  border:1px solid #E5EEF8!important;
+  border-radius:13px!important;
+  overflow:hidden!important;
+}
+.vacv2-vaccine-box th{
+  background:#F5F8FD!important;
+  color:#082B67!important;
+}
+.vacv2-vaccine-box th,
+.vacv2-vaccine-box td{
+  padding:11px 10px!important;
+  border-bottom:1px solid #E9F0F8!important;
+}
+.vacv2-vaccine-box td.pendente,
+.vacv2-vaccine-box td.fora,
+.vacv2-vaccine-box td.ok,
+.vacv2-vaccine-box td.branco{
+  background:transparent!important;
+}
+.vacv2-vac-badge{
+  border-radius:999px!important;
+  padding:5px 10px!important;
+  font-size:10.5px!important;
+  letter-spacing:.01em!important;
+}
+.vacv2-vac-badge.ok{background:#E7F8ED!important;color:#09834B!important;}
+.vacv2-vac-badge.pendente{background:#FFE5E5!important;color:#D90429!important;}
+.vacv2-vac-badge.fora{background:#FFF4DC!important;color:#D97706!important;}
+.vacv2-vac-badge.branco{background:#EEF2F7!important;color:#475569!important;}
+.vacv2-interpretar{
+  background:#F8FBFF!important;
+}
+.vacv2-interpretar li{
+  margin-bottom:5px!important;
+}
+.sidebar{
+  width:286px!important;
+}
+.menu-btn{
+  min-height:50px!important;
+  margin-bottom:8px!important;
+}
+.menu-btn.active{
+  box-shadow:0 12px 28px rgba(7,91,216,.22)!important;
+}
+.page-body{
+  padding:12px 20px 20px!important;
+  background:#F4F8FF!important;
+}
+@media(max-width:1680px){
+  .vacv2-grid-main{grid-template-columns:minmax(0,1fr) 450px!important;}
+  .vacv2-filters-grid{grid-template-columns:1.35fr .9fr 1fr .7fr .88fr .78fr .82fr auto auto!important;gap:9px!important;}
+  .vacv2-filter-actions{min-width:116px!important;}
+  .vacv2-kpi{padding:12px!important;}
+  .vacv2-kpi .kpi-icon{width:46px!important;height:46px!important;flex-basis:46px!important;}
+}
+@media(max-width:1450px){
+  .vacv2-grid-main{grid-template-columns:1fr!important;}
+  .vacv2-side{position:static!important;}
+  .vacv2-filters-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;}
+  .vacv2-filter-actions{grid-column:span 4!important;display:flex!important;justify-content:flex-end!important;}
+  .vacv2-kpis{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
+  .vacv2-evolucao-grid.full{grid-template-columns:1fr!important;}
+}
+@media(max-width:900px){
+  .topbar.topbar-vacinal-compact{display:flex!important;}
+  .vacv2-filters-grid,.vacv2-exec-strip,.vacv2-chart-filters{grid-template-columns:1fr!important;}
+  .vacv2-filter-actions{grid-column:auto!important;justify-content:flex-start!important;}
+  .vacv2-kpis{grid-template-columns:1fr!important;}
+}
+
+
+
+/* =========================================================
+   AJUSTE V8 — SEM JANELA EM AÇÕES + FILTROS COMPACTOS
+   ========================================================= */
+.vacv2-header-actions,
+.vacv2-last-update,
+.vacv2-help,
+.vacv2-modal-backdrop,
+.vacv2-modal,
+.vacv2-icon-btn{
+  display:none !important;
+}
+
+.vacv2-header{
+  margin-bottom:10px !important;
+}
+
+.vacv2-header h1{
+  font-size:30px !important;
+  margin-bottom:4px !important;
+}
+
+.vacv2-header p{
+  font-size:13px !important;
+  margin-bottom:0 !important;
+}
+
+.vacv2-filters-card{
+  padding:12px 14px !important;
+  margin-bottom:14px !important;
+}
+
+.vacv2-filters-grid-compact,
+.vacv2-filters-grid{
+  grid-template-columns:1.5fr 1.1fr .75fr .75fr auto !important;
+  gap:10px !important;
+  align-items:end !important;
+}
+
+.vacv2-filters-grid-compact .field,
+.vacv2-filters-grid .field{
+  margin-bottom:0 !important;
+}
+
+.vacv2-filters-grid-compact label,
+.vacv2-filters-grid label{
+  font-size:12px !important;
+  margin-bottom:5px !important;
+}
+
+.vacv2-filters-grid-compact select,
+.vacv2-filters-grid-compact input,
+.vacv2-filters-grid select,
+.vacv2-filters-grid input,
+.vacv2-search-box{
+  min-height:42px !important;
+  height:42px !important;
+  font-size:13px !important;
+}
+
+.vacv2-filter-actions{
+  display:flex !important;
+  gap:8px !important;
+  justify-content:flex-end !important;
+  align-items:end !important;
+  grid-column:auto !important;
+}
+
+.vacv2-filter-actions .vacv2-btn{
+  min-height:42px !important;
+  white-space:nowrap !important;
+  padding:8px 13px !important;
+}
+
+.vacv2-table{
+  min-width:760px !important;
+}
+
+.vacv2-table th:last-child,
+.vacv2-table td:last-child{
+  text-align:left !important;
+}
+
+@media(max-width:1350px){
+  .vacv2-filters-grid-compact,
+  .vacv2-filters-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+  .vacv2-filter-actions{
+    grid-column:1/-1 !important;
+    justify-content:flex-start !important;
+  }
+}
+
+@media(max-width:760px){
+  .vacv2-filters-grid-compact,
+  .vacv2-filters-grid{
+    grid-template-columns:1fr !important;
+  }
+}
+
+
+
+/* =========================================================
+   SIMVE v8c — Controle de quantidade por página
+   ========================================================= */
+.vacv2-actions-row-with-page-size{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:10px!important;
+  flex-wrap:wrap!important;
+}
+
+.vacv2-page-size-control{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  min-height:38px!important;
+  padding:0 10px!important;
+  border:1px solid #D9E7F7!important;
+  border-radius:10px!important;
+  background:#FFFFFF!important;
+  color:#082B67!important;
+  font-size:12px!important;
+  font-weight:900!important;
+  white-space:nowrap!important;
+}
+
+.vacv2-page-size-control select{
+  height:32px!important;
+  min-height:32px!important;
+  width:72px!important;
+  padding:4px 8px!important;
+  border:1px solid #CFE0F7!important;
+  border-radius:8px!important;
+  background:#F8FBFF!important;
+  color:#082B67!important;
+  font-weight:900!important;
+  outline:none!important;
+}
+
+.vacv2-pagination{
+  margin-top:12px!important;
+  display:flex!important;
+  justify-content:space-between!important;
+  align-items:center!important;
+  gap:12px!important;
+  flex-wrap:wrap!important;
+}
+
+@media(max-width:900px){
+  .vacv2-actions-row-with-page-size{
+    justify-content:flex-start!important;
+  }
+}
+
+
+
+/* =========================================================
+   SIMVE V9 — Situação Vacinal limpa
+   - Evolução da cobertura antes da lista
+   - Gráfico de Abril a Dezembro
+   - Sem quadro lateral redundante
+   - Sem cards abaixo do gráfico
+   ========================================================= */
+.vacv2-evolucao-clean{margin-bottom:14px;}
+.vacv2-chart-filters-clean{grid-template-columns:1.4fr .9fr .9fr!important;align-items:end;}
+.vacv2-chart-wrap-large{height:315px!important;width:100%;}
+.vacv2-evolucao-clean .vacv2-evolucao-grid.full{display:grid!important;grid-template-columns:1fr!important;}
+.vacv2-evolucao-clean .vacv2-note{margin-top:10px;}
+@media(max-width:900px){.vacv2-chart-filters-clean{grid-template-columns:1fr!important}.vacv2-chart-wrap-large{height:270px!important}}
+
+
+/* Bloco operacional Vacinal — versão final e overrides */
+.simve-vacinal-v2{
+  --azul:#075BD8;
+  --azul-escuro:#082B67;
+  --texto:#09245C;
+  --borda:#D9E7F7;
+  --fundo:#F5F9FF;
+}
+.simve-vacinal-v2 .vacv2-header{
+  align-items:center;
+  margin-bottom:12px;
+}
+.simve-vacinal-v2 .vacv2-header h1{
+  font-size:25px;
+  letter-spacing:-.35px;
+}
+.simve-vacinal-v2 .vacv2-header p{
+  font-size:13px;
+}
+.vacv2-header-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.vacv2-last-update{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  color:#082B67;
+  font-size:12px;
+  font-weight:800;
+  background:#fff;
+  border:1px solid #D9E7F7;
+  border-radius:12px;
+  padding:8px 12px;
+}
+.vacv2-last-update span{font-size:18px;color:#64748B}.vacv2-last-update small{display:block;color:#64748B;font-size:11px;font-weight:800}.vacv2-last-update strong{display:block;color:#082B67;font-size:12px}.vacv2-help{min-height:38px;border-radius:10px;background:#fff}.vacv2-grid-main{grid-template-columns:minmax(0,1fr) 480px;gap:20px}.vacv2-side{position:sticky;top:88px;min-width:0}.vacv2-filters-card,.vacv2-card,.vacv2-side-card{border-radius:16px;box-shadow:0 10px 28px rgba(12,45,80,.055)}.vacv2-filters-card{padding:14px}.vacv2-filters-grid{grid-template-columns:1.25fr 1fr 1.15fr .8fr .9fr .85fr .85fr auto auto;gap:12px}.vacv2-filter-actions{grid-column:auto;display:grid;grid-template-columns:1fr;gap:7px}.vacv2-check{font-size:12px;white-space:nowrap}.vacv2-btn{border-radius:9px;min-height:36px;padding:8px 14px}.vacv2-kpis{grid-template-columns:repeat(5,minmax(130px,1fr));gap:12px}.vacv2-kpi{min-height:82px;border-radius:14px;padding:14px}.vacv2-kpi .kpi-icon{width:50px;height:50px;flex-basis:50px}.vacv2-kpi .kpi-value{font-size:27px}.vacv2-exec-strip{display:grid;grid-template-columns:1.2fr .8fr .8fr 1fr;gap:12px;margin:0 0 14px}.vacv2-exec-strip>div{background:#fff;border:1px solid #D9E7F7;border-radius:14px;padding:13px 16px;box-shadow:0 8px 20px rgba(12,45,80,.045)}.vacv2-exec-strip span{display:block;color:#64748B;font-size:11px;font-weight:950;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}.vacv2-exec-strip strong{display:block;color:#082B67;font-size:18px;font-weight:950}.vacv2-exec-strip .danger{background:#FFF8F8;border-color:#FFCACA}.vacv2-exec-strip .danger strong{color:#DC2626}.vacv2-card{padding:15px}.vacv2-card-head h2{font-size:19px}.vacv2-table-wrap{border:1px solid #E4EEF9;border-radius:12px;overflow:auto}.vacv2-table{min-width:820px}.vacv2-table thead th{padding:11px 10px;background:#F5F8FD!important;font-size:12px}.vacv2-table tbody td{padding:11px 10px}.vacv2-table tbody tr{transition:.15s ease}.vacv2-table tbody tr.selected{box-shadow:inset 4px 0 0 #075BD8;background:#F6FAFF}.vacv2-table td:nth-child(2){min-width:230px}.vacv2-table td:nth-child(3){min-width:150px}.vacv2-table strong{line-height:1.25}.vacv2-pendencias strong{color:#D90429;font-size:13px}.vacv2-pendencias small{display:inline-flex;margin-top:5px;background:#FFF1F2;color:#BE123C;border-radius:999px;padding:3px 8px;font-weight:900}.vacv2-pagination{padding:2px 2px 0}.vacv2-chart-filters{grid-template-columns:1.5fr .8fr .8fr}.vacv2-evolucao-grid.full{display:grid;grid-template-columns:1fr;gap:14px}.vacv2-chart-wrap{height:240px}.vacv2-history-box{padding:12px;border-radius:13px}.vacv2-history-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}.vacv2-history-head h3{margin:0;font-size:14px}.vacv2-history-head h3 span{font-size:12px;color:#64748B}.vacv2-history-box table{table-layout:auto}.vacv2-history-box th,.vacv2-history-box td{font-size:12px;padding:9px 10px}.vacv2-side-card{padding:18px}.vacv2-side-card h2{font-size:18px;line-height:1.2}.vacv2-side-card>p{font-size:12px}.vacv2-student-box,.vacv2-vaccine-box,.vacv2-interpretar{border-radius:14px;padding:14px}.vacv2-student-grid{grid-template-columns:1fr 1fr;gap:12px 16px}.vacv2-student-grid div:nth-child(1),.vacv2-student-grid div:nth-child(5){grid-column:1/-1}.vacv2-student-grid strong{line-height:1.25}.vacv2-alert-aluno{display:grid;gap:4px;border-radius:14px}.vacv2-vaccine-box table{border:1px solid #E5EEF8;border-radius:12px;overflow:hidden;display:table}.vacv2-vaccine-box th{background:#F5F8FD}.vacv2-vaccine-box th,.vacv2-vaccine-box td{padding:10px 9px;font-size:12px}.vacv2-vaccine-box td.pendente,.vacv2-vaccine-box td.fora,.vacv2-vaccine-box td.ok,.vacv2-vaccine-box td.branco{background:transparent!important}.vacv2-vac-badge{border-radius:999px;padding:5px 9px}.vacv2-vac-badge.ok{background:#E7F8ED;color:#09834B}.vacv2-vac-badge.pendente{background:#FFE5E5;color:#D90429}.vacv2-vac-badge.fora{background:#FFF4DC;color:#D97706}.vacv2-vac-badge.branco{background:#EEF2F7;color:#475569}.vacv2-interpretar li{margin-bottom:4px}.layout{grid-template-columns:286px 1fr}.sidebar{background:#FFFFFF!important;color:#082B67!important;border-right:1px solid #D9E7F7;box-shadow:4px 0 22px rgba(12,45,80,.04)}.sidebar h2{display:none}.user-box{display:none}.menu-btn{background:transparent!important;color:#082B67!important;border-radius:14px;min-height:50px;font-weight:900;display:flex;align-items:center;gap:12px;padding:12px 14px}.menu-btn:hover{background:#F1F6FF!important}.menu-btn.active{background:#075BD8!important;color:#fff!important;box-shadow:0 10px 24px rgba(7,91,216,.22)}.sidebar-footer{color:#64748B;border-top:1px solid #E5EEF8;margin-top:auto;padding-top:18px}.topbar{padding:14px 22px}.topbar-title h1{font-size:24px;color:#082B67}.topbar-title p{font-size:13px}.page-body{padding:14px 20px 22px;background:#F4F8FF}@media(max-width:1600px){.vacv2-grid-main{grid-template-columns:minmax(0,1fr) 455px}.vacv2-filters-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.vacv2-filter-actions{grid-column:span 4;display:flex;justify-content:flex-end}.vacv2-check{min-height:38px}.vacv2-kpis{grid-template-columns:repeat(5,minmax(120px,1fr))}.vacv2-kpi{padding:12px}.vacv2-kpi .kpi-icon{width:46px;height:46px;flex-basis:46px}.vacv2-kpi .kpi-label{font-size:11px}.vacv2-kpi .kpi-value{font-size:25px}}@media(max-width:1350px){.vacv2-grid-main{grid-template-columns:1fr}.vacv2-side{position:static}.vacv2-exec-strip{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.vacv2-header{flex-direction:column;align-items:flex-start}.vacv2-header-actions{justify-content:flex-start}.vacv2-filters-grid,.vacv2-chart-filters,.vacv2-exec-strip{grid-template-columns:1fr}.vacv2-filter-actions{grid-column:auto;justify-content:flex-start}.vacv2-kpis{grid-template-columns:1fr}.vacv2-card-head,.vacv2-history-head{flex-direction:column;align-items:flex-start}.vacv2-student-grid{grid-template-columns:1fr}.layout{grid-template-columns:1fr}.topbar{position:relative}}
+
+</style>
+<style id="simve-uniformizacao-final-vacinal">
+:root{--simve-ui-font:"Inter","Segoe UI",Arial,Helvetica,sans-serif;--simve-blue:#075BD8;--simve-dark:#082B67;--simve-text:#173468;--simve-border:#DCE8F6;--simve-shadow:0 14px 34px rgba(8,43,103,.07)}
+#appArea,#appArea *{font-family:var(--simve-ui-font)!important;box-sizing:border-box!important}
+#appArea .layout{grid-template-columns:270px minmax(0,1fr)!important;background:linear-gradient(180deg,#F8FBFF 0%,#EEF6FF 100%)!important}
+#appArea .sidebar{width:270px!important;min-width:270px!important;padding:24px 18px!important;background:#fff!important;border-right:1px solid var(--simve-border)!important}
+#appArea .sidebar h2{height:78px!important;margin-bottom:26px!important}
+#appArea .menu-btn{min-height:54px!important;padding:11px 14px!important;margin-bottom:11px!important;grid-template-columns:40px 1fr!important;gap:13px!important;border-radius:16px!important;font-size:15.5px!important;line-height:1.18!important;font-weight:750!important;letter-spacing:-.18px!important}
+#appArea .menu-btn::before{width:38px!important;height:38px!important;border-radius:13px!important;background-size:21px 21px!important}
+#appArea .topbar{min-height:82px!important;height:82px!important;padding:15px 30px!important;background:#fff!important;border-bottom:1px solid var(--simve-border)!important;box-shadow:0 8px 22px rgba(8,43,103,.04)!important}
+#appArea .topbar-title h1{font-size:26px!important;font-weight:850!important;letter-spacing:-.6px!important;color:var(--simve-dark)!important}
+#appArea .topbar-title p{font-size:15.5px!important;font-weight:500!important;color:#385074!important}
+#appArea .topbar-meta{display:none!important}
+#appArea .topbar-profile{min-width:236px!important;padding:11px 15px!important;border-radius:18px!important}
+#appArea .page-body{padding:24px 30px 38px!important;background:linear-gradient(180deg,#F8FBFF 0%,#EFF6FF 100%)!important}
+#appArea .inicio-profile-header h1,#appArea .cad-header h1,#appArea .ranking-clean-header h1,#appArea .page-body h1{font-size:30px!important;line-height:1.14!important;font-weight:850!important;letter-spacing:-.7px!important;color:var(--simve-dark)!important}
+#appArea .inicio-profile-header p,#appArea .cad-header p,#appArea .ranking-clean-header p{font-size:16px!important;line-height:1.45!important;color:#455B7B!important;font-weight:500!important}
+#appArea .inicio-section-card,#appArea .chart-box,#appArea .table-box,#appArea .home-box,#appArea .placeholder-box,#appArea .resumo-box,#appArea .cad-card,#appArea .access-card,#appArea .ranking-card,#appArea .ranking-card-clean,#appArea .cad-filters,#appArea .active-filters{background:#fff!important;border:1px solid var(--simve-border)!important;border-radius:22px!important;box-shadow:var(--simve-shadow)!important;padding:20px!important}
+#appArea .inicio-section-title,#appArea .chart-box h2,#appArea .table-box h2,#appArea .home-box h2,#appArea .placeholder-box h2,#appArea .resumo-box h2,#appArea .cad-card-title h2,#appArea .access-card-title h2,#appArea .ranking-card-title h2,#appArea .ranking-card h2{font-size:20px!important;line-height:1.2!important;font-weight:850!important;color:var(--simve-dark)!important;letter-spacing:-.25px!important;margin:0 0 16px!important}
+#appArea .filters-3{display:grid!important;grid-template-columns:minmax(280px,1.15fr) minmax(180px,.75fr) auto!important;gap:14px!important;align-items:end!important;margin:0 0 12px!important;padding:18px!important;background:#fff!important;border:1px solid var(--simve-border)!important;border-radius:22px!important;box-shadow:var(--simve-shadow)!important}
+#appArea .filters-3 .field:nth-child(3){display:none!important}
+#appArea .filters-3+.filter-actions{margin:-70px 18px 28px auto!important;width:max-content!important;position:relative!important;z-index:3!important}
+#appArea .filters-3+.filter-actions .btn{min-height:46px!important;padding:0 18px!important;border-radius:14px!important;font-size:15px!important;font-weight:850!important;background:#fff!important;border:1px solid #CFE0F4!important;color:var(--simve-blue)!important}
+#appArea .active-filters{min-height:auto!important;margin:0 0 18px!important;padding:14px 18px!important;display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:10px!important}
+#appArea .active-filters h3{margin:0 8px 0 0!important;font-size:15px!important;font-weight:850!important;color:var(--simve-dark)!important}
+#appArea .pill{margin:0!important;padding:8px 12px!important;border-radius:999px!important;background:#EAF3FF!important;color:#075BD8!important;font-size:13.5px!important;line-height:1.1!important;font-weight:800!important}
+#appArea .field label{display:block!important;margin:0 0 8px!important;font-size:15.5px!important;line-height:1.2!important;font-weight:850!important;color:var(--simve-dark)!important}
+#appArea .field select,#appArea .field input,#appArea .field textarea{min-height:48px!important;height:48px!important;padding:10px 14px!important;border:1px solid #CFE0F4!important;border-radius:14px!important;background:#fff!important;color:var(--simve-text)!important;font-size:15.5px!important;font-weight:650!important;box-shadow:none!important}
+#appArea .cards-compact{display:grid!important;grid-template-columns:repeat(6,minmax(150px,1fr))!important;gap:14px!important;margin:0 0 18px!important}
+#appArea .mini-card,#appArea .inicio-alert,#appArea .inicio-kpi,#appArea .cad-kpi,#appArea .access-kpi,#appArea .ranking-kpi{min-height:96px!important;padding:18px!important;border-radius:18px!important;background:#fff!important;border:1px solid var(--simve-border)!important;box-shadow:none!important;display:flex!important;align-items:center!important;gap:15px!important}
+#appArea .mini-card .icon,#appArea .inicio-alert .icon,#appArea .inicio-kpi .icon,#appArea .cad-kpi .icon,#appArea .access-kpi .icon,#appArea .ranking-kpi .kpi-icon{width:56px!important;height:56px!important;flex:0 0 56px!important;border-radius:50%!important;font-size:27px!important;display:flex!important;align-items:center!important;justify-content:center!important}
+#appArea .mini-card .label,#appArea .inicio-alert .label,#appArea .inicio-kpi .label,#appArea .cad-kpi .label,#appArea .access-kpi .label,#appArea .ranking-kpi .kpi-label{margin:0 0 7px!important;color:var(--simve-dark)!important;font-size:14px!important;line-height:1.16!important;font-weight:850!important;letter-spacing:0!important;text-transform:none!important}
+#appArea .mini-card .number,#appArea .inicio-alert .value,#appArea .inicio-kpi .value,#appArea .cad-kpi .value,#appArea .access-kpi .value,#appArea .ranking-kpi .kpi-value{color:var(--simve-dark)!important;font-size:28px!important;line-height:1!important;font-weight:850!important;letter-spacing:-.55px!important}
+#appArea .mini-card .number[style]{font-size:19px!important;line-height:1.05!important}
+#appArea .mini-card.blue{border-left:4px solid #075BD8!important;background:#F8FBFF!important}#appArea .mini-card.green{border-left:4px solid #16A34A!important;background:#F8FFFB!important}#appArea .mini-card.red{border-left:4px solid #EF4444!important;background:#FFF8F8!important}#appArea .mini-card.orange{border-left:4px solid #F59E0B!important;background:#FFFDF7!important}#appArea .mini-card.gray{border-left:4px solid #94A3B8!important;background:#F8FBFF!important}
+#appArea .charts{display:grid!important;grid-template-columns:1fr 1fr!important;gap:18px!important;margin:0 0 18px!important}
+#appArea .chart-box[style*="grid-column:1/-1"]{grid-column:1/-1!important}
+#appArea .chart-wrap{height:310px!important;max-height:310px!important}
+#appArea canvas{max-width:100%!important}
+#appArea .info-note,#appArea .muted-box{border-radius:14px!important;border:1px solid #D8E7F6!important;background:#F8FBFF!important;color:#344D72!important;font-size:14px!important;line-height:1.45!important;font-weight:600!important}
+#appArea table{width:100%!important;min-width:0!important;border-collapse:collapse!important}
+#appArea thead th,#appArea .inicio-table th,#appArea .cad-table th,#appArea .access-table th,#appArea .ranking-modal-table th{background:#F2F7FE!important;color:var(--simve-dark)!important;padding:13px 14px!important;border-bottom:1px solid var(--simve-border)!important;font-size:14px!important;line-height:1.15!important;font-weight:850!important;text-align:left!important}
+#appArea tbody td,#appArea .inicio-table td,#appArea .cad-table td,#appArea .access-table td,#appArea .ranking-modal-table td{color:#112E5A!important;padding:13px 14px!important;border-bottom:1px solid #E9F1FA!important;font-size:14px!important;line-height:1.25!important;font-weight:650!important}
+#appArea tbody td:first-child,#appArea tbody td:nth-child(2){font-weight:750!important}
+#appArea .badge,#appArea .inicio-status,#appArea .cad-badge,#appArea .access-status{font-size:13px!important;font-weight:850!important;padding:7px 11px!important;border-radius:999px!important}
+@media(max-width:1500px){#appArea .cards-compact{grid-template-columns:repeat(3,minmax(170px,1fr))!important}#appArea .chart-wrap{height:300px!important}}
+@media(max-width:1200px){#appArea .layout{grid-template-columns:1fr!important}#appArea .sidebar{position:relative!important;width:100%!important;min-width:0!important;height:auto!important}#appArea .filters-3{grid-template-columns:1fr!important}#appArea .filters-3+.filter-actions{margin:0 0 16px!important;width:100%!important}#appArea .cards-compact,#appArea .inicio-alert-grid,#appArea .inicio-kpi-grid,#appArea .charts{grid-template-columns:1fr!important}}
+
+
+/* =========================================================
+   SIMVE — SITUAÇÃO VACINAL V3 PREMIUM / OPERACIONAL
+   Ajustes finais do modelo: painel lateral amplo, tabela limpa,
+   cabeçalho compacto, linha-meta no gráfico e histórico horizontal.
+   ========================================================= */
+.simve-vacinal-v2{
+  --azul:#075BD8;
+  --azul-escuro:#082B67;
+  --texto:#09245C;
+  --borda:#D9E7F7;
+  --fundo:#F5F9FF;
+}
+.simve-vacinal-v2 .vacv2-header{
+  align-items:center;
+  margin-bottom:12px;
+}
+.simve-vacinal-v2 .vacv2-header h1{
+  font-size:25px;
+  letter-spacing:-.35px;
+}
+.simve-vacinal-v2 .vacv2-header p{
+  font-size:13px;
+}
+.vacv2-header-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.vacv2-last-update{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  color:#082B67;
+  font-size:12px;
+  font-weight:800;
+  background:#fff;
+  border:1px solid #D9E7F7;
+  border-radius:12px;
+  padding:8px 12px;
+}
+.vacv2-last-update span{font-size:18px;color:#64748B}.vacv2-last-update small{display:block;color:#64748B;font-size:11px;font-weight:800}.vacv2-last-update strong{display:block;color:#082B67;font-size:12px}.vacv2-help{min-height:38px;border-radius:10px;background:#fff}.vacv2-grid-main{grid-template-columns:minmax(0,1fr) 480px;gap:20px}.vacv2-side{position:sticky;top:88px;min-width:0}.vacv2-filters-card,.vacv2-card,.vacv2-side-card{border-radius:16px;box-shadow:0 10px 28px rgba(12,45,80,.055)}.vacv2-filters-card{padding:14px}.vacv2-filters-grid{grid-template-columns:1.25fr 1fr 1.15fr .8fr .9fr .85fr .85fr auto auto;gap:12px}.vacv2-filter-actions{grid-column:auto;display:grid;grid-template-columns:1fr;gap:7px}.vacv2-check{font-size:12px;white-space:nowrap}.vacv2-btn{border-radius:9px;min-height:36px;padding:8px 14px}.vacv2-kpis{grid-template-columns:repeat(5,minmax(130px,1fr));gap:12px}.vacv2-kpi{min-height:82px;border-radius:14px;padding:14px}.vacv2-kpi .kpi-icon{width:50px;height:50px;flex-basis:50px}.vacv2-kpi .kpi-value{font-size:27px}.vacv2-exec-strip{display:grid;grid-template-columns:1.2fr .8fr .8fr 1fr;gap:12px;margin:0 0 14px}.vacv2-exec-strip>div{background:#fff;border:1px solid #D9E7F7;border-radius:14px;padding:13px 16px;box-shadow:0 8px 20px rgba(12,45,80,.045)}.vacv2-exec-strip span{display:block;color:#64748B;font-size:11px;font-weight:950;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}.vacv2-exec-strip strong{display:block;color:#082B67;font-size:18px;font-weight:950}.vacv2-exec-strip .danger{background:#FFF8F8;border-color:#FFCACA}.vacv2-exec-strip .danger strong{color:#DC2626}.vacv2-card{padding:15px}.vacv2-card-head h2{font-size:19px}.vacv2-table-wrap{border:1px solid #E4EEF9;border-radius:12px;overflow:auto}.vacv2-table{min-width:820px}.vacv2-table thead th{padding:11px 10px;background:#F5F8FD!important;font-size:12px}.vacv2-table tbody td{padding:11px 10px}.vacv2-table tbody tr{transition:.15s ease}.vacv2-table tbody tr.selected{box-shadow:inset 4px 0 0 #075BD8;background:#F6FAFF}.vacv2-table td:nth-child(2){min-width:230px}.vacv2-table td:nth-child(3){min-width:150px}.vacv2-table strong{line-height:1.25}.vacv2-pendencias strong{color:#D90429;font-size:13px}.vacv2-pendencias small{display:inline-flex;margin-top:5px;background:#FFF1F2;color:#BE123C;border-radius:999px;padding:3px 8px;font-weight:900}.vacv2-pagination{padding:2px 2px 0}.vacv2-chart-filters{grid-template-columns:1.5fr .8fr .8fr}.vacv2-evolucao-grid.full{display:grid;grid-template-columns:1fr;gap:14px}.vacv2-chart-wrap{height:240px}.vacv2-history-box{padding:12px;border-radius:13px}.vacv2-history-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}.vacv2-history-head h3{margin:0;font-size:14px}.vacv2-history-head h3 span{font-size:12px;color:#64748B}.vacv2-history-box table{table-layout:auto}.vacv2-history-box th,.vacv2-history-box td{font-size:12px;padding:9px 10px}.vacv2-side-card{padding:18px}.vacv2-side-card h2{font-size:18px;line-height:1.2}.vacv2-side-card>p{font-size:12px}.vacv2-student-box,.vacv2-vaccine-box,.vacv2-interpretar{border-radius:14px;padding:14px}.vacv2-student-grid{grid-template-columns:1fr 1fr;gap:12px 16px}.vacv2-student-grid div:nth-child(1),.vacv2-student-grid div:nth-child(5){grid-column:1/-1}.vacv2-student-grid strong{line-height:1.25}.vacv2-alert-aluno{display:grid;gap:4px;border-radius:14px}.vacv2-vaccine-box table{border:1px solid #E5EEF8;border-radius:12px;overflow:hidden;display:table}.vacv2-vaccine-box th{background:#F5F8FD}.vacv2-vaccine-box th,.vacv2-vaccine-box td{padding:10px 9px;font-size:12px}.vacv2-vaccine-box td.pendente,.vacv2-vaccine-box td.fora,.vacv2-vaccine-box td.ok,.vacv2-vaccine-box td.branco{background:transparent!important}.vacv2-vac-badge{border-radius:999px;padding:5px 9px}.vacv2-vac-badge.ok{background:#E7F8ED;color:#09834B}.vacv2-vac-badge.pendente{background:#FFE5E5;color:#D90429}.vacv2-vac-badge.fora{background:#FFF4DC;color:#D97706}.vacv2-vac-badge.branco{background:#EEF2F7;color:#475569}.vacv2-interpretar li{margin-bottom:4px}.layout{grid-template-columns:286px 1fr}.sidebar{background:#FFFFFF!important;color:#082B67!important;border-right:1px solid #D9E7F7;box-shadow:4px 0 22px rgba(12,45,80,.04)}.sidebar h2{display:none}.user-box{display:none}.menu-btn{background:transparent!important;color:#082B67!important;border-radius:14px;min-height:50px;font-weight:900;display:flex;align-items:center;gap:12px;padding:12px 14px}.menu-btn:hover{background:#F1F6FF!important}.menu-btn.active{background:#075BD8!important;color:#fff!important;box-shadow:0 10px 24px rgba(7,91,216,.22)}.sidebar-footer{color:#64748B;border-top:1px solid #E5EEF8;margin-top:auto;padding-top:18px}.topbar{padding:14px 22px}.topbar-title h1{font-size:24px;color:#082B67}.topbar-title p{font-size:13px}.page-body{padding:14px 20px 22px;background:#F4F8FF}@media(max-width:1600px){.vacv2-grid-main{grid-template-columns:minmax(0,1fr) 455px}.vacv2-filters-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.vacv2-filter-actions{grid-column:span 4;display:flex;justify-content:flex-end}.vacv2-check{min-height:38px}.vacv2-kpis{grid-template-columns:repeat(5,minmax(120px,1fr))}.vacv2-kpi{padding:12px}.vacv2-kpi .kpi-icon{width:46px;height:46px;flex-basis:46px}.vacv2-kpi .kpi-label{font-size:11px}.vacv2-kpi .kpi-value{font-size:25px}}@media(max-width:1350px){.vacv2-grid-main{grid-template-columns:1fr}.vacv2-side{position:static}.vacv2-exec-strip{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.vacv2-header{flex-direction:column;align-items:flex-start}.vacv2-header-actions{justify-content:flex-start}.vacv2-filters-grid,.vacv2-chart-filters,.vacv2-exec-strip{grid-template-columns:1fr}.vacv2-filter-actions{grid-column:auto;justify-content:flex-start}.vacv2-kpis{grid-template-columns:1fr}.vacv2-card-head,.vacv2-history-head{flex-direction:column;align-items:flex-start}.vacv2-student-grid{grid-template-columns:1fr}.layout{grid-template-columns:1fr}.topbar{position:relative}}
+
+</style>
+
+<style id="simve-premium-integrado-final-v1">
+/* =========================================================
+   SIMVE — VERSÃO PREMIUM INTEGRADA FINAL
+   Mantém Vue + google.script.run + code.gs e padroniza todas as abas.
+   ========================================================= */
+:root{
+  --simve-font:"Inter","Segoe UI",Arial,Helvetica,sans-serif;
+  --simve-bg:#F4F8FD;
+  --simve-card:#FFFFFF;
+  --simve-dark:#082B67;
+  --simve-text:#183A68;
+  --simve-muted:#60738E;
+  --simve-blue:#075BD8;
+  --simve-blue-soft:#EAF3FF;
+  --simve-green:#10A66B;
+  --simve-orange:#F59E0B;
+  --simve-red:#DC2626;
+  --simve-purple:#7C3AED;
+  --simve-border:#DCE8F6;
+  --simve-shadow:0 14px 34px rgba(8,43,103,.075);
+  --simve-shadow-soft:0 8px 22px rgba(8,43,103,.055);
+}
+
+html,body,#app{font-family:var(--simve-font)!important;background:var(--simve-bg)!important;color:var(--simve-text)!important;-webkit-font-smoothing:antialiased!important;-moz-osx-font-smoothing:grayscale!important;text-rendering:optimizeLegibility!important;}
+body{overflow-x:hidden!important;}
+#appArea,#appArea *{font-family:var(--simve-font)!important;box-sizing:border-box!important;}
+
+/* Estrutura geral */
+#appArea .layout{display:grid!important;grid-template-columns:292px minmax(0,1fr)!important;min-height:100vh!important;background:linear-gradient(180deg,#F8FBFF 0%,#EFF6FF 100%)!important;}
+#appArea .content{min-width:0!important;background:linear-gradient(180deg,#F8FBFF 0%,#EFF6FF 100%)!important;}
+
+/* Sidebar premium */
+#appArea .sidebar{width:292px!important;min-width:292px!important;background:#fff!important;color:var(--simve-dark)!important;border-right:1px solid var(--simve-border)!important;padding:24px 20px!important;box-shadow:8px 0 28px rgba(8,43,103,.045)!important;}
+#appArea .sidebar h2{height:86px!important;margin:0 0 24px!important;color:transparent!important;font-size:0!important;position:relative!important;}
+#appArea .sidebar h2::before{content:"SIMVE";display:block;color:var(--simve-dark);font-size:34px;line-height:.9;font-weight:950;letter-spacing:-1.6px;margin-bottom:7px;}
+#appArea .sidebar h2::after{content:"Monitoramento Vacinal Escolar";display:block;color:var(--simve-muted);font-size:12.5px;line-height:1.2;font-weight:850;letter-spacing:.02em;text-transform:uppercase;}
+#appArea .user-box{display:none!important;}
+#appArea .sidebar-footer{margin-top:auto!important;padding-top:18px!important;border-top:1px solid #E8F0FA!important;color:#71829A!important;font-size:12.5px!important;line-height:1.45!important;font-weight:750!important;}
+
+#appArea .menu-btn{width:100%!important;min-height:58px!important;display:grid!important;grid-template-columns:42px 1fr!important;align-items:center!important;gap:14px!important;margin:0 0 12px!important;padding:12px 16px!important;border:1px solid transparent!important;border-radius:18px!important;background:transparent!important;color:var(--simve-dark)!important;text-align:left!important;font-size:15.5px!important;line-height:1.18!important;font-weight:800!important;letter-spacing:-.18px!important;box-shadow:none!important;cursor:pointer!important;transition:.18s ease!important;}
+#appArea .menu-btn::before{content:""!important;width:42px!important;height:42px!important;border-radius:15px!important;background-color:#EEF6FF!important;background-position:center!important;background-repeat:no-repeat!important;background-size:22px 22px!important;transition:.18s ease!important;}
+#appArea .menu-btn:hover{background:#F5FAFF!important;border-color:#D8E9FA!important;color:var(--simve-dark)!important;transform:none!important;box-shadow:none!important;text-decoration:none!important;}
+#appArea .menu-btn.active{background:linear-gradient(135deg,#075BD8,#0B70F0)!important;color:#fff!important;border-color:#075BD8!important;box-shadow:0 14px 30px rgba(7,91,216,.24)!important;}
+#appArea .menu-btn.active::before{background-color:rgba(255,255,255,.20)!important;filter:brightness(0) invert(1)!important;}
+#appArea .menu-btn:nth-of-type(1)::before{background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23075BD8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 10.5 12 3l9 7.5'/%3E%3Cpath d='M5 10v10h14V10'/%3E%3Cpath d='M9 20v-6h6v6'/%3E%3C/svg%3E")!important;}
+#appArea .menu-btn:nth-of-type(2)::before{background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23075BD8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 7h10'/%3E%3Cpath d='M8 12h10'/%3E%3Cpath d='M8 17h6'/%3E%3Cpath d='M4 7h.01'/%3E%3Cpath d='M4 12h.01'/%3E%3Cpath d='M4 17h.01'/%3E%3C/svg%3E")!important;}
+#appArea .menu-btn:nth-of-type(3)::before{background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23075BD8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m19 5-7 7'/%3E%3Cpath d='m5 19 7-7'/%3E%3Cpath d='M12 12 7 7'/%3E%3Cpath d='m17 17-5-5'/%3E%3C/svg%3E")!important;}
+#appArea .menu-btn:nth-of-type(4)::before{background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23075BD8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 3v18h18'/%3E%3Cpath d='m7 14 4-4 3 3 5-6'/%3E%3C/svg%3E")!important;}
+#appArea .menu-btn:nth-of-type(5)::before{background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23075BD8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E")!important;}
+#appArea .menu-btn:nth-of-type(6)::before{background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23075BD8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z'/%3E%3Cpath d='M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 8.6 19a1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 5 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 15.4 5a1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.23.35.6.58 1 .6H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1.4Z'/%3E%3C/svg%3E")!important;}
+#appArea .menu-btn:nth-of-type(7)::before{background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23075BD8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z'/%3E%3Cpath d='M14 2v6h6'/%3E%3Cpath d='M8 13h8'/%3E%3Cpath d='M8 17h5'/%3E%3C/svg%3E")!important;}
+#appArea .menu-btn:nth-of-type(8)::before{background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23075BD8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21 15a4 4 0 0 1-4 4H7l-4 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z'/%3E%3C/svg%3E")!important;}
+
+/* Topbar e perfil */
+#appArea .topbar{min-height:88px!important;height:88px!important;padding:16px 34px!important;background:rgba(255,255,255,.98)!important;border-bottom:1px solid var(--simve-border)!important;box-shadow:0 8px 22px rgba(8,43,103,.045)!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:20px!important;position:sticky!important;top:0!important;z-index:30!important;}
+#appArea .topbar-title h1{margin:0!important;color:var(--simve-dark)!important;font-size:27px!important;line-height:1.08!important;font-weight:900!important;letter-spacing:-.75px!important;}
+#appArea .topbar-title p{margin:7px 0 0!important;color:var(--simve-muted)!important;font-size:15.5px!important;line-height:1.35!important;font-weight:650!important;}
+#appArea .topbar-meta{display:none!important;}
+#appArea .topbar-profile{position:relative!important;display:grid!important;grid-template-columns:44px auto 20px!important;align-items:center!important;gap:12px!important;min-width:246px!important;padding:12px 16px!important;border-radius:20px!important;background:#FBFDFF!important;border:1px solid #D6E5F7!important;box-shadow:0 10px 24px rgba(8,43,103,.055)!important;cursor:pointer!important;color:var(--simve-dark)!important;}
+#appArea .topbar-profile-icon{width:44px!important;height:44px!important;border-radius:50%!important;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23075BD8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 21a8 8 0 0 0-16 0'/%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3C/svg%3E") center/24px 24px no-repeat,#EEF6FF!important;border:1px solid #D8E8FA!important;}
+#appArea .topbar-profile-text{font-size:14px!important;line-height:1.35!important;font-weight:700!important;text-align:left!important;white-space:nowrap!important;}
+#appArea .topbar-profile-text strong{font-weight:900!important;}
+#appArea .topbar-profile-arrow{font-size:22px!important;color:var(--simve-dark)!important;transform:translateY(-2px)!important;}
+#appArea .topbar-profile-menu{position:absolute!important;top:calc(100% + 10px)!important;right:0!important;width:280px!important;background:#fff!important;border:1px solid #D6E5F7!important;border-radius:20px!important;box-shadow:0 20px 55px rgba(8,43,103,.18)!important;padding:14px!important;z-index:9999!important;}
+#appArea .topbar-profile-menu-head{display:grid!important;grid-template-columns:38px 1fr!important;align-items:center!important;gap:12px!important;padding:8px 6px 14px!important;border-bottom:1px solid #E6EEF8!important;color:var(--simve-dark)!important;font-size:14px!important;font-weight:700!important;line-height:1.35!important;}
+#appArea .topbar-profile-logout{width:100%!important;margin-top:10px!important;min-height:48px!important;display:flex!important;align-items:center!important;gap:12px!important;border:0!important;border-radius:14px!important;background:transparent!important;color:var(--simve-dark)!important;font-size:15px!important;font-weight:800!important;cursor:pointer!important;padding:10px 12px!important;}
+#appArea .topbar-profile-logout:hover{background:#F1F7FF!important;}
+
+/* Área de conteúdo */
+#appArea .page-body{padding:26px 34px 40px!important;background:linear-gradient(180deg,#F8FBFF 0%,#EFF6FF 100%)!important;}
+#appArea .loading{font-size:16px!important;line-height:1.4!important;font-weight:850!important;padding:16px 18px!important;border-radius:14px!important;}
+#appArea .top-message{border-radius:16px!important;padding:14px 18px!important;font-size:15px!important;line-height:1.4!important;}
+
+/* Remove visualmente informações de data de atualização */
+#appArea .inicio-periodo,#appArea .ranking-periodo{display:none!important;}
+#appArea .mini-card:has(.label:nth-child(1)){ }
+#appArea .mini-card:has(.label){ }
+#appArea .mini-card:has(.label):has(.number[style*="font-size:15px"]){display:none!important;}
+
+/* Títulos de página */
+#appArea .inicio-profile-header,#appArea .cad-header,#appArea .ranking-clean-header{margin-bottom:22px!important;align-items:flex-start!important;}
+#appArea .inicio-profile-header h1,#appArea .cad-header h1,#appArea .ranking-clean-header h1,#appArea .page-body h1{margin:0 0 7px!important;color:var(--simve-dark)!important;font-size:31px!important;line-height:1.12!important;font-weight:900!important;letter-spacing:-.85px!important;}
+#appArea .inicio-profile-header p,#appArea .cad-header p,#appArea .ranking-clean-header p{margin:0!important;color:#455B7B!important;font-size:16px!important;line-height:1.45!important;font-weight:600!important;}
+
+/* Cards padrão em todas as abas */
+#appArea .inicio-section-card,#appArea .chart-box,#appArea .table-box,#appArea .home-box,#appArea .placeholder-box,#appArea .resumo-box,#appArea .cad-card,#appArea .access-card,#appArea .ranking-card,#appArea .ranking-card-clean,#appArea .cad-filters,#appArea .active-filters{background:var(--simve-card)!important;border:1px solid var(--simve-border)!important;border-radius:24px!important;box-shadow:var(--simve-shadow)!important;padding:22px!important;}
+#appArea .inicio-section-title,#appArea .chart-box h2,#appArea .table-box h2,#appArea .home-box h2,#appArea .placeholder-box h2,#appArea .resumo-box h2,#appArea .cad-card-title h2,#appArea .access-card-title h2,#appArea .ranking-card-title h2,#appArea .ranking-card h2{margin:0 0 16px!important;color:var(--simve-dark)!important;font-size:21px!important;line-height:1.2!important;font-weight:900!important;letter-spacing:-.35px!important;}
+
+/* Filtros compactos e uniformes */
+#appArea .filters,#appArea .filters-4,#appArea .filters-3,#appArea .cad-filter-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important;align-items:end!important;margin-bottom:16px!important;}
+#appArea .filters-3{grid-template-columns:minmax(280px,1.2fr) minmax(190px,.8fr) minmax(180px,.7fr)!important;margin-bottom:14px!important;padding:18px!important;background:#fff!important;border:1px solid var(--simve-border)!important;border-radius:24px!important;box-shadow:var(--simve-shadow)!important;}
+#appArea .filters-3+.filter-actions{margin:-72px 18px 28px auto!important;width:max-content!important;position:relative!important;z-index:3!important;}
+#appArea .field label{display:block!important;margin:0 0 8px!important;color:var(--simve-dark)!important;font-size:15px!important;line-height:1.2!important;font-weight:850!important;}
+#appArea .field select,#appArea .field input,#appArea .field textarea{min-height:48px!important;height:48px!important;padding:10px 14px!important;border:1px solid #CFE0F4!important;border-radius:15px!important;background:#fff!important;color:var(--simve-text)!important;font-size:15px!important;font-weight:650!important;box-shadow:none!important;outline:none!important;}
+#appArea .field textarea{height:auto!important;min-height:110px!important;}
+#appArea .field select:focus,#appArea .field input:focus,#appArea .field textarea:focus{border-color:var(--simve-blue)!important;box-shadow:0 0 0 3px rgba(7,91,216,.10)!important;}
+#appArea .filter-actions{gap:10px!important;margin-bottom:18px!important;}
+#appArea .btn,#appArea .btn-primary,#appArea .btn-outline,#appArea .btn-secondary{min-height:46px!important;border-radius:15px!important;font-size:15px!important;line-height:1.2!important;font-weight:850!important;padding:0 18px!important;box-shadow:none!important;}
+#appArea .btn-primary{background:linear-gradient(135deg,#075BD8,#0B70F0)!important;color:#fff!important;border:0!important;}
+#appArea .btn-outline,#appArea .btn-secondary{background:#fff!important;border:1px solid #CFE0F4!important;color:var(--simve-blue)!important;}
+#appArea .active-filters{min-height:auto!important;margin:0 0 18px!important;padding:14px 18px!important;display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:10px!important;}
+#appArea .active-filters h3{margin:0 8px 0 0!important;color:var(--simve-dark)!important;font-size:15px!important;font-weight:900!important;}
+#appArea .pill{margin:0!important;padding:8px 12px!important;border-radius:999px!important;background:var(--simve-blue-soft)!important;color:var(--simve-blue)!important;font-size:13.5px!important;line-height:1.1!important;font-weight:850!important;}
+
+/* KPIs */
+#appArea .inicio-alert-grid,#appArea .inicio-kpi-grid,#appArea .ranking-kpis,#appArea .access-kpis,#appArea .cad-kpis{gap:16px!important;}
+#appArea .cards-compact{display:grid!important;grid-template-columns:repeat(5,minmax(170px,1fr))!important;gap:16px!important;margin:0 0 20px!important;}
+#appArea .mini-card,#appArea .inicio-alert,#appArea .inicio-kpi,#appArea .cad-kpi,#appArea .access-kpi,#appArea .ranking-kpi{min-height:106px!important;padding:19px!important;border-radius:20px!important;background:#fff!important;border:1px solid var(--simve-border)!important;box-shadow:var(--simve-shadow-soft)!important;display:flex!important;align-items:center!important;gap:16px!important;}
+#appArea .mini-card .icon,#appArea .inicio-alert .icon,#appArea .inicio-kpi .icon,#appArea .cad-kpi .icon,#appArea .access-kpi .icon,#appArea .ranking-kpi .kpi-icon{width:58px!important;height:58px!important;flex:0 0 58px!important;border-radius:50%!important;font-size:28px!important;display:flex!important;align-items:center!important;justify-content:center!important;}
+#appArea .mini-card .label,#appArea .inicio-alert .label,#appArea .inicio-kpi .label,#appArea .cad-kpi .label,#appArea .access-kpi .label,#appArea .ranking-kpi .kpi-label{margin:0 0 7px!important;color:var(--simve-dark)!important;font-size:14px!important;line-height:1.16!important;font-weight:900!important;letter-spacing:0!important;text-transform:none!important;}
+#appArea .mini-card .number,#appArea .inicio-alert .value,#appArea .inicio-kpi .value,#appArea .cad-kpi .value,#appArea .access-kpi .value,#appArea .ranking-kpi .kpi-value{color:var(--simve-dark)!important;font-size:30px!important;line-height:1!important;font-weight:900!important;letter-spacing:-.6px!important;}
+#appArea .mini-card .sub,#appArea .inicio-kpi .sub,#appArea .ranking-kpi .kpi-sub,#appArea .access-kpi .sub,#appArea .cad-kpi .sub,#appArea .inicio-alert .link{margin-top:8px!important;color:var(--simve-muted)!important;font-size:13.5px!important;line-height:1.25!important;font-weight:750!important;}
+#appArea .mini-card.blue,#appArea .access-kpi.blue,#appArea .ranking-kpi.blue,#appArea .cad-kpi.blue{border-left:5px solid var(--simve-blue)!important;background:#F8FBFF!important;}
+#appArea .mini-card.green,#appArea .access-kpi.green,#appArea .ranking-kpi.green,#appArea .cad-kpi.green{border-left:5px solid var(--simve-green)!important;background:#F8FFFB!important;}
+#appArea .mini-card.red,#appArea .access-kpi.red,#appArea .ranking-kpi.red,#appArea .cad-kpi.red{border-left:5px solid var(--simve-red)!important;background:#FFF8F8!important;}
+#appArea .mini-card.orange,#appArea .access-kpi.orange,#appArea .ranking-kpi.yellow,#appArea .cad-kpi.orange{border-left:5px solid var(--simve-orange)!important;background:#FFFDF7!important;}
+#appArea .mini-card.gray{border-left:5px solid #94A3B8!important;background:#F8FBFF!important;}
+
+/* Gráficos */
+#appArea .charts{display:grid!important;grid-template-columns:1fr 1fr!important;gap:18px!important;margin:0 0 20px!important;}
+#appArea .chart-box[style*="grid-column:1/-1"]{grid-column:1/-1!important;}
+#appArea .chart-wrap{position:relative!important;height:315px!important;max-height:315px!important;}
+#appArea canvas{max-width:100%!important;}
+#appArea .info-note,#appArea .muted-box{border-radius:16px!important;border:1px solid #D8E7F6!important;background:#F8FBFF!important;color:#344D72!important;font-size:14px!important;line-height:1.45!important;font-weight:650!important;}
+
+/* Tabelas */
+#appArea .table-box{overflow:auto!important;}
+#appArea table{width:100%!important;min-width:0!important;border-collapse:collapse!important;background:#fff!important;}
+#appArea thead th,#appArea .inicio-table th,#appArea .cad-table th,#appArea .access-table th,#appArea .ranking-modal-table th{background:#F2F7FE!important;color:var(--simve-dark)!important;padding:14px!important;border-bottom:1px solid var(--simve-border)!important;font-size:14px!important;line-height:1.15!important;font-weight:900!important;text-align:left!important;}
+#appArea tbody td,#appArea .inicio-table td,#appArea .cad-table td,#appArea .access-table td,#appArea .ranking-modal-table td{color:#112E5A!important;padding:14px!important;border-bottom:1px solid #E9F1FA!important;font-size:14px!important;line-height:1.25!important;font-weight:650!important;}
+#appArea tbody td:first-child,#appArea tbody td:nth-child(2){font-weight:800!important;}
+#appArea tbody tr:hover{background:#F8FBFF!important;}
+#appArea .badge,#appArea .inicio-status,#appArea .cad-badge,#appArea .access-status,#appArea .ranking-status{font-size:13px!important;font-weight:900!important;padding:7px 11px!important;border-radius:999px!important;}
+#appArea .table-toolbar{gap:14px!important;margin-bottom:18px!important;}
+#appArea .table-count{font-size:14px!important;color:var(--simve-muted)!important;font-weight:800!important;}
+#appArea .table-search{width:360px!important;}
+
+/* Modais */
+#appArea .ranking-modal{border-radius:24px!important;border:1px solid var(--simve-border)!important;box-shadow:0 28px 90px rgba(8,43,103,.28)!important;}
+#appArea .ranking-modal-title{font-size:24px!important;font-weight:900!important;color:var(--simve-dark)!important;}
+#appArea .ranking-modal-sub{font-size:18px!important;font-weight:900!important;color:var(--simve-blue)!important;}
+
+/* Responsivo */
+@media(max-width:1500px){
+  #appArea .layout{grid-template-columns:280px minmax(0,1fr)!important;}
+  #appArea .sidebar{width:280px!important;min-width:280px!important;}
+  #appArea .cards-compact{grid-template-columns:repeat(3,minmax(170px,1fr))!important;}
+  #appArea .chart-wrap{height:300px!important;}
+}
+@media(max-width:1200px){
+  #appArea .layout{grid-template-columns:1fr!important;}
+  #appArea .sidebar{position:relative!important;width:100%!important;min-width:0!important;height:auto!important;}
+  #appArea .filters,#appArea .filters-4,#appArea .filters-3,#appArea .cad-filter-grid{grid-template-columns:1fr!important;}
+  #appArea .filters-3+.filter-actions{margin:0 0 16px!important;width:100%!important;}
+  #appArea .cards-compact,#appArea .inicio-alert-grid,#appArea .inicio-kpi-grid,#appArea .ranking-kpis,#appArea .access-kpis,#appArea .cad-kpis,#appArea .charts{grid-template-columns:1fr!important;}
+  #appArea .topbar{height:auto!important;min-height:88px!important;align-items:flex-start!important;}
+}
+@media(max-width:720px){
+  #appArea .page-body{padding:20px 16px 28px!important;}
+  #appArea .topbar{padding:16px!important;flex-direction:column!important;}
+  #appArea .topbar-profile{width:100%!important;min-width:0!important;}
+  #appArea .inicio-profile-header h1,#appArea .cad-header h1,#appArea .ranking-clean-header h1,#appArea .page-body h1{font-size:25px!important;}
+}
+
+
+/* =========================================================
+   SIMVE - ABA SITUAÇÃO VACINAL V2
+   Modelo operacional com filtros, lista nominal e painel do aluno
+   ========================================================= */
+.simve-vacinal-v2{color:#09245c}.simve-vacinal-v2 *{box-sizing:border-box}.vacv2-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}.vacv2-header h1{margin:0 0 6px;font-size:26px;font-weight:950;color:#082b67}.vacv2-header p{margin:0;color:#42587a;font-weight:600}.vacv2-help{border:1px solid #bcd4f6;background:#fff;color:#075bd8;border-radius:8px;padding:10px 16px;font-weight:900;cursor:pointer}.vacv2-update{display:flex;align-items:center;gap:10px;background:#eafaf0;border:1px solid #bfe8cc;color:#047344;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-weight:800}.vacv2-grid-main{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:18px;align-items:start}.vacv2-left{min-width:0}.vacv2-filters-card,.vacv2-card,.vacv2-side-card{background:#fff;border:1px solid #d9e7f7;border-radius:14px;box-shadow:0 8px 24px rgba(12,45,80,.06)}.vacv2-filters-card{padding:16px;margin-bottom:14px}.vacv2-filters-grid{display:grid;grid-template-columns:1.25fr repeat(4,1fr);gap:14px;align-items:end}.vacv2-filters-grid .field{margin:0}.vacv2-filters-grid label,.vacv2-chart-filters label{font-size:12px;font-weight:950;color:#082b67;margin-bottom:7px;display:block}.vacv2-filters-grid select,.vacv2-filters-grid input,.vacv2-chart-filters select{width:100%;min-height:42px;border:1px solid #c9d8ec;border-radius:8px;background:#fff;color:#09245c;padding:8px 12px;font-weight:700;outline:none}.vacv2-search-box{position:relative}.vacv2-search-box input{padding-right:38px}.vacv2-search-box span{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-weight:900;color:#075bd8}.vacv2-check{display:flex!important;align-items:center;gap:8px;font-weight:850;color:#09245c;min-height:42px}.vacv2-check input{width:16px;height:16px}.vacv2-filter-actions{display:flex;gap:10px;justify-content:flex-end;align-items:center;grid-column:4/6}.vacv2-btn{border:1px solid #c9d8ec;background:#fff;color:#075bd8;border-radius:8px;min-height:38px;padding:9px 16px;font-weight:950;cursor:pointer;white-space:nowrap}.vacv2-btn.primary{background:#075bd8;color:#fff;border-color:#075bd8}.vacv2-btn.success{background:#fff;color:#087a42;border-color:#4fc081}.vacv2-btn.ghost:hover{background:#f6faff}.vacv2-kpis{display:grid;grid-template-columns:repeat(5,minmax(145px,1fr));gap:12px;margin-bottom:14px}.vacv2-kpi{display:flex;align-items:center;gap:14px;min-height:86px;border:1px solid #d9e7f7;border-radius:12px;background:#fff;padding:16px;box-shadow:0 8px 20px rgba(12,45,80,.05)}.vacv2-kpi .kpi-icon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;flex:0 0 52px}.vacv2-kpi .kpi-label{font-size:12px;color:#082b67;font-weight:950;line-height:1.2}.vacv2-kpi .kpi-value{font-size:28px;font-weight:950;color:#082b67;line-height:1;margin-top:4px}.vacv2-kpi .kpi-sub{font-size:12px;font-weight:900;margin-top:6px}.vacv2-kpi.blue{background:#f8fbff}.vacv2-kpi.blue .kpi-icon{background:#e8f2ff;color:#075bd8}.vacv2-kpi.green{background:#f8fffb}.vacv2-kpi.green .kpi-icon{background:#e5f8ee;color:#09834b}.vacv2-kpi.green .kpi-sub{color:#09834b}.vacv2-kpi.orange{background:#fffdf7}.vacv2-kpi.orange .kpi-icon{background:#fff4dc;color:#d97706}.vacv2-kpi.orange .kpi-sub{color:#d97706}.vacv2-kpi.purple{background:#fbf8ff}.vacv2-kpi.purple .kpi-icon{background:#f1e8ff;color:#7e22ce}.vacv2-kpi.red{background:#fff8f8}.vacv2-kpi.red .kpi-icon{background:#ffe5e5;color:#dc2626}.vacv2-kpi.red .kpi-sub{color:#dc2626}.vacv2-card{padding:16px;margin-bottom:14px}.vacv2-card-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px}.vacv2-card-head h2{margin:0;font-size:20px;font-weight:950;color:#082b67}.vacv2-card-head h2 span{font-size:16px}.vacv2-actions-row{display:flex;gap:10px;align-items:center}.vacv2-table-wrap{overflow:auto}.vacv2-table{width:100%;min-width:820px;border-collapse:collapse;background:#fff}.vacv2-table thead th{background:#f1f6fd!important;color:#09245c!important;padding:12px 10px;font-size:13px;font-weight:950;text-align:left;border-bottom:1px solid #dce8f6;position:static;cursor:pointer}.vacv2-table tbody td{padding:13px 10px;border-bottom:1px solid #e8eff8;color:#09245c;font-size:13px;vertical-align:middle}.vacv2-table tbody tr:hover,.vacv2-table tbody tr.selected{background:#f8fbff}.vacv2-table strong{font-weight:950;display:block}.vacv2-table small{display:block;color:#42587a;font-size:11px;font-weight:700;margin-top:3px}.vacv2-status{display:inline-flex;align-items:center;justify-content:center;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:950}.vacv2-status.orange{background:#fff4dc;color:#d97706;border:1px solid #ffd995}.vacv2-pendencias{color:#d90429!important;font-weight:950}.vacv2-icon-btn{width:38px;height:34px;border:1px solid #c9d8ec;background:#fff;color:#075bd8;border-radius:8px;cursor:pointer;font-weight:900}.vacv2-pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:14px;color:#42587a;font-size:13px;font-weight:800}.vacv2-pagination select{border:1px solid #c9d8ec;border-radius:8px;min-height:36px;padding:7px 12px;color:#09245c;font-weight:800}.vacv2-page-controls{display:flex;gap:7px}.vacv2-page-controls button{min-width:34px;min-height:34px;border:1px solid #c9d8ec;background:#fff;color:#075bd8;border-radius:8px;font-weight:900;cursor:pointer}.vacv2-page-controls button.active{background:#075bd8;color:#fff}.vacv2-page-controls button:disabled{opacity:.45;cursor:not-allowed}.vacv2-chart-filters{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:14px;margin-bottom:12px}.vacv2-evolucao-grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}.vacv2-chart-wrap{height:255px;position:relative}.vacv2-history-box{background:#f8fbff;border:1px solid #dbe8f7;border-radius:12px;padding:12px}.vacv2-history-box h3{margin:0 0 10px;color:#082b67;font-size:14px;font-weight:950}.vacv2-history-box table{width:100%;min-width:0;border-collapse:collapse}.vacv2-history-box th,.vacv2-history-box td{padding:8px;font-size:12px;border-bottom:1px solid #e2ecf8;color:#09245c;font-weight:800;text-align:left}.vacv2-history-box th{background:#eef5ff}.vacv2-note{margin-top:12px;color:#37557a;font-size:12px;font-weight:700}.vacv2-side{position:sticky;top:92px}.vacv2-side-card{padding:18px;position:relative}.vacv2-side-close{position:absolute;right:14px;top:12px;width:30px;height:30px;border:1px solid #d7e5f6;background:#fff;border-radius:8px;color:#09245c;font-size:20px;cursor:pointer}.vacv2-side-card h2{margin:8px 34px 8px 0;color:#082b67;font-size:19px;font-weight:950}.vacv2-side-card>p{color:#42587a;font-size:12.5px;line-height:1.45;font-weight:700;margin:0 0 14px}.vacv2-student-box,.vacv2-vaccine-box,.vacv2-interpretar{border:1px solid #dbe8f7;border-radius:12px;background:#fff;padding:14px;margin-bottom:14px}.vacv2-student-box h3,.vacv2-vaccine-box h3,.vacv2-interpretar h3{margin:0 0 12px;font-size:14px;color:#082b67;font-weight:950}.vacv2-student-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.vacv2-student-grid div{font-size:12px;color:#42587a}.vacv2-student-grid span{display:block;font-weight:800;margin-bottom:2px}.vacv2-student-grid strong{display:block;color:#09245c;font-weight:950}.vacv2-base-badge{display:inline-flex!important;background:#e8f2ff;color:#075bd8;border-radius:7px;padding:4px 8px}.vacv2-alert-aluno{background:#fff8e8;border:1px solid #ffd794;border-radius:12px;padding:14px;color:#d97706;margin-bottom:14px}.vacv2-alert-aluno strong{display:block;font-size:15px;font-weight:950;margin-bottom:6px}.vacv2-alert-aluno span{font-size:12px;font-weight:800}.vacv2-vaccine-box table{width:100%;min-width:0;border-collapse:collapse}.vacv2-vaccine-box th,.vacv2-vaccine-box td{padding:8px 7px;border-bottom:1px solid #e8eff8;font-size:12px;color:#09245c;font-weight:800;text-align:left}.vacv2-vaccine-box th{background:#f1f6fd;font-weight:950}.vacv2-vac-badge{display:inline-flex;border-radius:7px;padding:4px 8px;font-size:11px;font-weight:950;white-space:nowrap}.vacv2-vac-badge.ok,.vacv2-vaccine-box td.ok{background:#e7f8ed;color:#09834b}.vacv2-vac-badge.pendente,.vacv2-vaccine-box td.pendente{background:#ffe5e5;color:#d90429}.vacv2-vac-badge.fora,.vacv2-vaccine-box td.fora{background:#fff4dc;color:#d97706}.vacv2-vac-badge.branco,.vacv2-vaccine-box td.branco{background:#eef2f7;color:#475569}.vacv2-interpretar{background:#f8fbff}.vacv2-interpretar ul{margin:0;padding-left:18px;color:#09245c;font-size:12px;line-height:1.55;font-weight:700}@media(max-width:1450px){.vacv2-grid-main{grid-template-columns:1fr}.vacv2-side{position:static}.vacv2-filters-grid{grid-template-columns:repeat(3,1fr)}.vacv2-filter-actions{grid-column:span 3}.vacv2-kpis{grid-template-columns:repeat(3,1fr)}}@media(max-width:900px){.vacv2-filters-grid,.vacv2-chart-filters,.vacv2-evolucao-grid{grid-template-columns:1fr}.vacv2-filter-actions{grid-column:auto;justify-content:flex-start}.vacv2-kpis{grid-template-columns:1fr}.vacv2-card-head{flex-direction:column;align-items:flex-start}.vacv2-student-grid{grid-template-columns:1fr}}
+
+
+
+/* =========================================================
+   SIMVE — SITUAÇÃO VACINAL V3 PREMIUM / OPERACIONAL
+   Ajustes finais do modelo: painel lateral amplo, tabela limpa,
+   cabeçalho compacto, linha-meta no gráfico e histórico horizontal.
+   ========================================================= */
+.simve-vacinal-v2{
+  --azul:#075BD8;
+  --azul-escuro:#082B67;
+  --texto:#09245C;
+  --borda:#D9E7F7;
+  --fundo:#F5F9FF;
+}
+.simve-vacinal-v2 .vacv2-header{
+  align-items:center;
+  margin-bottom:12px;
+}
+.simve-vacinal-v2 .vacv2-header h1{
+  font-size:25px;
+  letter-spacing:-.35px;
+}
+.simve-vacinal-v2 .vacv2-header p{
+  font-size:13px;
+}
+.vacv2-header-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.vacv2-last-update{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  color:#082B67;
+  font-size:12px;
+  font-weight:800;
+  background:#fff;
+  border:1px solid #D9E7F7;
+  border-radius:12px;
+  padding:8px 12px;
+}
+.vacv2-last-update span{font-size:18px;color:#64748B}.vacv2-last-update small{display:block;color:#64748B;font-size:11px;font-weight:800}.vacv2-last-update strong{display:block;color:#082B67;font-size:12px}.vacv2-help{min-height:38px;border-radius:10px;background:#fff}.vacv2-grid-main{grid-template-columns:minmax(0,1fr) 480px;gap:20px}.vacv2-side{position:sticky;top:88px;min-width:0}.vacv2-filters-card,.vacv2-card,.vacv2-side-card{border-radius:16px;box-shadow:0 10px 28px rgba(12,45,80,.055)}.vacv2-filters-card{padding:14px}.vacv2-filters-grid{grid-template-columns:1.25fr 1fr 1.15fr .8fr .9fr .85fr .85fr auto auto;gap:12px}.vacv2-filter-actions{grid-column:auto;display:grid;grid-template-columns:1fr;gap:7px}.vacv2-check{font-size:12px;white-space:nowrap}.vacv2-btn{border-radius:9px;min-height:36px;padding:8px 14px}.vacv2-kpis{grid-template-columns:repeat(5,minmax(130px,1fr));gap:12px}.vacv2-kpi{min-height:82px;border-radius:14px;padding:14px}.vacv2-kpi .kpi-icon{width:50px;height:50px;flex-basis:50px}.vacv2-kpi .kpi-value{font-size:27px}.vacv2-exec-strip{display:grid;grid-template-columns:1.2fr .8fr .8fr 1fr;gap:12px;margin:0 0 14px}.vacv2-exec-strip>div{background:#fff;border:1px solid #D9E7F7;border-radius:14px;padding:13px 16px;box-shadow:0 8px 20px rgba(12,45,80,.045)}.vacv2-exec-strip span{display:block;color:#64748B;font-size:11px;font-weight:950;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}.vacv2-exec-strip strong{display:block;color:#082B67;font-size:18px;font-weight:950}.vacv2-exec-strip .danger{background:#FFF8F8;border-color:#FFCACA}.vacv2-exec-strip .danger strong{color:#DC2626}.vacv2-card{padding:15px}.vacv2-card-head h2{font-size:19px}.vacv2-table-wrap{border:1px solid #E4EEF9;border-radius:12px;overflow:auto}.vacv2-table{min-width:820px}.vacv2-table thead th{padding:11px 10px;background:#F5F8FD!important;font-size:12px}.vacv2-table tbody td{padding:11px 10px}.vacv2-table tbody tr{transition:.15s ease}.vacv2-table tbody tr.selected{box-shadow:inset 4px 0 0 #075BD8;background:#F6FAFF}.vacv2-table td:nth-child(2){min-width:230px}.vacv2-table td:nth-child(3){min-width:150px}.vacv2-table strong{line-height:1.25}.vacv2-pendencias strong{color:#D90429;font-size:13px}.vacv2-pendencias small{display:inline-flex;margin-top:5px;background:#FFF1F2;color:#BE123C;border-radius:999px;padding:3px 8px;font-weight:900}.vacv2-pagination{padding:2px 2px 0}.vacv2-chart-filters{grid-template-columns:1.5fr .8fr .8fr}.vacv2-evolucao-grid.full{display:grid;grid-template-columns:1fr;gap:14px}.vacv2-chart-wrap{height:240px}.vacv2-history-box{padding:12px;border-radius:13px}.vacv2-history-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}.vacv2-history-head h3{margin:0;font-size:14px}.vacv2-history-head h3 span{font-size:12px;color:#64748B}.vacv2-history-box table{table-layout:auto}.vacv2-history-box th,.vacv2-history-box td{font-size:12px;padding:9px 10px}.vacv2-side-card{padding:18px}.vacv2-side-card h2{font-size:18px;line-height:1.2}.vacv2-side-card>p{font-size:12px}.vacv2-student-box,.vacv2-vaccine-box,.vacv2-interpretar{border-radius:14px;padding:14px}.vacv2-student-grid{grid-template-columns:1fr 1fr;gap:12px 16px}.vacv2-student-grid div:nth-child(1),.vacv2-student-grid div:nth-child(5){grid-column:1/-1}.vacv2-student-grid strong{line-height:1.25}.vacv2-alert-aluno{display:grid;gap:4px;border-radius:14px}.vacv2-vaccine-box table{border:1px solid #E5EEF8;border-radius:12px;overflow:hidden;display:table}.vacv2-vaccine-box th{background:#F5F8FD}.vacv2-vaccine-box th,.vacv2-vaccine-box td{padding:10px 9px;font-size:12px}.vacv2-vaccine-box td.pendente,.vacv2-vaccine-box td.fora,.vacv2-vaccine-box td.ok,.vacv2-vaccine-box td.branco{background:transparent!important}.vacv2-vac-badge{border-radius:999px;padding:5px 9px}.vacv2-vac-badge.ok{background:#E7F8ED;color:#09834B}.vacv2-vac-badge.pendente{background:#FFE5E5;color:#D90429}.vacv2-vac-badge.fora{background:#FFF4DC;color:#D97706}.vacv2-vac-badge.branco{background:#EEF2F7;color:#475569}.vacv2-interpretar li{margin-bottom:4px}.layout{grid-template-columns:286px 1fr}.sidebar{background:#FFFFFF!important;color:#082B67!important;border-right:1px solid #D9E7F7;box-shadow:4px 0 22px rgba(12,45,80,.04)}.sidebar h2{display:none}.user-box{display:none}.menu-btn{background:transparent!important;color:#082B67!important;border-radius:14px;min-height:50px;font-weight:900;display:flex;align-items:center;gap:12px;padding:12px 14px}.menu-btn:hover{background:#F1F6FF!important}.menu-btn.active{background:#075BD8!important;color:#fff!important;box-shadow:0 10px 24px rgba(7,91,216,.22)}.sidebar-footer{color:#64748B;border-top:1px solid #E5EEF8;margin-top:auto;padding-top:18px}.topbar{padding:14px 22px}.topbar-title h1{font-size:24px;color:#082B67}.topbar-title p{font-size:13px}.page-body{padding:14px 20px 22px;background:#F4F8FF}@media(max-width:1600px){.vacv2-grid-main{grid-template-columns:minmax(0,1fr) 455px}.vacv2-filters-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.vacv2-filter-actions{grid-column:span 4;display:flex;justify-content:flex-end}.vacv2-check{min-height:38px}.vacv2-kpis{grid-template-columns:repeat(5,minmax(120px,1fr))}.vacv2-kpi{padding:12px}.vacv2-kpi .kpi-icon{width:46px;height:46px;flex-basis:46px}.vacv2-kpi .kpi-label{font-size:11px}.vacv2-kpi .kpi-value{font-size:25px}}@media(max-width:1350px){.vacv2-grid-main{grid-template-columns:1fr}.vacv2-side{position:static}.vacv2-exec-strip{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.vacv2-header{flex-direction:column;align-items:flex-start}.vacv2-header-actions{justify-content:flex-start}.vacv2-filters-grid,.vacv2-chart-filters,.vacv2-exec-strip{grid-template-columns:1fr}.vacv2-filter-actions{grid-column:auto;justify-content:flex-start}.vacv2-kpis{grid-template-columns:1fr}.vacv2-card-head,.vacv2-history-head{flex-direction:column;align-items:flex-start}.vacv2-student-grid{grid-template-columns:1fr}.layout{grid-template-columns:1fr}.topbar{position:relative}}
+
+
+
+/* =========================================================
+   SIMVE V6C — DETALHE INLINE NA TABELA VACINAL
+   Remove o drawer fixo e exibe o detalhe apenas na linha clicada.
+   ========================================================= */
+.vacv2-inline-row td {
+  background: #f8fbff !important;
+  padding: 0 !important;
+  border-bottom: 1px solid #dbe7f7 !important;
+}
+.vacv2-inline-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr);
+  gap: 16px;
+  padding: 16px;
+  border-left: 4px solid #2563eb;
+  box-shadow: inset 0 1px 0 rgba(37,99,235,.08);
+}
+.vacv2-inline-main,
+.vacv2-inline-vaccines {
+  background: #ffffff;
+  border: 1px solid #d9e3f0;
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 8px 20px rgba(12,45,80,.05);
+}
+.vacv2-inline-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.vacv2-inline-label {
+  display: inline-flex;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: #e8f2ff;
+  color: #1d6fd1;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 6px;
+}
+.vacv2-inline-title h3 {
+  margin: 0;
+  color: #0f2744;
+  font-size: 17px;
+  font-weight: 950;
+  line-height: 1.2;
+}
+.vacv2-inline-title p {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}
+.vacv2-inline-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.vacv2-inline-grid div {
+  background: #f8fbff;
+  border: 1px solid #e2eaf5;
+  border-radius: 12px;
+  padding: 10px;
+  min-width: 0;
+}
+.vacv2-inline-grid span {
+  display: block;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.vacv2-inline-grid strong {
+  display: block;
+  color: #0f2744;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.vacv2-inline-pendency {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+}
+.vacv2-inline-pendency strong,
+.vacv2-inline-pendency small {
+  display: block;
+}
+.vacv2-inline-pendency strong {
+  font-size: 13px;
+  font-weight: 950;
+}
+.vacv2-inline-pendency small {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.vacv2-inline-vaccines h4 {
+  margin: 0 0 12px;
+  color: #0f2744;
+  font-size: 15px;
+  font-weight: 950;
+}
+.vacv2-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.vacv2-vac-chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.vacv2-vac-chip.badge-ok,
+.vacv2-vac-chip.ok {
+  background: #e7f8ed;
+  color: #15803d;
+}
+.vacv2-vac-chip.badge-danger,
+.vacv2-vac-chip.danger {
+  background: #ffe5e5;
+  color: #dc2626;
+}
+.vacv2-vac-chip.badge-warning,
+.vacv2-vac-chip.warning {
+  background: #fff4dc;
+  color: #d97706;
+}
+.vacv2-vac-chip.badge-neutral,
+.vacv2-vac-chip.neutral,
+.vacv2-vac-chip.gray {
+  background: #eef2f7;
+  color: #475569;
+}
+.vacv2-table tbody tr.selected > td {
+  background: #eef6ff !important;
+}
+.vacv2-table .vacv2-icon-btn {
+  min-width: 34px;
+}
+@media (max-width: 1200px) {
+  .vacv2-inline-detail {
+    grid-template-columns: 1fr;
+  }
+  .vacv2-inline-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 720px) {
+  .vacv2-inline-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =========================================================
+   SIMVE — CORREÇÃO FINAL DO FUNDO DO LOGIN (GitHub/jsDelivr)
+   Mantém a imagem hospedada e evita que blocos responsivos sobrescrevam o fundo.
+   ========================================================= */
+.auth-wrapper.simve-login-vue.simve-bg-final{
+  width:100vw!important;
+  height:100dvh!important;
+  min-width:0!important;
+  min-height:100dvh!important;
+  overflow:hidden!important;
+  background-image:url('https://cdn.jsdelivr.net/gh/imunizacaoitaitinga-cmyk/simve-assets@main/fundo-login.webp?v=6')!important;
+  background-size:cover!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+  background-color:#EAF5FF!important;
+}
+
+</style>
+
+<style>
+/* =========================================================
+   SIMVE — AJUSTE RESPONSIVO REAL DA TELA DE LOGIN
+   Corrige redimensionamento do fundo e posição do card.
+   ========================================================= */
+
+.auth-wrapper.simve-login-vue.simve-bg-final {
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+
+  background-image: url('https://raw.githubusercontent.com/imunizacaoitaitinga-cmyk/simve-assets/main/fundo-login.webp?v=6') !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+}
+
+.simve-login-screen,
+.simve-login-layer {
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+/* Card do login: posição proporcional e mais estável */
+.simve-card-final {
+  position: absolute !important;
+  top: 50% !important;
+  right: clamp(48px, 7vw, 132px) !important;
+  transform: translateY(-50%) !important;
+
+  width: clamp(360px, 26vw, 430px) !important;
+  max-width: min(430px, calc(100vw - 48px)) !important;
+  min-width: 0 !important;
+
+  background: rgba(255,255,255,.965) !important;
+  border: 1px solid rgba(218,228,242,.9) !important;
+  border-radius: 26px !important;
+  padding: clamp(24px, 2vw, 30px) clamp(28px, 2.2vw, 34px) 24px !important;
+  box-shadow: 0 24px 60px rgba(8,43,103,.16) !important;
+  z-index: 5 !important;
+}
+
+/* Redução proporcional dos elementos internos */
+.simve-card-final .simve-login-avatar {
+  width: clamp(82px, 6vw, 98px) !important;
+  height: clamp(82px, 6vw, 98px) !important;
+  margin-bottom: 12px !important;
+}
+
+.simve-card-final .simve-login-avatar img {
+  width: 86% !important;
+  height: 86% !important;
+  object-fit: contain !important;
+}
+
+.simve-card-final h1 {
+  margin: 0 0 7px !important;
+  font-size: clamp(25px, 2vw, 29px) !important;
+  line-height: 1.08 !important;
+}
+
+.simve-card-final .simve-login-sub {
+  margin-bottom: 18px !important;
+  font-size: clamp(13px, 1vw, 14.5px) !important;
+  line-height: 1.35 !important;
+}
+
+.simve-card-final .simve-field {
+  margin-bottom: 12px !important;
+}
+
+.simve-card-final .simve-field label {
+  font-size: 13.5px !important;
+  margin-bottom: 6px !important;
+}
+
+.simve-card-final .simve-input {
+  min-height: 47px !important;
+  border-radius: 11px !important;
+}
+
+.simve-card-final .simve-input input,
+.simve-card-final .simve-input select {
+  min-height: 45px !important;
+  font-size: 14px !important;
+}
+
+.simve-card-final .simve-actions {
+  margin-bottom: 13px !important;
+  font-size: 12.8px !important;
+}
+
+.simve-card-final .simve-btn-primary {
+  min-height: 50px !important;
+  font-size: 16px !important;
+}
+
+.simve-about-login-btn {
+  min-height: 42px !important;
+  margin-top: 10px !important;
+  font-size: 13px !important;
+}
+
+/* Notebook comum: evita o card invadir a imagem central */
+@media (max-width: 1450px) {
+  .auth-wrapper.simve-login-vue.simve-bg-final {
+    background-position: center center !important;
+  }
+
+  .simve-card-final {
+    right: clamp(34px, 5.5vw, 86px) !important;
+    width: clamp(350px, 28vw, 405px) !important;
+    transform: translateY(-50%) !important;
+  }
+}
+
+/* Telas com pouca altura: diminui o card sem deslocar */
+@media (max-height: 760px) {
+  .simve-card-final {
+    transform: translateY(-50%) scale(.92) !important;
+    transform-origin: center right !important;
+  }
+}
+
+@media (max-height: 680px) {
+  .simve-card-final {
+    transform: translateY(-50%) scale(.84) !important;
+    transform-origin: center right !important;
+  }
+}
+
+/* Tablet/celular: prioriza o login centralizado */
+@media (max-width: 900px) {
+  .auth-wrapper.simve-login-vue.simve-bg-final {
+    background-size: cover !important;
+    background-position: center center !important;
+  }
+
+  .simve-card-final {
+    top: 50% !important;
+    right: 50% !important;
+    transform: translate(50%, -50%) scale(.94) !important;
+    transform-origin: center center !important;
+    width: min(400px, calc(100vw - 28px)) !important;
+    max-width: calc(100vw - 28px) !important;
+  }
+}
+
+/* Monitor muito largo: não deixa o card fugir para fora da composição */
+@media (min-width: 1800px) {
+  .simve-card-final {
+    right: 8.5vw !important;
+  }
+}
+</style>
+
+</style>

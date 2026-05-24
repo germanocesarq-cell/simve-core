@@ -1,0 +1,328 @@
+<style>
+/* =========================================================
+   SIMVE — ModalStyles.html
+   Etapa 1D: modais, overlays, mensagens e estados flutuantes.
+   Seguro: não remove CSS antigo; apenas centraliza regras prioritárias.
+   ========================================================= */
+
+:root {
+  --simve-modal-navy:#082B67;
+  --simve-modal-blue:#075BD8;
+  --simve-modal-border:#D9E3F0;
+  --simve-modal-soft:#F8FBFF;
+  --simve-modal-danger:#DC2626;
+  --simve-modal-success:#15803D;
+  --simve-modal-warning:#D97706;
+}
+
+/* Mensagens superiores do sistema */
+.top-message {
+  margin-bottom:16px !important;
+  padding:12px 14px !important;
+  border-radius:12px !important;
+  font-weight:800 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:12px !important;
+  box-shadow:0 8px 22px rgba(8,43,103,.055) !important;
+}
+.top-message.error {
+  background:#FFF1F1 !important;
+  color:#A61B1B !important;
+  border:1px solid #F1B5B5 !important;
+}
+.top-message.success {
+  background:#EEFDF3 !important;
+  color:#166534 !important;
+  border:1px solid #BDEBD0 !important;
+}
+.close-msg {
+  width:28px !important;
+  height:28px !important;
+  border:0 !important;
+  border-radius:8px !important;
+  background:rgba(255,255,255,.55) !important;
+  color:inherit !important;
+  cursor:pointer !important;
+  font-size:18px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+}
+.close-msg:hover { background:rgba(255,255,255,.9) !important; }
+
+/* Estado de carregamento genérico */
+.loading,
+.simve-loading-box {
+  margin-bottom:14px !important;
+  padding:12px 14px !important;
+  border-radius:12px !important;
+  background:#FFF8E8 !important;
+  color:#7D6000 !important;
+  border:1px solid #F0D9A7 !important;
+  font-weight:850 !important;
+}
+
+/* Overlay base para modais */
+.simve-modal-backdrop,
+.ranking-modal-backdrop {
+  position:fixed !important;
+  inset:0 !important;
+  z-index:9998 !important;
+  display:flex !important;
+  padding:28px !important;
+  background:rgba(15,23,42,.56) !important;
+  backdrop-filter:blur(2px) !important;
+}
+
+/* Modal Sobre o SIMVE */
+.simve-modal-backdrop.simve-about-proposta2 {
+  justify-content:flex-end !important;
+  align-items:flex-start !important;
+  padding:24px 34px 130px !important;
+  background:rgba(8,43,103,.12) !important;
+  z-index:9999 !important;
+}
+.simve-about-card-proposta2,
+.simve-about-card {
+  background:#FFFFFF !important;
+  color:var(--simve-modal-navy) !important;
+  border:1px solid rgba(217,227,240,.9) !important;
+  border-radius:24px !important;
+  box-shadow:0 24px 64px rgba(9,36,92,.18) !important;
+  max-height:calc(100vh - 150px) !important;
+  overflow-y:auto !important;
+}
+.simve-about-card-proposta2 {
+  width:430px !important;
+  max-width:calc(100vw - 28px) !important;
+  padding:28px 30px 30px !important;
+  position:relative !important;
+}
+.simve-about-close-proposta2,
+.simve-about-close {
+  position:absolute !important;
+  top:16px !important;
+  right:18px !important;
+  width:30px !important;
+  height:30px !important;
+  border:0 !important;
+  background:transparent !important;
+  color:var(--simve-modal-navy) !important;
+  font-size:30px !important;
+  line-height:24px !important;
+  cursor:pointer !important;
+}
+.simve-about-close-proposta2:hover,
+.simve-about-close:hover { opacity:.7 !important; }
+.simve-about-header-proposta2 {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:10px !important;
+  margin:2px 34px 18px !important;
+}
+.simve-about-header-proposta2 h2 {
+  margin:0 !important;
+  color:var(--simve-modal-navy) !important;
+  font-size:22px !important;
+  font-weight:950 !important;
+  text-align:center !important;
+}
+.simve-about-heart {
+  width:38px !important;
+  height:38px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border-radius:50% !important;
+  background:#E8F2FF !important;
+  font-size:20px !important;
+}
+.simve-about-quote {
+  background:#F8FBFF !important;
+  border:1px solid #D9E3F0 !important;
+  border-left:5px solid var(--simve-modal-blue) !important;
+  border-radius:14px !important;
+  padding:14px 16px !important;
+  color:#173468 !important;
+  font-size:14px !important;
+  line-height:1.55 !important;
+  font-weight:850 !important;
+  margin-bottom:18px !important;
+}
+.simve-about-row {
+  display:grid !important;
+  grid-template-columns:42px 1fr !important;
+  gap:12px !important;
+  align-items:flex-start !important;
+  margin-bottom:14px !important;
+}
+.simve-about-row-icon {
+  width:38px !important;
+  height:38px !important;
+  border-radius:50% !important;
+  background:#F0F4FA !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  font-size:18px !important;
+}
+.simve-about-row p {
+  margin:0 !important;
+  color:#344866 !important;
+  font-size:14px !important;
+  line-height:1.55 !important;
+  font-weight:600 !important;
+}
+.simve-about-signature {
+  margin-top:18px !important;
+  padding:16px !important;
+  border-radius:16px !important;
+  background:#ECF9F2 !important;
+  border:1px solid #BFEFD8 !important;
+}
+.sig-name { color:#082B67 !important; font-size:15px !important; font-weight:950 !important; }
+.sig-role { color:#344866 !important; font-size:13px !important; font-weight:800 !important; margin-top:3px !important; }
+.sig-note { color:#0F7A3C !important; font-size:12px !important; font-weight:850 !important; margin-top:8px !important; }
+.simve-about-btn-proposta2,
+.simve-about-btn {
+  width:100% !important;
+  min-height:48px !important;
+  margin-top:22px !important;
+  border:1px solid #CBD7E8 !important;
+  border-radius:12px !important;
+  background:#FFFFFF !important;
+  color:var(--simve-modal-navy) !important;
+  font-size:15px !important;
+  font-weight:950 !important;
+  cursor:pointer !important;
+}
+.simve-about-btn-proposta2:hover,
+.simve-about-btn:hover { background:#F6FAFF !important; }
+
+/* Modal ranking/listagens */
+.ranking-modal-backdrop {
+  align-items:center !important;
+  justify-content:center !important;
+}
+.ranking-modal {
+  width:min(980px, 92vw) !important;
+  max-width:92vw !important;
+  max-height:88vh !important;
+  background:#FFFFFF !important;
+  border:1px solid var(--simve-modal-border) !important;
+  border-radius:18px !important;
+  box-shadow:0 22px 70px rgba(0,0,0,.28) !important;
+  overflow:hidden !important;
+  display:flex !important;
+  flex-direction:column !important;
+}
+.ranking-modal-header,
+.ranking-modal-footer {
+  background:#FFFFFF !important;
+  border-color:#EDF2F7 !important;
+}
+.ranking-modal-body {
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+}
+.ranking-modal-close {
+  border:0 !important;
+  background:transparent !important;
+  color:#334155 !important;
+  font-size:26px !important;
+  cursor:pointer !important;
+}
+.ranking-modal-close:hover {
+  background:#F1F5F9 !important;
+  border-radius:8px !important;
+}
+
+/* Toasts e mensagens flutuantes */
+.cad-cpf-toast,
+.simve-toast {
+  position:fixed !important;
+  left:50% !important;
+  bottom:34px !important;
+  transform:translateX(-50%) !important;
+  z-index:9999 !important;
+  width:min(620px, calc(100vw - 48px)) !important;
+  background:#FFFFFF !important;
+  border:1px solid #CFE7D8 !important;
+  border-radius:18px !important;
+  box-shadow:0 22px 60px rgba(8,43,103,.20) !important;
+  padding:18px 22px 14px !important;
+  display:flex !important;
+  gap:14px !important;
+  align-items:flex-start !important;
+}
+.cad-cpf-toast-icon,
+.simve-toast-icon {
+  width:38px !important;
+  height:38px !important;
+  border-radius:50% !important;
+  background:#16A34A !important;
+  color:#FFFFFF !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  font-weight:950 !important;
+  flex:0 0 38px !important;
+}
+.cad-cpf-toast-close,
+.simve-toast-close {
+  border:0 !important;
+  background:transparent !important;
+  color:#15803D !important;
+  font-size:24px !important;
+  line-height:1 !important;
+  cursor:pointer !important;
+  padding:0 4px !important;
+}
+
+/* Spinner pequeno reutilizável */
+.cad-spinner,
+.simve-spinner {
+  width:14px !important;
+  height:14px !important;
+  border:2px solid rgba(31,100,207,.25) !important;
+  border-top-color:#1F64CF !important;
+  border-radius:50% !important;
+  display:inline-block !important;
+  vertical-align:-2px !important;
+  margin-right:6px !important;
+  animation:simveSpin .75s linear infinite !important;
+}
+@keyframes simveSpin { to { transform:rotate(360deg); } }
+
+/* Responsivo */
+@media (max-width: 760px) {
+  .simve-modal-backdrop,
+  .simve-modal-backdrop.simve-about-proposta2,
+  .ranking-modal-backdrop {
+    justify-content:center !important;
+    align-items:center !important;
+    padding:14px !important;
+    background:rgba(8,43,103,.24) !important;
+  }
+  .simve-about-card-proposta2,
+  .simve-about-card,
+  .ranking-modal {
+    width:94vw !important;
+    max-width:94vw !important;
+    max-height:88vh !important;
+  }
+  .ranking-modal-header,
+  .ranking-modal-footer {
+    flex-direction:column !important;
+    align-items:flex-start !important;
+  }
+  .cad-cpf-toast,
+  .simve-toast {
+    bottom:18px !important;
+    width:calc(100vw - 28px) !important;
+    padding:16px !important;
+  }
+}
+</style>

@@ -1,0 +1,1687 @@
+<style>
+/* Ajuste operacional da lista de CPF - layout limpo e focado na ação */
+  .cad-cpf-layout-note {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#eef6ff;
+    border:1px solid #cfe3ff;
+    color:#0f3b75;
+    border-radius:12px;
+    padding:12px 14px;
+    font-size:13px;
+    font-weight:800;
+    line-height:1.35;
+    margin-bottom:14px;
+  }
+  .cad-cpf-layout-note strong { color:#082b67; }
+
+  .cad-table-v10.cad-table-cpf-operacional {
+    table-layout:fixed;
+    min-width:1040px;
+  }
+  .cad-table-v10.cad-table-cpf-operacional th,
+  .cad-table-v10.cad-table-cpf-operacional td {
+    vertical-align:middle;
+  }
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(1),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(1) { width:42px; text-align:center; }
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(2),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(2) { width:105px; }
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(3),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(3) { width:auto; }
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(4),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(4) { width:70px; text-align:center; }
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(5),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(5) { width:175px; }
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(6),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(6) { width:175px; }
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(7),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(7) { width:110px; text-align:center; }
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(8),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(8) { width:120px; text-align:center; }
+
+  .cad-aluno-cell strong {
+    display:block;
+    max-width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-weight:950;
+    color:#082b67;
+  }
+  .cad-aluno-cell small {
+    display:block;
+    margin-top:4px;
+    color:#64748b;
+    font-size:11px;
+    font-weight:800;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .cad-mat {
+    display:inline-block;
+    font-weight:900;
+    color:#334155;
+    background:#f8fbff;
+    border:1px solid #d9e3f0;
+    border-radius:8px;
+    padding:5px 8px;
+    white-space:nowrap;
+    font-size:12px;
+  }
+  .cad-cpf-input {
+    width:150px;
+    min-height:36px;
+    padding:8px 10px;
+    border:1px solid #cfd8e3;
+    border-radius:8px;
+    font-weight:900;
+    color:#0f2744;
+    background:#fff;
+    outline:none;
+  }
+  .cad-cpf-input:focus {
+    border-color:#1f64cf;
+    box-shadow:0 0 0 3px rgba(31,100,207,.10);
+  }
+  .cad-cpf-input:disabled {
+    background:#f1f5f9;
+    color:#64748b;
+    cursor:not-allowed;
+  }
+  .cad-cpf-save {
+    min-width:86px;
+    border:1px solid #83c7a0;
+    border-radius:9px;
+    padding:8px 10px;
+    background:#ffffff;
+    color:#15803d;
+    font-weight:950;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .cad-cpf-save:hover { background:#f0fff6; }
+  .cad-cpf-save:disabled { opacity:.55; cursor:not-allowed; }
+  .cad-cpf-locked {
+    color:#64748b;
+    font-size:12px;
+    font-weight:800;
+    line-height:1.35;
+    display:block;
+    margin-top:4px;
+  }
+  .cad-status-pill {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:6px 11px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:950;
+    white-space:nowrap;
+  }
+  .cad-status-pendente { background:#ffe5e5; color:#dc2626; }
+  .cad-status-ok { background:#e7f8ed; color:#15803d; }
+
+  .cad-cpf-success-banner {
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:14px;
+    background:#f0fff6;
+    border:1px solid #9bd7b5;
+    color:#0f6b35;
+    border-radius:14px;
+    padding:14px 16px;
+    margin:0 0 16px;
+    box-shadow:0 8px 22px rgba(21,128,61,.08);
+  }
+  .cad-cpf-success-banner .left {
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+  }
+  .cad-cpf-success-banner .check {
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:2px solid #16a34a;
+    font-weight:950;
+    flex:0 0 34px;
+  }
+  .cad-cpf-success-banner strong {
+    display:block;
+    font-size:15px;
+    margin-bottom:4px;
+    color:#0f6b35;
+  }
+  .cad-cpf-success-banner small {
+    display:block;
+    font-size:12px;
+    color:#166534;
+    font-weight:800;
+    line-height:1.35;
+  }
+  .cad-cpf-success-banner button {
+    border:0;
+    background:transparent;
+    color:#15803d;
+    font-size:22px;
+    line-height:1;
+    cursor:pointer;
+    padding:2px 6px;
+  }
+  .cad-row-saved {
+    background:#f0fff6 !important;
+    outline:1px solid #9bd7b5;
+    outline-offset:-1px;
+  }
+  .cad-row-saved td {
+    border-bottom-color:#bdebd0 !important;
+  }
+  .cad-cpf-input.saved {
+    border-color:#16a34a;
+    background:#f0fff6;
+    color:#0f6b35;
+  }
+  .cad-cpf-input-wrap {
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .cad-input-check {
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    border:2px solid #16a34a;
+    color:#16a34a;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:950;
+    font-size:13px;
+    flex:0 0 24px;
+  }
+  .cad-saved-action {
+    display:inline-flex;
+    flex-direction:column;
+    align-items:center;
+    color:#15803d;
+    font-weight:950;
+    line-height:1.2;
+  }
+  .cad-saved-action small {
+    margin-top:2px;
+    color:#15803d;
+    font-size:11px;
+    font-weight:800;
+  }
+
+
+
+  /* SIMVE v4 - tabela operacional CPF: compacta, sem buracos e com feedback visível */
+  .cad-cpf-layout-note { display:none !important; }
+
+  .cad-list-card-v10 .cad-list-header-v10 {
+    align-items:center;
+    margin-bottom:14px;
+  }
+
+  .cad-list-card-v10 .cad-search-row .btn-secondary {
+    width:auto;
+    min-height:42px;
+    padding:10px 18px;
+    border-radius:12px;
+    border:1px solid #c8dcff;
+    color:#0b5bd3;
+    background:#fff;
+    font-weight:950;
+  }
+
+  .cad-table-v10.cad-table-cpf-operacional {
+    table-layout:fixed !important;
+    min-width:980px !important;
+    width:100% !important;
+  }
+
+  .cad-table-v10.cad-table-cpf-operacional th,
+  .cad-table-v10.cad-table-cpf-operacional td {
+    vertical-align:middle !important;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(1),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(1) { width:110px !important; }
+
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(2),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(2) { width:auto !important; min-width:0 !important; }
+
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(3),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(3) { width:230px !important; }
+
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(4),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(4) { width:220px !important; }
+
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(5),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(5) { width:130px !important; text-align:center !important; }
+
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(6),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(6) { width:120px !important; text-align:center !important; }
+
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(n+7),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(n+7) { display:none !important; }
+
+  .cad-aluno-cell strong {
+    max-width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  .cad-cpf-input { width:185px !important; }
+  .cad-cpf-save { min-width:94px !important; }
+
+  .cad-cpf-toast {
+    position:fixed;
+    left:50%;
+    bottom:34px;
+    transform:translateX(-50%);
+    z-index:9999;
+    width:min(620px, calc(100vw - 48px));
+    background:#fff;
+    border:1px solid #cfe7d8;
+    border-radius:18px;
+    box-shadow:0 22px 60px rgba(8,43,103,.20);
+    padding:18px 22px 14px;
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    color:#0f6b35;
+  }
+  .cad-cpf-toast-icon {
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:#16a34a;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:950;
+    flex:0 0 38px;
+  }
+  .cad-cpf-toast-content { flex:1; min-width:0; }
+  .cad-cpf-toast-content strong {
+    display:block;
+    color:#0f6b35;
+    font-size:16px;
+    font-weight:950;
+    margin-bottom:4px;
+  }
+  .cad-cpf-toast-content small {
+    display:block;
+    color:#35537a;
+    font-size:13px;
+    font-weight:800;
+  }
+  .cad-cpf-toast-close {
+    border:0;
+    background:transparent;
+    color:#15803d;
+    font-size:24px;
+    line-height:1;
+    cursor:pointer;
+    padding:0 4px;
+  }
+  .cad-cpf-toast-progress {
+    position:absolute;
+    left:22px;
+    right:22px;
+    bottom:10px;
+    height:4px;
+    border-radius:999px;
+    background:#16a34a;
+    animation:cadToastProgress 4.5s linear forwards;
+  }
+  @keyframes cadToastProgress { from { width:calc(100% - 44px); } to { width:0; } }
+
+  @media (max-width: 900px) {
+    .cad-table-v10.cad-table-cpf-operacional { min-width:900px !important; }
+  }
+
+
+  /* SIMVE v5 - redistribuição final da tabela e estado Atualizando */
+  .cad-table-v10.cad-table-cpf-operacional {
+    table-layout: fixed !important;
+    min-width: 1180px !important;
+    width: 100% !important;
+  }
+
+  .cad-table-v10.cad-table-cpf-operacional th,
+  .cad-table-v10.cad-table-cpf-operacional td {
+    padding: 13px 12px !important;
+  }
+
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(1),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(1) { width: 115px !important; }
+
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(2),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(2) { width: 42% !important; }
+
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(3),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(3) { width: 190px !important; }
+
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(4),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(4) { width: 205px !important; }
+
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(5),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(5) { width: 125px !important; text-align:center !important; }
+
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(6),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(6) { width: 145px !important; text-align:center !important; }
+
+  .cad-cpf-input { width: 170px !important; }
+  .cad-cpf-save { min-width: 118px !important; }
+
+  .cad-row-saving {
+    background: #f4f8ff !important;
+    box-shadow: inset 4px 0 0 #1f64cf;
+  }
+
+  .cad-row-saving td {
+    border-bottom-color: #cfe3ff !important;
+  }
+
+  .cad-status-loading {
+    background:#eaf2ff;
+    color:#1f64cf;
+  }
+
+  .cad-cpf-save.saving {
+    border-color:#9fc0ff;
+    background:#f4f8ff;
+    color:#1f64cf;
+  }
+
+  .cad-spinner {
+    width:14px;
+    height:14px;
+    border:2px solid rgba(31,100,207,.25);
+    border-top-color:#1f64cf;
+    border-radius:50%;
+    display:inline-block;
+    vertical-align:-2px;
+    margin-right:6px;
+    animation:cadSpin .75s linear infinite;
+  }
+
+  @keyframes cadSpin { to { transform:rotate(360deg); } }
+
+  .cad-cpf-processing-msg {
+    display:block;
+    margin-top:7px;
+    color:#1f64cf;
+    font-size:12px;
+    font-weight:850;
+  }
+
+  .cad-cpf-toast-content small {
+    color:#0f6b35 !important;
+  }
+
+
+
+  /* SIMVE v6 - painel cadastral mais limpo, filtros enxutos e tabela operacional equilibrada */
+  .simve-cadastral-v10 {
+    --cad-blue:#0b5bd3;
+    --cad-navy:#082b67;
+    --cad-border:#d9e7fb;
+    --cad-soft:#f8fbff;
+    --cad-red:#ef4444;
+    --cad-green:#16a34a;
+    --cad-orange:#f59e0b;
+  }
+
+  .simve-cadastral-v10 .cad-header h1 {
+    font-size:28px !important;
+    letter-spacing:-.6px;
+  }
+
+  .simve-cadastral-v10 .cad-header p {
+    color:#52647f !important;
+    font-weight:700;
+  }
+
+  .cad-kpis-v10 {
+    gap:14px !important;
+    margin-bottom:16px !important;
+  }
+
+  .cad-kpis-v10 .cad-kpi {
+    min-height:94px !important;
+    border-radius:18px !important;
+    background:#fff !important;
+    box-shadow:0 10px 26px rgba(8,43,103,.055) !important;
+    border:1px solid var(--cad-border) !important;
+  }
+
+  .cad-kpis-v10 .cad-kpi.blue { border-left:4px solid var(--cad-blue) !important; }
+  .cad-kpis-v10 .cad-kpi.red { border-left:4px solid var(--cad-red) !important; }
+  .cad-kpis-v10 .cad-kpi.orange { border-left:4px solid var(--cad-orange) !important; }
+  .cad-kpis-v10 .cad-kpi.green { border-left:4px solid var(--cad-green) !important; }
+
+  .cad-kpis-v10 .cad-kpi .icon {
+    width:54px !important;
+    height:54px !important;
+    border-radius:16px !important;
+    background:#eef6ff !important;
+    font-size:25px !important;
+  }
+
+  .cad-kpis-v10 .cad-kpi.red .icon { background:#fff1f1 !important; }
+  .cad-kpis-v10 .cad-kpi.orange .icon { background:#fff7e6 !important; }
+  .cad-kpis-v10 .cad-kpi.green .icon { background:#eefcf3 !important; }
+
+  .cad-filters-v10 {
+    border-radius:18px !important;
+    background:#fff !important;
+    border:1px solid var(--cad-border) !important;
+    box-shadow:0 10px 28px rgba(8,43,103,.055) !important;
+    margin-bottom:16px !important;
+  }
+
+  .cad-filters-v10::before {
+    content:'Filtros';
+    display:block;
+    color:var(--cad-navy);
+    font-size:18px;
+    font-weight:950;
+    margin:0 0 12px;
+  }
+
+  .cad-filter-grid-v10 {
+    grid-template-columns: minmax(180px, .85fr) minmax(230px, .95fr) minmax(320px, 1.35fr) auto !important;
+    gap:16px !important;
+    align-items:end !important;
+  }
+
+  .cad-filter-buttons-v10 {
+    display:flex !important;
+    align-items:end !important;
+    justify-content:flex-end !important;
+    margin:0 !important;
+  }
+
+  .cad-filter-buttons-v10 .btn-secondary {
+    min-width:145px !important;
+    min-height:44px !important;
+    border-radius:12px !important;
+    border:1px solid #c8dcff !important;
+    background:#fff !important;
+    color:var(--cad-blue) !important;
+    font-weight:950 !important;
+  }
+
+  .cad-filter-buttons-v10 .btn-primary { display:none !important; }
+
+  .cad-search-box-v10 input,
+  .cad-filters-v10 select {
+    border-color:#cfdff7 !important;
+    background:#fff !important;
+    font-weight:800 !important;
+    color:var(--cad-navy) !important;
+  }
+
+  .cad-analytics-v10 {
+    grid-template-columns: 1.35fr .85fr !important;
+    gap:16px !important;
+    margin-bottom:16px !important;
+  }
+
+  .cad-card {
+    border:1px solid var(--cad-border) !important;
+    box-shadow:0 10px 26px rgba(8,43,103,.055) !important;
+  }
+
+  .cad-summary-card-v10 .cad-summary-item-v10 {
+    background:#fff !important;
+    border-bottom:1px solid #edf3fb !important;
+    color:var(--cad-navy) !important;
+  }
+
+  .cad-summary-card-v10 .cad-summary-item-v10.red,
+  .cad-summary-card-v10 .cad-summary-item-v10.blue,
+  .cad-summary-card-v10 .cad-summary-item-v10.orange {
+    border-radius:0 !important;
+  }
+
+  .cad-summary-card-v10 .cad-summary-item-v10 strong { color:#ef4444 !important; }
+  .cad-summary-card-v10 .cad-summary-item-v10.blue strong { color:#0b5bd3 !important; }
+  .cad-summary-card-v10 .cad-summary-item-v10.orange strong { color:#f59e0b !important; }
+
+  .cad-bars-v10 .cad-bar-fill-v10 { background:#ef4444 !important; }
+
+  .cad-list-card-v10 {
+    border-radius:18px !important;
+    overflow:hidden;
+  }
+
+  .cad-list-header-v10 {
+    padding-bottom:8px !important;
+  }
+
+  .cad-list-header-v10 h2 {
+    font-size:21px !important;
+    color:var(--cad-navy) !important;
+  }
+
+  .cad-list-header-v10 .btn-secondary::before { content:'⇩ '; }
+
+  .cad-table-v10.cad-table-cpf-operacional {
+    min-width:0 !important;
+    table-layout:fixed !important;
+    width:100% !important;
+  }
+
+  .cad-table-v10.cad-table-cpf-operacional th,
+  .cad-table-v10.cad-table-cpf-operacional td {
+    padding:12px 14px !important;
+    border-bottom:1px solid #e8f0fb !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    white-space:nowrap !important;
+  }
+
+  .cad-table-v10.cad-table-cpf-operacional th {
+    background:#f4f8ff !important;
+    color:var(--cad-navy) !important;
+    font-size:13px !important;
+  }
+
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(1),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(1) { width:9% !important; }
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(2),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(2) { width:36% !important; }
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(3),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(3) { width:16% !important; }
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(4),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(4) { width:17% !important; }
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(5),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(5) { width:10% !important; text-align:center !important; }
+  .cad-table-v10.cad-table-cpf-operacional th:nth-child(6),
+  .cad-table-v10.cad-table-cpf-operacional td:nth-child(6) { width:12% !important; text-align:center !important; }
+
+  .cad-mat {
+    background:#f8fbff !important;
+    border:1px solid #d7e5f8 !important;
+    color:#334155 !important;
+  }
+
+  .cad-cpf-input {
+    width:100% !important;
+    max-width:185px !important;
+    min-height:38px !important;
+    border-radius:9px !important;
+  }
+
+  .cad-cpf-save {
+    min-width:128px !important;
+    min-height:38px !important;
+    border-radius:10px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:6px !important;
+  }
+
+  .cad-row-saving {
+    background:#f4f8ff !important;
+    box-shadow:inset 4px 0 0 var(--cad-blue) !important;
+  }
+
+  .cad-row-saving .cad-cpf-save {
+    background:#eef6ff !important;
+    color:var(--cad-blue) !important;
+    border-color:#9fc0ff !important;
+  }
+
+  .cad-cpf-processing-msg { display:none !important; }
+
+  @media (max-width: 1250px) {
+    .cad-filter-grid-v10 { grid-template-columns:1fr 1fr !important; }
+    .cad-analytics-v10 { grid-template-columns:1fr !important; }
+    .cad-table-v10.cad-table-cpf-operacional { min-width:920px !important; }
+  }
+
+
+
+  /* SIMVE v7 - relatório de impressão e painel cadastral mais enxuto */
+  .cad-analytics-v10 .cad-summary-card-v10 { display:none !important; }
+  .cad-analytics-v10 { grid-template-columns:1fr !important; }
+
+  .cad-print-btn-v7 {
+    width:auto !important;
+    min-height:42px !important;
+    padding:10px 18px !important;
+    border-radius:12px !important;
+    border:1px solid #b7ddc7 !important;
+    color:#0f7a3c !important;
+    background:#f4fff8 !important;
+    font-weight:950 !important;
+    cursor:pointer;
+    margin-left:8px;
+  }
+  .cad-print-btn-v7:hover { background:#ecfff3 !important; }
+  .cad-print-btn-v7::before { content:'🖨️ '; }
+
+  .cad-export-actions-v7 {
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+
+  @media print {
+    .sidebar,
+    .topbar,
+    .cad-filters,
+    .cad-kpis,
+    .cad-analytics-v10,
+    .cad-pagination,
+    .cad-export-actions-v7,
+    .top-message { display:none !important; }
+  }
+
+
+
+  /* SIMVE v10 - filtros reposicionados na lista e ordenação por colunas */
+  .cad-list-card-v10 .cad-filters-v10 {
+    margin: 14px 0 16px !important;
+    box-shadow: none !important;
+    background: #f8fbff !important;
+  }
+  .cad-list-card-v10 .cad-filter-grid-v10 {
+    grid-template-columns: minmax(160px, .75fr) minmax(210px, .95fr) minmax(280px, 1.2fr) minmax(180px, .8fr) auto !important;
+  }
+  .cad-sort-hint-v10 {
+    margin: 6px 0 0;
+    color: #52647f;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .cad-table-v10 th.cad-sortable-th {
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .cad-table-v10 th.cad-sortable-th:hover {
+    color: #0b5bd3 !important;
+    background: #eaf3ff !important;
+  }
+  .cad-sort-indicator {
+    display: inline-flex;
+    margin-left: 6px;
+    color: #0b5bd3;
+    font-size: 11px;
+    font-weight: 950;
+  }
+  @media (max-width: 1250px) {
+    .cad-list-card-v10 .cad-filter-grid-v10 { grid-template-columns: 1fr 1fr !important; }
+  }
+  @media (max-width: 760px) {
+    .cad-list-card-v10 .cad-filter-grid-v10 { grid-template-columns: 1fr !important; }
+  }
+
+.ranking-escola-page .access-table { min-width:0; }
+    .ranking-escola-page .access-table th,
+    .ranking-escola-page .access-table td { font-size:13px; }
+    .ranking-evolution-card .ranking-card-title + .access-table { margin-top:6px; }
+    .ranking-info-box { background:#f8fbff; }
+    .ranking-metric-grid[v-if] { margin-top:0; }
+    @media (max-width: 1250px) {
+      .ranking-hero-card { grid-template-columns: 90px 1fr !important; }
+      .ranking-hero-divider { display:none !important; }
+    }
+  
+
+/* =========================================================
+   SIMVE - AJUSTE SEM INLINE + LARGURA TOTAL DA TELA
+   ========================================================= */
+.content,
+.page-body,
+.simve-vacinal-v2,
+.vacv2-grid-main,
+.vacv2-left,
+.vacv2-card {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.vacv2-grid-main {
+  display: block !important;
+}
+
+.vacv2-left {
+  min-width: 0 !important;
+}
+
+.vacv2-table-wrap {
+  width: 100% !important;
+  overflow-x: auto !important;
+}
+
+.vacv2-table {
+  width: 100% !important;
+}
+
+.vacv2-inline-row,
+.vacv2-inline-detail {
+  display: none !important;
+}
+
+.vacv2-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, .45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 24px;
+}
+
+.vacv2-modal {
+  width: min(920px, 95vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  position: relative;
+  box-shadow: 0 25px 80px rgba(0,0,0,.25);
+  border: 1px solid #dbeafe;
+}
+
+.vacv2-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  border: none;
+  background: #eff6ff;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  color: #082b67;
+  font-weight: 900;
+}
+
+.vacv2-modal-header {
+  padding-right: 54px;
+}
+
+.vacv2-modal-header h2 {
+  margin: 8px 0 4px;
+  color: #082b67;
+  font-size: 24px;
+  font-weight: 950;
+}
+
+.vacv2-modal-header p {
+  margin: 0;
+  color: #64748b;
+  font-weight: 800;
+}
+
+.vacv2-modal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.vacv2-info-card {
+  border: 1px solid #dbeafe;
+  border-radius: 18px;
+  padding: 18px;
+  background: #f8fbff;
+  min-width: 0;
+}
+
+.vacv2-info-card span {
+  display: block;
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 6px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.vacv2-info-card strong {
+  color: #0f172a;
+  overflow-wrap: anywhere;
+}
+
+.vacv2-modal-pendency {
+  margin-top: 16px;
+  border: 1px solid #fed7aa;
+  background: #fff7ed;
+  color: #9a3412;
+  border-radius: 18px;
+  padding: 16px 18px;
+}
+
+.vacv2-modal-pendency strong,
+.vacv2-modal-pendency small {
+  display: block;
+}
+
+.vacv2-modal-pendency small {
+  margin-top: 6px;
+  font-weight: 800;
+}
+
+.vacv2-modal-vaccines {
+  margin-top: 16px;
+  border: 1px solid #dbeafe;
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.vacv2-modal-vaccines h3 {
+  margin: 0 0 14px;
+  color: #082b67;
+}
+
+@media (max-width: 900px) {
+  .vacv2-modal {
+    width: 96vw;
+    padding: 22px;
+  }
+
+  .vacv2-modal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =========================================================
+   AJUSTE V8 — SEM JANELA EM AÇÕES + FILTROS COMPACTOS
+   ========================================================= */
+.vacv2-header-actions,
+.vacv2-last-update,
+.vacv2-help,
+.vacv2-modal-backdrop,
+.vacv2-modal,
+.vacv2-icon-btn{
+  display:none !important;
+}
+
+.vacv2-header{
+  margin-bottom:10px !important;
+}
+
+.vacv2-header h1{
+  font-size:30px !important;
+  margin-bottom:4px !important;
+}
+
+.vacv2-header p{
+  font-size:13px !important;
+  margin-bottom:0 !important;
+}
+
+.vacv2-filters-card{
+  padding:12px 14px !important;
+  margin-bottom:14px !important;
+}
+
+.vacv2-filters-grid-compact,
+.vacv2-filters-grid{
+  grid-template-columns:1.5fr 1.1fr .75fr .75fr auto !important;
+  gap:10px !important;
+  align-items:end !important;
+}
+
+.vacv2-filters-grid-compact .field,
+.vacv2-filters-grid .field{
+  margin-bottom:0 !important;
+}
+
+.vacv2-filters-grid-compact label,
+.vacv2-filters-grid label{
+  font-size:12px !important;
+  margin-bottom:5px !important;
+}
+
+.vacv2-filters-grid-compact select,
+.vacv2-filters-grid-compact input,
+.vacv2-filters-grid select,
+.vacv2-filters-grid input,
+.vacv2-search-box{
+  min-height:42px !important;
+  height:42px !important;
+  font-size:13px !important;
+}
+
+.vacv2-filter-actions{
+  display:flex !important;
+  gap:8px !important;
+  justify-content:flex-end !important;
+  align-items:end !important;
+  grid-column:auto !important;
+}
+
+.vacv2-filter-actions .vacv2-btn{
+  min-height:42px !important;
+  white-space:nowrap !important;
+  padding:8px 13px !important;
+}
+
+.vacv2-table{
+  min-width:760px !important;
+}
+
+.vacv2-table th:last-child,
+.vacv2-table td:last-child{
+  text-align:left !important;
+}
+
+@media(max-width:1350px){
+  .vacv2-filters-grid-compact,
+  .vacv2-filters-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+  .vacv2-filter-actions{
+    grid-column:1/-1 !important;
+    justify-content:flex-start !important;
+  }
+}
+
+@media(max-width:760px){
+  .vacv2-filters-grid-compact,
+  .vacv2-filters-grid{
+    grid-template-columns:1fr !important;
+  }
+}
+
+
+
+/* =========================================================
+   SIMVE v8c — Controle de quantidade por página
+   ========================================================= */
+.vacv2-actions-row-with-page-size{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:10px!important;
+  flex-wrap:wrap!important;
+}
+
+.vacv2-page-size-control{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  min-height:38px!important;
+  padding:0 10px!important;
+  border:1px solid #D9E7F7!important;
+  border-radius:10px!important;
+  background:#FFFFFF!important;
+  color:#082B67!important;
+  font-size:12px!important;
+  font-weight:900!important;
+  white-space:nowrap!important;
+}
+
+.vacv2-page-size-control select{
+  height:32px!important;
+  min-height:32px!important;
+  width:72px!important;
+  padding:4px 8px!important;
+  border:1px solid #CFE0F7!important;
+  border-radius:8px!important;
+  background:#F8FBFF!important;
+  color:#082B67!important;
+  font-weight:900!important;
+  outline:none!important;
+}
+
+.vacv2-pagination{
+  margin-top:12px!important;
+  display:flex!important;
+  justify-content:space-between!important;
+  align-items:center!important;
+  gap:12px!important;
+  flex-wrap:wrap!important;
+}
+
+@media(max-width:900px){
+  .vacv2-actions-row-with-page-size{
+    justify-content:flex-start!important;
+  }
+}
+
+
+
+/* =========================================================
+   SIMVE V9 — Situação Vacinal limpa
+   - Evolução da cobertura antes da lista
+   - Gráfico de Abril a Dezembro
+   - Sem quadro lateral redundante
+   - Sem cards abaixo do gráfico
+   ========================================================= */
+.vacv2-evolucao-clean{margin-bottom:14px;}
+.vacv2-chart-filters-clean{grid-template-columns:1.4fr .9fr .9fr!important;align-items:end;}
+.vacv2-chart-wrap-large{height:315px!important;width:100%;}
+.vacv2-evolucao-clean .vacv2-evolucao-grid.full{display:grid!important;grid-template-columns:1fr!important;}
+.vacv2-evolucao-clean .vacv2-note{margin-top:10px;}
+@media(max-width:900px){.vacv2-chart-filters-clean{grid-template-columns:1fr!important}.vacv2-chart-wrap-large{height:270px!important}}
+
+
+
+/* =========================================================
+   SIMVE — CSS OFICIAL RESPONSIVO E LIMPO
+   Data: 2026-05-16
+   Objetivo: padronizar exibição em notebook, desktop e telas menores
+   sem depender de um único tamanho de monitor.
+   ========================================================= */
+:root {
+  --simve-blue:#082B67;
+  --simve-blue-2:#0B5BD3;
+  --simve-green:#0AA463;
+  --simve-bg:#EEF3F7;
+  --simve-card:#FFFFFF;
+  --simve-border:#D9E7F7;
+  --simve-text:#0F2744;
+  --simve-muted:#64748B;
+}
+
+* { box-sizing:border-box; }
+html, body, #app {
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100vw !important;
+  margin:0 !important;
+  overflow-x:hidden !important;
+  font-family:'Inter','Segoe UI',Arial,Helvetica,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+body { background:var(--simve-bg); }
+
+/* Login: não força mais largura fixa */
+.auth-wrapper,
+.auth-wrapper.simve-login-vue,
+.auth-wrapper.simve-login-vue.simve-bg-final {
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100vw !important;
+  min-height:100dvh !important;
+  overflow-x:hidden !important;
+  overflow-y:auto !important;
+}
+.simve-login-screen,
+.simve-login-layer {
+  width:100% !important;
+  min-width:0 !important;
+}
+.simve-card-final,
+.simve-login-card {
+  width:min(485px, calc(100vw - 32px)) !important;
+  max-width:100% !important;
+}
+
+/* Estrutura principal */
+.layout {
+  width:100% !important;
+  min-width:0 !important;
+  min-height:100vh !important;
+  display:grid !important;
+  grid-template-columns:260px minmax(0, 1fr) !important;
+}
+.sidebar {
+  width:260px !important;
+  min-width:260px !important;
+}
+.content {
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  overflow-x:hidden !important;
+}
+.page-body {
+  width:100% !important;
+  max-width:1440px !important;
+  min-width:0 !important;
+  margin:0 auto !important;
+  padding:18px 20px 24px !important;
+}
+.section,
+.home-box,
+.placeholder-box,
+.resumo-box,
+.cad-card,
+.vacv2-card,
+.ranking-table-card,
+.ranking-evolution-card,
+.inicio-section-card,
+.access-card {
+  min-width:0 !important;
+  max-width:100% !important;
+}
+.topbar {
+  width:100% !important;
+  min-width:0 !important;
+  position:sticky !important;
+  top:0 !important;
+  z-index:20 !important;
+}
+
+/* Grids fluídos: cards, indicadores e áreas executivas */
+.cards,
+.cards-4,
+.cad-kpis,
+.cad-kpis-v10,
+.vacv2-kpis,
+.access-kpis,
+.inicio-kpi-grid,
+.inicio-alert-grid,
+.ranking-kpis,
+.ranking-metric-grid,
+.cards-compact {
+  display:grid !important;
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)) !important;
+  gap:14px !important;
+}
+
+.charts,
+.access-grid,
+.cad-grid-2,
+.cad-analytics-v10,
+.inicio-grid-2,
+.inicio-grid-3,
+.ranking-school-grid,
+.ranking-top-grid {
+  display:grid !important;
+  grid-template-columns:repeat(auto-fit, minmax(min(360px, 100%), 1fr)) !important;
+  gap:16px !important;
+}
+
+/* Filtros: deixam de depender de largura fixa */
+.filters,
+.filters-3,
+.filters-4,
+.cad-filter-grid,
+.cad-filter-grid-v10,
+.cad-list-card-v10 .cad-filter-grid-v10,
+.vacv2-filters-grid,
+.vacv2-filters-grid-compact,
+.vacv2-chart-filters-clean,
+.vacv2-chart-filters {
+  display:grid !important;
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)) !important;
+  gap:12px !important;
+  align-items:end !important;
+}
+.vacv2-filter-actions,
+.cad-filter-buttons-v10,
+.filter-actions,
+.cad-export-actions-v7,
+.vacv2-actions-row,
+.vacv2-actions-row-with-page-size {
+  display:flex !important;
+  flex-wrap:wrap !important;
+  gap:10px !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+}
+.field,
+.field input,
+.field select,
+.field textarea,
+.vacv2-search-box,
+.cad-search-box-v10,
+.simve-input {
+  min-width:0 !important;
+  max-width:100% !important;
+}
+
+/* Tabelas: padrão profissional em tela menor */
+.table-box,
+.cad-table-wrapper,
+.vacv2-table-wrap,
+.ranking-modal-body,
+.ranking-full-list,
+.access-card,
+.inicio-section-card {
+  width:100% !important;
+  max-width:100% !important;
+  overflow-x:auto !important;
+}
+table,
+.cad-table,
+.cad-table-v10,
+.vacv2-table,
+.access-table,
+.inicio-table,
+.ranking-school-table,
+.ranking-modal-table {
+  width:100% !important;
+  border-collapse:collapse !important;
+}
+.cad-table-v10.cad-table-cpf-operacional {
+  width:100% !important;
+  min-width:900px !important;
+  table-layout:fixed !important;
+}
+.vacv2-table { min-width:760px !important; }
+.access-table,
+.inicio-table,
+.ranking-school-table { min-width:680px !important; }
+.cad-table-v10 th,
+.cad-table-v10 td,
+.vacv2-table th,
+.vacv2-table td,
+.access-table th,
+.access-table td,
+.inicio-table th,
+.inicio-table td {
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.vacv2-pendencias strong,
+.vacv2-table td:last-child,
+.cad-aluno-cell strong,
+.cad-aluno-cell small {
+  white-space:normal !important;
+  overflow-wrap:anywhere !important;
+}
+
+/* Gráficos */
+.chart-wrap,
+.vacv2-chart-wrap,
+.vacv2-chart-wrap-large,
+.ranking-evolution-wrap {
+  width:100% !important;
+  min-width:0 !important;
+}
+canvas {
+  max-width:100% !important;
+}
+
+/* Ranking e modais */
+.ranking-modal {
+  width:min(980px, 94vw) !important;
+  max-width:94vw !important;
+}
+.modal-progress,
+.modal-progress-track,
+.modal-name-cell {
+  min-width:0 !important;
+  max-width:100% !important;
+}
+
+/* Quebras por tamanho de tela */
+@media (max-width: 1200px) {
+  .page-body { padding:14px 16px 22px !important; }
+  .ranking-hero-card,
+  .vacv2-exec-strip {
+    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .layout {
+    grid-template-columns:82px minmax(0, 1fr) !important;
+  }
+  .sidebar {
+    width:82px !important;
+    min-width:82px !important;
+    padding:12px 8px !important;
+  }
+  .sidebar h2,
+  .sidebar .user-box,
+  .sidebar-footer {
+    display:none !important;
+  }
+  .menu-btn {
+    min-height:46px !important;
+    padding:10px 8px !important;
+    text-align:center !important;
+    font-size:0 !important;
+  }
+  .menu-btn::first-letter {
+    font-size:18px !important;
+  }
+  .topbar {
+    flex-wrap:wrap !important;
+    gap:12px !important;
+  }
+  .topbar-title h1 { font-size:20px !important; }
+}
+
+@media (max-width: 760px) {
+  .layout {
+    display:block !important;
+  }
+  .sidebar {
+    width:100% !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    display:flex !important;
+    flex-direction:row !important;
+    gap:8px !important;
+    overflow-x:auto !important;
+    padding:8px !important;
+  }
+  .menu-btn {
+    width:auto !important;
+    min-width:120px !important;
+    flex:0 0 auto !important;
+    font-size:12px !important;
+    white-space:normal !important;
+  }
+  .menu-btn::first-letter { font-size:12px !important; }
+  .page-body { padding:12px !important; }
+  .topbar {
+    position:relative !important;
+    align-items:flex-start !important;
+  }
+  .topbar-profile {
+    width:100% !important;
+  }
+  .cad-table-v10.cad-table-cpf-operacional { min-width:820px !important; }
+  .vacv2-table { min-width:720px !important; }
+  .access-table,
+  .inicio-table,
+  .ranking-school-table { min-width:620px !important; }
+  .cad-cpf-toast { width:calc(100vw - 24px) !important; bottom:14px !important; }
+}
+
+@media print {
+  html, body, #app { overflow:visible !important; }
+  .sidebar,
+  .topbar,
+  .top-message,
+  .cad-filters,
+  .vacv2-filters-card,
+  .cad-pagination,
+  .vacv2-pagination,
+  .cad-export-actions-v7,
+  .vacv2-actions-row { display:none !important; }
+  .layout { display:block !important; }
+  .page-body { max-width:none !important; padding:0 !important; }
+}
+
+@page { size: A4 portrait; margin: 10mm 9mm 11mm; }
+    * { box-sizing:border-box; }
+    body {
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      color:#071f5c;
+      background:#fff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .page { width:100%; }
+    .header {
+      display:grid;
+      grid-template-columns: 220px 1fr;
+      gap:18px;
+      align-items:center;
+      padding:4px 0 12px;
+      border-bottom:3px solid #0AA463;
+      margin-bottom:14px;
+    }
+    .brand { display:flex; align-items:center; gap:10px; }
+    .brand-mark {
+      width:58px; height:58px; border:3px solid #0863d8; border-radius:14px;
+      display:flex; align-items:center; justify-content:center; color:#0863d8; font-size:26px; font-weight:900;
+    }
+    .logo { font-size:32px; font-weight:950; letter-spacing:-2px; line-height:.9; color:#082B67; }
+    .logo strong { color:#0AA463; }
+    .brand small { display:block; margin-top:3px; font-size:9.5px; line-height:1.15; color:#082B67; font-weight:800; text-transform:uppercase; }
+    .title { text-align:left; border-left:1px solid #cbdaf0; padding-left:18px; }
+    .title h1 { margin:0; font-size:24px; line-height:1.12; color:#082B67; font-weight:950; }
+    .title h2 { margin:5px 0 0; font-size:17px; color:#0863d8; font-weight:900; }
+    .title p { margin:6px 0 0; font-size:10.5px; color:#53657d; font-weight:700; }
+
+    .meta { display:grid; grid-template-columns: minmax(0,1fr) 190px; gap:12px; align-items:stretch; margin-bottom:12px; }
+    .filters, .total { border:1px solid #d7e6fb; border-radius:10px; padding:9px 11px; background:#fff; }
+    .filters h3, .total h3 { margin:0 0 7px; font-size:11.5px; color:#082B67; text-transform:uppercase; letter-spacing:.04em; }
+    .filter-grid { display:grid; grid-template-columns: 1.45fr .7fr .7fr 1fr; gap:5px 13px; align-items:center; font-size:10.2px; line-height:1.25; }
+    .filter-item strong { color:#082B67; }
+    .total .num { font-size:34px; line-height:1; color:#dc2626; font-weight:950; margin:2px 0 5px; }
+    .total .lbl { font-size:11px; font-weight:850; color:#082B67; }
+
+    .section-title { margin:14px 0 8px; padding-top:10px; border-top:2px solid #0b5bd3; color:#082B67; font-size:14px; font-weight:950; text-transform:uppercase; }
+    table { width:100%; border-collapse:separate; border-spacing:0; table-layout:fixed; border:1px solid #d7e6fb; border-radius:8px; overflow:hidden; font-size:9.8px; }
+    thead { display:table-header-group; }
+    thead th { background:#082B67; color:#fff; text-align:left; padding:8px 7px; text-transform:uppercase; font-size:9.2px; letter-spacing:.03em; }
+    tbody td { padding:7px; border-bottom:1px solid #e3eefb; vertical-align:middle; color:#071f5c; font-weight:700; }
+    tbody tr:nth-child(even) td { background:#f8fbff; }
+    tbody tr:last-child td { border-bottom:0; }
+    th:nth-child(1), td:nth-child(1) { width:34px; text-align:center; }
+    th:nth-child(2), td:nth-child(2) { width:82px; }
+    th:nth-child(3), td:nth-child(3) { width:31%; }
+    th:nth-child(4), td:nth-child(4) { width:21%; }
+    th:nth-child(5), td:nth-child(5) { width:72px; }
+    th:nth-child(6), td:nth-child(6) { width:25%; }
+    .nome { font-weight:900; }
+    .vacinas { font-weight:900; color:#082B67; white-space:normal; line-height:1.35; }
+    .mat, .idade, .turma { color:#102a6b; }
+    .footer { margin-top:12px; padding-top:9px; border-top:2px solid #0AA463; display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; align-items:end; color:#082B67; font-size:9.5px; font-weight:700; }
+    .footer .center { text-align:center; }
+    .footer .right { text-align:right; }
+    .print-actions { position:fixed; right:18px; bottom:18px; display:flex; gap:8px; }
+    .print-actions button { border:0; border-radius:10px; padding:10px 14px; font-weight:900; cursor:pointer; background:#0b5bd3; color:#fff; box-shadow:0 10px 24px rgba(8,43,103,.18); }
+    .print-actions .ghost { background:#fff; color:#082B67; border:1px solid #d9e7fb; }
+    @media print {
+      .print-actions { display:none; }
+      tr { break-inside:avoid; page-break-inside:avoid; }
+      .header, .filters, .total, table { box-shadow:none; }
+      body { margin:0; }
+    }
+
+.vacv2-list-filters-card{margin:12px 0 14px!important;padding:16px 18px!important;}
+.vacv2-list-filters-title{margin:0 0 10px!important;color:#082B67!important;font-size:18px!important;font-weight:950!important;}
+.vacv2-list-filters-card .vacv2-filters-grid{align-items:end!important;}
+.vacv2-pendencias strong{white-space:normal!important;line-height:1.35!important;}
+
+@page { size: A4 portrait; margin: 11mm 10mm 12mm; }
+    * { box-sizing:border-box; }
+    body {
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      color:#0f2744;
+      background:#fff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .page { width:100%; }
+    .header {
+      border:1px solid #d9e7fb;
+      border-radius:18px;
+      padding:18px 20px;
+      display:flex;
+      justify-content:space-between;
+      gap:18px;
+      align-items:flex-start;
+      background:linear-gradient(135deg,#f8fbff 0%,#ffffff 58%,#edf7ff 100%);
+      margin-bottom:12px;
+      position:relative;
+      overflow:hidden;
+    }
+    .header:before {
+      content:"";
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width:7px;
+      background:#0AA463;
+    }
+    .brand { padding-left:8px; min-width:210px; }
+    .logo {
+      font-size:34px;
+      font-weight:950;
+      letter-spacing:-2px;
+      color:#082B67;
+      line-height:1;
+    }
+    .logo strong { color:#0AA463; }
+    .brand small {
+      display:block;
+      margin-top:4px;
+      color:#334155;
+      font-size:10.5px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+    }
+    .title { text-align:right; }
+    .title h1 {
+      margin:0 0 7px;
+      color:#082B67;
+      font-size:21px;
+      line-height:1.12;
+    }
+    .title p {
+      margin:0 0 3px;
+      color:#52647f;
+      font-size:11.5px;
+      font-weight:700;
+    }
+    .meta {
+      display:grid;
+      grid-template-columns: 1.45fr .72fr;
+      gap:10px;
+      margin-bottom:12px;
+    }
+    .box {
+      border:1px solid #d9e7fb;
+      border-radius:14px;
+      padding:11px 13px;
+      background:#fff;
+    }
+    .box h2 {
+      margin:0 0 8px;
+      font-size:12px;
+      color:#082B67;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+    }
+    .grid {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:6px 14px;
+      font-size:11.2px;
+      line-height:1.25;
+    }
+    .item strong { color:#082B67; }
+    .total-number {
+      font-size:31px;
+      line-height:1;
+      font-weight:950;
+      color:#ef4444;
+      margin-bottom:5px;
+    }
+    .total-label {
+      font-size:11.2px;
+      color:#52647f;
+      font-weight:800;
+    }
+    table {
+      width:100%;
+      border-collapse:collapse;
+      border:1px solid #d9e7fb;
+      border-radius:14px;
+      overflow:hidden;
+      font-size:10.8px;
+      table-layout:fixed;
+    }
+    thead { display:table-header-group; }
+    thead th {
+      background:#082B67;
+      color:white;
+      padding:8px 7px;
+      text-align:left;
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:.035em;
+    }
+    tbody td {
+      padding:7px 7px;
+      border-bottom:1px solid #e8f0fb;
+      vertical-align:middle;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    tbody tr:nth-child(even) td { background:#f8fbff; }
+    th:nth-child(1), td:nth-child(1) { width:82px; }
+    th:nth-child(2), td:nth-child(2) { width:${mostrarEscola ? "30%" : "46%"}; }
+    ${mostrarEscola ? "th:nth-child(3), td:nth-child(3) { width:18%; }" : ""}
+    .mat { font-weight:900; color:#334155; }
+    .nome { font-weight:850; color:#0f2744; }
+    .turma { color:#334155; }
+    .cpf { text-align:center; color:#64748b; font-weight:850; }
+    .center { text-align:center; }
+    .status {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      background:#ffe5e5;
+      color:#dc2626;
+      border-radius:999px;
+      padding:4px 8px;
+      font-size:9.8px;
+      font-weight:950;
+      white-space:nowrap;
+    }
+    .footer {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:16px;
+      margin-top:12px;
+      padding-top:9px;
+      border-top:2px solid #e8f0fb;
+      color:#52647f;
+      font-size:10px;
+      font-weight:700;
+    }
+    .credits strong { color:#082B67; }
+    .print-actions {
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      display:flex;
+      gap:8px;
+    }
+    .print-actions button {
+      border:0;
+      border-radius:10px;
+      padding:10px 14px;
+      font-weight:900;
+      cursor:pointer;
+      background:#0b5bd3;
+      color:#fff;
+      box-shadow:0 10px 24px rgba(8,43,103,.18);
+    }
+    .print-actions .ghost { background:#fff; color:#082B67; border:1px solid #d9e7fb; }
+    @media print {
+      .print-actions { display:none; }
+      .page { break-inside:auto; }
+      tr { break-inside:avoid; page-break-inside:avoid; }
+      .header, .box, table { box-shadow:none; }
+      body { margin:0; }
+    }
+</style>
