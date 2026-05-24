@@ -7550,50 +7550,7 @@ table,.inicio-table,.cad-table,.access-table,.ranking-modal-table{font-size:15px
 
 
 /* =========================================================
-   SIMVE — SITUAÇÃO VACINAL V3 PREMIUM / OPERACIONAL
-   Ajustes finais do modelo: painel lateral amplo, tabela limpa,
-   cabeçalho compacto, linha-meta no gráfico e histórico horizontal.
-   ========================================================= */
-.simve-vacinal-v2{
-  --azul:#075BD8;
-  --azul-escuro:#082B67;
-  --texto:#09245C;
-  --borda:#D9E7F7;
-  --fundo:#F5F9FF;
-}
-.simve-vacinal-v2 .vacv2-header{
-  align-items:center;
-  margin-bottom:12px;
-}
-.simve-vacinal-v2 .vacv2-header h1{
-  font-size:25px;
-  letter-spacing:-.35px;
-}
-.simve-vacinal-v2 .vacv2-header p{
-  font-size:13px;
-}
-.vacv2-header-actions{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-}
-.vacv2-last-update{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  color:#082B67;
-  font-size:12px;
-  font-weight:800;
-  background:#fff;
-  border:1px solid #D9E7F7;
-  border-radius:12px;
-  padding:8px 12px;
-}
-.vacv2-last-update span{font-size:18px;color:#64748B}.vacv2-last-update small{display:block;color:#64748B;font-size:11px;font-weight:800}.vacv2-last-update strong{display:block;color:#082B67;font-size:12px}.vacv2-help{min-height:38px;border-radius:10px;background:#fff}.vacv2-grid-main{grid-template-columns:minmax(0,1fr) 480px;gap:20px}.vacv2-side{position:sticky;top:88px;min-width:0}.vacv2-filters-card,.vacv2-card,.vacv2-side-card{border-radius:16px;box-shadow:0 10px 28px rgba(12,45,80,.055)}.vacv2-filters-card{padding:14px}.vacv2-filters-grid{grid-template-columns:1.25fr 1fr 1.15fr .8fr .9fr .85fr .85fr auto auto;gap:12px}.vacv2-filter-actions{grid-column:auto;display:grid;grid-template-columns:1fr;gap:7px}.vacv2-check{font-size:12px;white-space:nowrap}.vacv2-btn{border-radius:9px;min-height:36px;padding:8px 14px}.vacv2-kpis{grid-template-columns:repeat(5,minmax(130px,1fr));gap:12px}.vacv2-kpi{min-height:82px;border-radius:14px;padding:14px}.vacv2-kpi .kpi-icon{width:50px;height:50px;flex-basis:50px}.vacv2-kpi .kpi-value{font-size:27px}.vacv2-exec-strip{display:grid;grid-template-columns:1.2fr .8fr .8fr 1fr;gap:12px;margin:0 0 14px}.vacv2-exec-strip>div{background:#fff;border:1px solid #D9E7F7;border-radius:14px;padding:13px 16px;box-shadow:0 8px 20px rgba(12,45,80,.045)}.vacv2-exec-strip span{display:block;color:#64748B;font-size:11px;font-weight:950;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}.vacv2-exec-strip strong{display:block;color:#082B67;font-size:18px;font-weight:950}.vacv2-exec-strip .danger{background:#FFF8F8;border-color:#FFCACA}.vacv2-exec-strip .danger strong{color:#DC2626}.vacv2-card{padding:15px}.vacv2-card-head h2{font-size:19px}.vacv2-table-wrap{border:1px solid #E4EEF9;border-radius:12px;overflow:auto}.vacv2-table{min-width:820px}.vacv2-table thead th{padding:11px 10px;background:#F5F8FD!important;font-size:12px}.vacv2-table tbody td{padding:11px 10px}.vacv2-table tbody tr{transition:.15s ease}.vacv2-table tbody tr.selected{box-shadow:inset 4px 0 0 #075BD8;background:#F6FAFF}.vacv2-table td:nth-child(2){min-width:230px}.vacv2-table td:nth-child(3){min-width:150px}.vacv2-table strong{line-height:1.25}.vacv2-pendencias strong{color:#D90429;font-size:13px}.vacv2-pendencias small{display:inline-flex;margin-top:5px;background:#FFF1F2;color:#BE123C;border-radius:999px;padding:3px 8px;font-weight:900}.vacv2-pagination{padding:2px 2px 0}.vacv2-chart-filters{grid-template-columns:1.5fr .8fr .8fr}.vacv2-evolucao-grid.full{display:grid;grid-template-columns:1fr;gap:14px}.vacv2-chart-wrap{height:240px}.vacv2-history-box{padding:12px;border-radius:13px}.vacv2-history-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}.vacv2-history-head h3{margin:0;font-size:14px}.vacv2-history-head h3 span{font-size:12px;color:#64748B}.vacv2-history-box table{table-layout:auto}.vacv2-history-box th,.vacv2-history-box td{font-size:12px;padding:9px 10px}.vacv2-side-card{padding:18px}.vacv2-side-card h2{font-size:18px;line-height:1.2}.vacv2-side-card>p{font-size:12px}.vacv2-student-box,.vacv2-vaccine-box,.vacv2-interpretar{border-radius:14px;padding:14px}.vacv2-student-grid{grid-template-columns:1fr 1fr;gap:12px 16px}.vacv2-student-grid div:nth-child(1),.vacv2-student-grid div:nth-child(5){grid-column:1/-1}.vacv2-student-grid strong{line-height:1.25}.vacv2-alert-aluno{display:grid;gap:4px;border-radius:14px}.vacv2-vaccine-box table{border:1px solid #E5EEF8;border-radius:12px;overflow:hidden;display:table}.vacv2-vaccine-box th{background:#F5F8FD}.vacv2-vaccine-box th,.vacv2-vaccine-box td{padding:10px 9px;font-size:12px}.vacv2-vaccine-box td.pendente,.vacv2-vaccine-box td.fora,.vacv2-vaccine-box td.ok,.vacv2-vaccine-box td.branco{background:transparent!important}.vacv2-vac-badge{border-radius:999px;padding:5px 9px}.vacv2-vac-badge.ok{background:#E7F8ED;color:#09834B}.vacv2-vac-badge.pendente{background:#FFE5E5;color:#D90429}.vacv2-vac-badge.fora{background:#FFF4DC;color:#D97706}.vacv2-vac-badge.branco{background:#EEF2F7;color:#475569}.vacv2-interpretar li{margin-bottom:4px}.layout{grid-template-columns:286px 1fr}.sidebar{background:#FFFFFF!important;color:#082B67!important;border-right:1px solid #D9E7F7;box-shadow:4px 0 22px rgba(12,45,80,.04)}.sidebar h2{display:none}.user-box{display:none}.menu-btn{background:transparent!important;color:#082B67!important;border-radius:14px;min-height:50px;font-weight:900;display:flex;align-items:center;gap:12px;padding:12px 14px}.menu-btn:hover{background:#F1F6FF!important}.menu-btn.active{background:#075BD8!important;color:#fff!important;box-shadow:0 10px 24px rgba(7,91,216,.22)}.sidebar-footer{color:#64748B;border-top:1px solid #E5EEF8;margin-top:auto;padding-top:18px}.topbar{padding:14px 22px}.topbar-title h1{font-size:24px;color:#082B67}.topbar-title p{font-size:13px}.page-body{padding:14px 20px 22px;background:#F4F8FF}@media(max-width:1600px){.vacv2-grid-main{grid-template-columns:minmax(0,1fr) 455px}.vacv2-filters-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.vacv2-filter-actions{grid-column:span 4;display:flex;justify-content:flex-end}.vacv2-check{min-height:38px}.vacv2-kpis{grid-template-columns:repeat(5,minmax(120px,1fr))}.vacv2-kpi{padding:12px}.vacv2-kpi .kpi-icon{width:46px;height:46px;flex-basis:46px}.vacv2-kpi .kpi-label{font-size:11px}.vacv2-kpi .kpi-value{font-size:25px}}@media(max-width:1350px){.vacv2-grid-main{grid-template-columns:1fr}.vacv2-side{position:static}.vacv2-exec-strip{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.vacv2-header{flex-direction:column;align-items:flex-start}.vacv2-header-actions{justify-content:flex-start}.vacv2-filters-grid,.vacv2-chart-filters,.vacv2-exec-strip{grid-template-columns:1fr}.vacv2-filter-actions{grid-column:auto;justify-content:flex-start}.vacv2-kpis{grid-template-columns:1fr}.vacv2-card-head,.vacv2-history-head{flex-direction:column;align-items:flex-start}.vacv2-student-grid{grid-template-columns:1fr}.layout{grid-template-columns:1fr}.topbar{position:relative}}
-
-</style>
+ 
 <style id="simve-uniformizacao-final-vacinal">
 :root{--simve-ui-font:"Inter","Segoe UI",Arial,Helvetica,sans-serif;--simve-blue:#075BD8;--simve-dark:#082B67;--simve-text:#173468;--simve-border:#DCE8F6;--simve-shadow:0 14px 34px rgba(8,43,103,.07)}
 #appArea,#appArea *{font-family:var(--simve-ui-font)!important;box-sizing:border-box!important}
