@@ -1,0 +1,94 @@
+<style>
+
+/* =========================================================
+   SIMVE — CORE STYLES
+   Estrutura base premium do sistema
+   ========================================================= */
+
+:root{
+  --simve-font:"Inter","Segoe UI",Arial,Helvetica,sans-serif;
+  --simve-bg:#F4F8FD;
+  --simve-card:#FFFFFF;
+  --simve-dark:#082B67;
+  --simve-text:#183A68;
+  --simve-muted:#60738E;
+  --simve-blue:#075BD8;
+  --simve-blue-soft:#EAF3FF;
+  --simve-border:#DCE8F6;
+}
+
+html,body,#app{
+  font-family:var(--simve-font)!important;
+  background:var(--simve-bg)!important;
+  color:var(--simve-text)!important;
+}
+
+body{
+  overflow-x:hidden!important;
+}
+
+#appArea,
+#appArea *{
+  font-family:var(--simve-font)!important;
+  box-sizing:border-box!important;
+}
+
+/* Estrutura geral */
+#appArea .layout{
+  display:grid!important;
+  grid-template-columns:292px minmax(0,1fr)!important;
+  min-height:100vh!important;
+}
+
+#appArea .content{
+  min-width:0!important;
+}
+
+/* Sidebar premium */
+#appArea .sidebar{
+  width:292px!important;
+  min-width:292px!important;
+  background:#fff!important;
+  color:var(--simve-dark)!important;
+  border-right:1px solid var(--simve-border)!important;
+  padding:24px 20px!important;
+}
+
+#appArea .sidebar h2{
+  height:86px!important;
+  margin:0 0 24px!important;
+  color:transparent!important;
+  font-size:0!important;
+}
+
+#appArea .user-box{
+  display:none!important;
+}
+
+#appArea .sidebar-footer{
+  display:none!important;
+}
+
+/* Menu */
+#appArea .menu-btn{
+  width:100%!important;
+  min-height:58px!important;
+  border-radius:18px!important;
+  background:transparent!important;
+  color:var(--simve-dark)!important;
+}
+
+#appArea .menu-btn.active{
+  background:linear-gradient(135deg,#075BD8,#0B70F0)!important;
+  color:#fff!important;
+}
+
+/* Topbar */
+#appArea .topbar{
+  min-height:88px!important;
+  padding:16px 34px!important;
+  background:#fff!important;
+  border-bottom:1px solid var(--simve-border)!important;
+}
+
+</style>

@@ -7668,10 +7668,6 @@ table,.inicio-table,.cad-table,.access-table,.ranking-modal-table{font-size:15px
   --simve-shadow-soft:0 8px 22px rgba(8,43,103,.055);
 }
 
-html,body,#app{font-family:var(--simve-font)!important;background:var(--simve-bg)!important;color:var(--simve-text)!important;-webkit-font-smoothing:antialiased!important;-moz-osx-font-smoothing:grayscale!important;text-rendering:optimizeLegibility!important;}
-body{overflow-x:hidden!important;}
-#appArea,#appArea *{font-family:var(--simve-font)!important;box-sizing:border-box!important;}
-
 /* Estrutura geral */
 #appArea .layout{display:grid!important;grid-template-columns:292px minmax(0,1fr)!important;min-height:100vh!important;background:linear-gradient(180deg,#F8FBFF 0%,#EFF6FF 100%)!important;}
 #appArea .content{min-width:0!important;background:linear-gradient(180deg,#F8FBFF 0%,#EFF6FF 100%)!important;}
@@ -8216,7 +8212,7 @@ body{overflow-x:hidden!important;}
 }
 </style>
 
-
+  <?!= include('CoreStyles'); ?>
   <?!= include('LoginStyles'); ?>
   <?!= include('SidebarStyles'); ?>
   <?!= include('DashboardStyles'); ?>
