@@ -1,11 +1,11 @@
-<style>
+﻿<style>
 /* =========================================================
-   SIMVE — VacinalStyles.html
-   Etapa 1G: organização visual da aba Situação Vacinal.
-   Seguro: não remove regras antigas; apenas centraliza e reforça overrides.
+   SIMVE â€” VacinalStyles.html
+   Etapa 1G: organizaÃ§Ã£o visual da aba SituaÃ§Ã£o Vacinal.
+   Seguro: nÃ£o remove regras antigas; apenas centraliza e reforÃ§a overrides.
    ========================================================= */
 
-/* Regras base usadas pela aba Situação Vacinal */
+/* Regras base usadas pela aba SituaÃ§Ã£o Vacinal */
 .vacina-filter-select { min-width: 220px; }
 .tabela-vacinal-centralizada thead th,
 .tabela-vacinal-centralizada tbody td { text-align: center; vertical-align: middle; }
@@ -16,7 +16,7 @@
 
 
 
-/* Bloco operacional Vacinal — versão compacta inicial */
+/* Bloco operacional Vacinal â€” versÃ£o compacta inicial */
 .simve-vacinal-v2{
   --azul:#075BD8;
   --azul-escuro:#082B67;
@@ -59,396 +59,7 @@
 
 
 /* =========================================================
-   SIMVE v4 — Refinamento premium da aba Situação Vacinal
-   Implementa: topo compacto, filtros mais legíveis, meta visual,
-   chips suaves e painel lateral mais limpo.
-   ========================================================= */
-.topbar.topbar-vacinal-compact{
-  min-height:64px!important;
-  padding:8px 22px!important;
-  justify-content:flex-end!important;
-  background:#ffffff!important;
-  border-bottom:1px solid #D9E7F7!important;
-}
-.topbar.topbar-vacinal-compact .topbar-title{
-  display:none!important;
-}
-.topbar.topbar-vacinal-compact .topbar-profile{
-  margin-left:auto!important;
-}
-.simve-vacinal-v2{
-  margin-top:0!important;
-}
-.simve-vacinal-v2 .vacv2-header{
-  margin-bottom:12px!important;
-  padding:0!important;
-  align-items:center!important;
-}
-.simve-vacinal-v2 .vacv2-header h1{
-  font-size:29px!important;
-  letter-spacing:-.8px!important;
-  line-height:1.05!important;
-}
-.simve-vacinal-v2 .vacv2-header p{
-  font-size:13px!important;
-  margin-top:6px!important;
-}
-.vacv2-header-actions{
-  gap:10px!important;
-}
-.vacv2-last-update{
-  border-radius:14px!important;
-  background:#fff!important;
-  border:1px solid #D9E7F7!important;
-  padding:9px 13px!important;
-  min-height:42px!important;
-}
-.vacv2-help{
-  min-height:42px!important;
-  padding:8px 14px!important;
-  border:1px solid #CFE0F7!important;
-  color:#075BD8!important;
-  font-weight:950!important;
-}
-.vacv2-grid-main{
-  grid-template-columns:minmax(0,1fr) 470px!important;
-  gap:18px!important;
-}
-.vacv2-filters-card{
-  padding:14px!important;
-  border:1px solid #D9E7F7!important;
-  background:#fff!important;
-}
-.vacv2-filters-grid{
-  display:grid!important;
-  grid-template-columns:1.55fr 1.05fr 1.2fr .85fr 1.05fr .9fr .95fr auto auto!important;
-  gap:10px 12px!important;
-  align-items:end!important;
-}
-.vacv2-filters-grid .field label{
-  font-size:12px!important;
-  line-height:1.08!important;
-  color:#082B67!important;
-  font-weight:950!important;
-  margin-bottom:6px!important;
-}
-.vacv2-filters-grid select,
-.vacv2-search-box{
-  min-height:40px!important;
-  height:40px!important;
-  border-radius:11px!important;
-  border:1px solid #CFE0F7!important;
-  background:#fff!important;
-  box-shadow:0 4px 12px rgba(12,45,80,.035)!important;
-}
-.vacv2-search-box input{
-  font-size:13px!important;
-  font-weight:800!important;
-}
-.vacv2-filters-grid select{
-  padding:0 12px!important;
-  color:#082B67!important;
-  font-weight:850!important;
-  font-size:13px!important;
-  cursor:pointer!important;
-}
-.vacv2-filters-grid select:hover,
-.vacv2-search-box:hover{
-  border-color:#9BC4FF!important;
-}
-.vacv2-filters-grid select:focus,
-.vacv2-search-box:focus-within{
-  outline:none!important;
-  border-color:#075BD8!important;
-  box-shadow:0 0 0 3px rgba(7,91,216,.10)!important;
-}
-.vacv2-check{
-  align-self:end!important;
-  min-height:40px!important;
-  display:flex!important;
-  align-items:center!important;
-  gap:7px!important;
-  padding:0 4px!important;
-  font-size:12px!important;
-  color:#082B67!important;
-  font-weight:950!important;
-  white-space:nowrap!important;
-}
-.vacv2-check input{
-  width:15px!important;
-  height:15px!important;
-  accent-color:#075BD8!important;
-}
-.vacv2-filter-actions{
-  display:grid!important;
-  grid-template-columns:1fr!important;
-  gap:6px!important;
-  min-width:126px!important;
-}
-.vacv2-btn{
-  min-height:34px!important;
-  border-radius:9px!important;
-  font-size:12px!important;
-  font-weight:950!important;
-  padding:8px 12px!important;
-}
-.vacv2-btn.primary{
-  background:#075BD8!important;
-  border-color:#075BD8!important;
-}
-.vacv2-btn.ghost{
-  background:#fff!important;
-  color:#075BD8!important;
-  border:1px solid #CFE0F7!important;
-}
-.vacv2-kpis{
-  grid-template-columns:repeat(5,minmax(0,1fr))!important;
-  gap:12px!important;
-  margin:12px 0!important;
-}
-.vacv2-kpi{
-  min-height:94px!important;
-  padding:14px 16px!important;
-  border-radius:16px!important;
-  box-shadow:0 8px 22px rgba(12,45,80,.045)!important;
-}
-.vacv2-kpi .kpi-label{
-  font-size:12px!important;
-  line-height:1.15!important;
-}
-.vacv2-kpi .kpi-value{
-  font-size:28px!important;
-  line-height:1!important;
-}
-.vacv2-kpi .kpi-sub{
-  font-size:12px!important;
-  margin-top:5px!important;
-}
-.vacv2-kpi.purple .kpi-label{color:#37206D!important;}
-.vacv2-exec-strip{
-  grid-template-columns:1.15fr .72fr 1.08fr 1fr!important;
-  gap:10px!important;
-  margin:0 0 12px!important;
-}
-.vacv2-exec-strip>div{
-  min-height:70px!important;
-  border-radius:14px!important;
-  padding:13px 16px!important;
-  background:#fff!important;
-}
-.vacv2-exec-strip span{
-  font-size:10.5px!important;
-  color:#5E718E!important;
-}
-.vacv2-exec-strip strong{
-  font-size:18px!important;
-  color:#082B67!important;
-}
-.vacv2-pendencia-box strong{
-  color:#D90429!important;
-}
-.vacv2-pendencia-box em{
-  display:inline-flex!important;
-  margin-left:8px!important;
-  transform:translateY(-2px)!important;
-  padding:4px 8px!important;
-  border-radius:999px!important;
-  background:#FFE5E5!important;
-  color:#D90429!important;
-  font-size:11px!important;
-  font-weight:950!important;
-  font-style:normal!important;
-}
-.vacv2-meta-track{
-  width:100%!important;
-  height:7px!important;
-  border-radius:999px!important;
-  background:#E8EEF7!important;
-  margin-top:8px!important;
-  overflow:hidden!important;
-  position:relative!important;
-}
-.vacv2-meta-track:after{
-  content:"Meta 95%";
-  position:absolute;
-  right:0;
-  top:-18px;
-  color:#64748B;
-  font-size:10px;
-  font-weight:900;
-}
-.vacv2-meta-track i{
-  display:block!important;
-  height:100%!important;
-  border-radius:999px!important;
-  background:linear-gradient(90deg,#075BD8,#23A6F0)!important;
-  min-width:3px!important;
-}
-.vacv2-card{
-  border-radius:16px!important;
-  border:1px solid #D9E7F7!important;
-  padding:15px!important;
-  box-shadow:0 10px 28px rgba(12,45,80,.05)!important;
-}
-.vacv2-card-head{
-  margin-bottom:12px!important;
-}
-.vacv2-card-head h2{
-  font-size:19px!important;
-}
-.vacv2-table-wrap{
-  border:1px solid #E3EDF9!important;
-  border-radius:14px!important;
-  overflow:auto!important;
-}
-.vacv2-table thead th{
-  background:#F5F8FD!important;
-  color:#082B67!important;
-  font-size:12px!important;
-  padding:12px 11px!important;
-}
-.vacv2-table tbody td{
-  padding:12px 11px!important;
-}
-.vacv2-table tbody tr.selected{
-  background:#F4F9FF!important;
-  box-shadow:inset 4px 0 0 #075BD8!important;
-}
-.vacv2-table tbody tr:hover{
-  background:#F8FBFF!important;
-}
-.vacv2-pendencias strong{
-  color:#D90429!important;
-  font-weight:950!important;
-}
-.vacv2-pendencias small{
-  background:#FFF1F2!important;
-  color:#D90429!important;
-  border:1px solid #FFD0D6!important;
-}
-.vacv2-evolucao{
-  margin-top:12px!important;
-}
-.vacv2-evolucao-grid.full{
-  grid-template-columns:1.15fr .85fr!important;
-  align-items:start!important;
-  gap:14px!important;
-}
-.vacv2-chart-wrap{
-  height:215px!important;
-}
-.vacv2-history-box{
-  min-height:215px!important;
-  border-radius:14px!important;
-  background:#F8FBFF!important;
-}
-.vacv2-history-box th,
-.vacv2-history-box td{
-  font-size:11.5px!important;
-  padding:8px!important;
-}
-.vacv2-side{
-  top:78px!important;
-}
-.vacv2-side-card{
-  padding:18px!important;
-  border-radius:18px!important;
-  border:1px solid #D9E7F7!important;
-  box-shadow:0 14px 34px rgba(12,45,80,.07)!important;
-}
-.vacv2-side-card h2{
-  font-size:19px!important;
-  margin-top:4px!important;
-}
-.vacv2-student-box,
-.vacv2-vaccine-box,
-.vacv2-interpretar{
-  border-radius:15px!important;
-  border:1px solid #DDE9F7!important;
-  background:#fff!important;
-  padding:14px!important;
-}
-.vacv2-student-grid{
-  gap:11px 16px!important;
-}
-.vacv2-vaccine-box table{
-  border-collapse:separate!important;
-  border-spacing:0!important;
-  border:1px solid #E5EEF8!important;
-  border-radius:13px!important;
-  overflow:hidden!important;
-}
-.vacv2-vaccine-box th{
-  background:#F5F8FD!important;
-  color:#082B67!important;
-}
-.vacv2-vaccine-box th,
-.vacv2-vaccine-box td{
-  padding:11px 10px!important;
-  border-bottom:1px solid #E9F0F8!important;
-}
-.vacv2-vaccine-box td.pendente,
-.vacv2-vaccine-box td.fora,
-.vacv2-vaccine-box td.ok,
-.vacv2-vaccine-box td.branco{
-  background:transparent!important;
-}
-.vacv2-vac-badge{
-  border-radius:999px!important;
-  padding:5px 10px!important;
-  font-size:10.5px!important;
-  letter-spacing:.01em!important;
-}
-.vacv2-vac-badge.ok{background:#E7F8ED!important;color:#09834B!important;}
-.vacv2-vac-badge.pendente{background:#FFE5E5!important;color:#D90429!important;}
-.vacv2-vac-badge.fora{background:#FFF4DC!important;color:#D97706!important;}
-.vacv2-vac-badge.branco{background:#EEF2F7!important;color:#475569!important;}
-.vacv2-interpretar{
-  background:#F8FBFF!important;
-}
-.vacv2-interpretar li{
-  margin-bottom:5px!important;
-}
-.sidebar{
-  width:286px!important;
-}
-.menu-btn{
-  min-height:50px!important;
-  margin-bottom:8px!important;
-}
-.menu-btn.active{
-  box-shadow:0 12px 28px rgba(7,91,216,.22)!important;
-}
-.page-body{
-  padding:12px 20px 20px!important;
-  background:#F4F8FF!important;
-}
-@media(max-width:1680px){
-  .vacv2-grid-main{grid-template-columns:minmax(0,1fr) 450px!important;}
-  .vacv2-filters-grid{grid-template-columns:1.35fr .9fr 1fr .7fr .88fr .78fr .82fr auto auto!important;gap:9px!important;}
-  .vacv2-filter-actions{min-width:116px!important;}
-  .vacv2-kpi{padding:12px!important;}
-  .vacv2-kpi .kpi-icon{width:46px!important;height:46px!important;flex-basis:46px!important;}
-}
-@media(max-width:1450px){
-  .vacv2-grid-main{grid-template-columns:1fr!important;}
-  .vacv2-side{position:static!important;}
-  .vacv2-filters-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;}
-  .vacv2-filter-actions{grid-column:span 4!important;display:flex!important;justify-content:flex-end!important;}
-  .vacv2-kpis{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
-  .vacv2-evolucao-grid.full{grid-template-columns:1fr!important;}
-}
-@media(max-width:900px){
-  .topbar.topbar-vacinal-compact{display:flex!important;}
-  .vacv2-filters-grid,.vacv2-exec-strip,.vacv2-chart-filters{grid-template-columns:1fr!important;}
-  .vacv2-filter-actions{grid-column:auto!important;justify-content:flex-start!important;}
-  .vacv2-kpis{grid-template-columns:1fr!important;}
-}
-
-
-
-/* =========================================================
-   AJUSTE V8 — SEM JANELA EM AÇÕES + FILTROS COMPACTOS
+   AJUSTE V8 â€” SEM JANELA EM AÃ‡Ã•ES + FILTROS COMPACTOS
    ========================================================= */
 .vacv2-header-actions,
 .vacv2-last-update,
@@ -550,7 +161,7 @@
 
 
 /* =========================================================
-   SIMVE v8c — Controle de quantidade por página
+   SIMVE v8c â€” Controle de quantidade por pÃ¡gina
    ========================================================= */
 .vacv2-actions-row-with-page-size{
   display:flex!important;
@@ -606,11 +217,11 @@
 
 
 /* =========================================================
-   SIMVE V9 — Situação Vacinal limpa
-   - Evolução da cobertura antes da lista
-   - Gráfico de Abril a Dezembro
+   SIMVE V9 â€” SituaÃ§Ã£o Vacinal limpa
+   - EvoluÃ§Ã£o da cobertura antes da lista
+   - GrÃ¡fico de Abril a Dezembro
    - Sem quadro lateral redundante
-   - Sem cards abaixo do gráfico
+   - Sem cards abaixo do grÃ¡fico
    ========================================================= */
 .vacv2-evolucao-clean{margin-bottom:14px;}
 .vacv2-chart-filters-clean{grid-template-columns:1.4fr .9fr .9fr!important;align-items:end;}
@@ -620,7 +231,7 @@
 @media(max-width:900px){.vacv2-chart-filters-clean{grid-template-columns:1fr!important}.vacv2-chart-wrap-large{height:270px!important}}
 
 
-/* Bloco operacional Vacinal — versão final e overrides */
+/* Bloco operacional Vacinal â€” versÃ£o final e overrides */
 .simve-vacinal-v2{
   --azul:#075BD8;
   --azul-escuro:#082B67;
@@ -710,9 +321,9 @@
 
 
 /* =========================================================
-   SIMVE — SITUAÇÃO VACINAL V3 PREMIUM / OPERACIONAL
+   SIMVE â€” SITUAÃ‡ÃƒO VACINAL V3 PREMIUM / OPERACIONAL
    Ajustes finais do modelo: painel lateral amplo, tabela limpa,
-   cabeçalho compacto, linha-meta no gráfico e histórico horizontal.
+   cabeÃ§alho compacto, linha-meta no grÃ¡fico e histÃ³rico horizontal.
    ========================================================= */
 .simve-vacinal-v2{
   --azul:#075BD8;
@@ -757,8 +368,8 @@
 
 <style id="simve-premium-integrado-final-v1">
 /* =========================================================
-   SIMVE — VERSÃO PREMIUM INTEGRADA FINAL
-   Mantém Vue + google.script.run + code.gs e padroniza todas as abas.
+   SIMVE â€” VERSÃƒO PREMIUM INTEGRADA FINAL
+   MantÃ©m Vue + google.script.run + code.gs e padroniza todas as abas.
    ========================================================= */
 :root{
   --simve-font:"Inter","Segoe UI",Arial,Helvetica,sans-serif;
@@ -823,23 +434,23 @@ body{overflow-x:hidden!important;}
 #appArea .topbar-profile-logout{width:100%!important;margin-top:10px!important;min-height:48px!important;display:flex!important;align-items:center!important;gap:12px!important;border:0!important;border-radius:14px!important;background:transparent!important;color:var(--simve-dark)!important;font-size:15px!important;font-weight:800!important;cursor:pointer!important;padding:10px 12px!important;}
 #appArea .topbar-profile-logout:hover{background:#F1F7FF!important;}
 
-/* Área de conteúdo */
+/* Ãrea de conteÃºdo */
 #appArea .page-body{padding:26px 34px 40px!important;background:linear-gradient(180deg,#F8FBFF 0%,#EFF6FF 100%)!important;}
 #appArea .loading{font-size:16px!important;line-height:1.4!important;font-weight:850!important;padding:16px 18px!important;border-radius:14px!important;}
 #appArea .top-message{border-radius:16px!important;padding:14px 18px!important;font-size:15px!important;line-height:1.4!important;}
 
-/* Remove visualmente informações de data de atualização */
+/* Remove visualmente informaÃ§Ãµes de data de atualizaÃ§Ã£o */
 #appArea .inicio-periodo,#appArea .ranking-periodo{display:none!important;}
 #appArea .mini-card:has(.label:nth-child(1)){ }
 #appArea .mini-card:has(.label){ }
 #appArea .mini-card:has(.label):has(.number[style*="font-size:15px"]){display:none!important;}
 
-/* Títulos de página */
+/* TÃ­tulos de pÃ¡gina */
 #appArea .inicio-profile-header,#appArea .cad-header,#appArea .ranking-clean-header{margin-bottom:22px!important;align-items:flex-start!important;}
 #appArea .inicio-profile-header h1,#appArea .cad-header h1,#appArea .ranking-clean-header h1,#appArea .page-body h1{margin:0 0 7px!important;color:var(--simve-dark)!important;font-size:31px!important;line-height:1.12!important;font-weight:900!important;letter-spacing:-.85px!important;}
 #appArea .inicio-profile-header p,#appArea .cad-header p,#appArea .ranking-clean-header p{margin:0!important;color:#455B7B!important;font-size:16px!important;line-height:1.45!important;font-weight:600!important;}
 
-/* Cards padrão em todas as abas */
+/* Cards padrÃ£o em todas as abas */
 #appArea .inicio-section-card,#appArea .chart-box,#appArea .table-box,#appArea .home-box,#appArea .placeholder-box,#appArea .resumo-box,#appArea .cad-card,#appArea .access-card,#appArea .ranking-card,#appArea .ranking-card-clean,#appArea .cad-filters,#appArea .active-filters{background:var(--simve-card)!important;border:1px solid var(--simve-border)!important;border-radius:24px!important;box-shadow:var(--simve-shadow)!important;padding:22px!important;}
 #appArea .inicio-section-title,#appArea .chart-box h2,#appArea .table-box h2,#appArea .home-box h2,#appArea .placeholder-box h2,#appArea .resumo-box h2,#appArea .cad-card-title h2,#appArea .access-card-title h2,#appArea .ranking-card-title h2,#appArea .ranking-card h2{margin:0 0 16px!important;color:var(--simve-dark)!important;font-size:21px!important;line-height:1.2!important;font-weight:900!important;letter-spacing:-.35px!important;}
 
@@ -873,7 +484,7 @@ body{overflow-x:hidden!important;}
 #appArea .mini-card.orange,#appArea .access-kpi.orange,#appArea .ranking-kpi.yellow,#appArea .cad-kpi.orange{border-left:5px solid var(--simve-orange)!important;background:#FFFDF7!important;}
 #appArea .mini-card.gray{border-left:5px solid #94A3B8!important;background:#F8FBFF!important;}
 
-/* Gráficos */
+/* GrÃ¡ficos */
 #appArea .charts{display:grid!important;grid-template-columns:1fr 1fr!important;gap:18px!important;margin:0 0 20px!important;}
 #appArea .chart-box[style*="grid-column:1/-1"]{grid-column:1/-1!important;}
 #appArea .chart-wrap{position:relative!important;height:315px!important;max-height:315px!important;}
@@ -921,7 +532,7 @@ body{overflow-x:hidden!important;}
 
 
 /* =========================================================
-   SIMVE - ABA SITUAÇÃO VACINAL V2
+   SIMVE - ABA SITUAÃ‡ÃƒO VACINAL V2
    Modelo operacional com filtros, lista nominal e painel do aluno
    ========================================================= */
 .simve-vacinal-v2{color:#09245c}.simve-vacinal-v2 *{box-sizing:border-box}.vacv2-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}.vacv2-header h1{margin:0 0 6px;font-size:26px;font-weight:950;color:#082b67}.vacv2-header p{margin:0;color:#42587a;font-weight:600}.vacv2-help{border:1px solid #bcd4f6;background:#fff;color:#075bd8;border-radius:8px;padding:10px 16px;font-weight:900;cursor:pointer}.vacv2-update{display:flex;align-items:center;gap:10px;background:#eafaf0;border:1px solid #bfe8cc;color:#047344;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-weight:800}.vacv2-grid-main{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:18px;align-items:start}.vacv2-left{min-width:0}.vacv2-filters-card,.vacv2-card,.vacv2-side-card{background:#fff;border:1px solid #d9e7f7;border-radius:14px;box-shadow:0 8px 24px rgba(12,45,80,.06)}.vacv2-filters-card{padding:16px;margin-bottom:14px}.vacv2-filters-grid{display:grid;grid-template-columns:1.25fr repeat(4,1fr);gap:14px;align-items:end}.vacv2-filters-grid .field{margin:0}.vacv2-filters-grid label,.vacv2-chart-filters label{font-size:12px;font-weight:950;color:#082b67;margin-bottom:7px;display:block}.vacv2-filters-grid select,.vacv2-filters-grid input,.vacv2-chart-filters select{width:100%;min-height:42px;border:1px solid #c9d8ec;border-radius:8px;background:#fff;color:#09245c;padding:8px 12px;font-weight:700;outline:none}.vacv2-search-box{position:relative}.vacv2-search-box input{padding-right:38px}.vacv2-search-box span{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-weight:900;color:#075bd8}.vacv2-check{display:flex!important;align-items:center;gap:8px;font-weight:850;color:#09245c;min-height:42px}.vacv2-check input{width:16px;height:16px}.vacv2-filter-actions{display:flex;gap:10px;justify-content:flex-end;align-items:center;grid-column:4/6}.vacv2-btn{border:1px solid #c9d8ec;background:#fff;color:#075bd8;border-radius:8px;min-height:38px;padding:9px 16px;font-weight:950;cursor:pointer;white-space:nowrap}.vacv2-btn.primary{background:#075bd8;color:#fff;border-color:#075bd8}.vacv2-btn.success{background:#fff;color:#087a42;border-color:#4fc081}.vacv2-btn.ghost:hover{background:#f6faff}.vacv2-kpis{display:grid;grid-template-columns:repeat(5,minmax(145px,1fr));gap:12px;margin-bottom:14px}.vacv2-kpi{display:flex;align-items:center;gap:14px;min-height:86px;border:1px solid #d9e7f7;border-radius:12px;background:#fff;padding:16px;box-shadow:0 8px 20px rgba(12,45,80,.05)}.vacv2-kpi .kpi-icon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;flex:0 0 52px}.vacv2-kpi .kpi-label{font-size:12px;color:#082b67;font-weight:950;line-height:1.2}.vacv2-kpi .kpi-value{font-size:28px;font-weight:950;color:#082b67;line-height:1;margin-top:4px}.vacv2-kpi .kpi-sub{font-size:12px;font-weight:900;margin-top:6px}.vacv2-kpi.blue{background:#f8fbff}.vacv2-kpi.blue .kpi-icon{background:#e8f2ff;color:#075bd8}.vacv2-kpi.green{background:#f8fffb}.vacv2-kpi.green .kpi-icon{background:#e5f8ee;color:#09834b}.vacv2-kpi.green .kpi-sub{color:#09834b}.vacv2-kpi.orange{background:#fffdf7}.vacv2-kpi.orange .kpi-icon{background:#fff4dc;color:#d97706}.vacv2-kpi.orange .kpi-sub{color:#d97706}.vacv2-kpi.purple{background:#fbf8ff}.vacv2-kpi.purple .kpi-icon{background:#f1e8ff;color:#7e22ce}.vacv2-kpi.red{background:#fff8f8}.vacv2-kpi.red .kpi-icon{background:#ffe5e5;color:#dc2626}.vacv2-kpi.red .kpi-sub{color:#dc2626}.vacv2-card{padding:16px;margin-bottom:14px}.vacv2-card-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px}.vacv2-card-head h2{margin:0;font-size:20px;font-weight:950;color:#082b67}.vacv2-card-head h2 span{font-size:16px}.vacv2-actions-row{display:flex;gap:10px;align-items:center}.vacv2-table-wrap{overflow:auto}.vacv2-table{width:100%;min-width:820px;border-collapse:collapse;background:#fff}.vacv2-table thead th{background:#f1f6fd!important;color:#09245c!important;padding:12px 10px;font-size:13px;font-weight:950;text-align:left;border-bottom:1px solid #dce8f6;position:static;cursor:pointer}.vacv2-table tbody td{padding:13px 10px;border-bottom:1px solid #e8eff8;color:#09245c;font-size:13px;vertical-align:middle}.vacv2-table tbody tr:hover,.vacv2-table tbody tr.selected{background:#f8fbff}.vacv2-table strong{font-weight:950;display:block}.vacv2-table small{display:block;color:#42587a;font-size:11px;font-weight:700;margin-top:3px}.vacv2-status{display:inline-flex;align-items:center;justify-content:center;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:950}.vacv2-status.orange{background:#fff4dc;color:#d97706;border:1px solid #ffd995}.vacv2-pendencias{color:#d90429!important;font-weight:950}.vacv2-icon-btn{width:38px;height:34px;border:1px solid #c9d8ec;background:#fff;color:#075bd8;border-radius:8px;cursor:pointer;font-weight:900}.vacv2-pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:14px;color:#42587a;font-size:13px;font-weight:800}.vacv2-pagination select{border:1px solid #c9d8ec;border-radius:8px;min-height:36px;padding:7px 12px;color:#09245c;font-weight:800}.vacv2-page-controls{display:flex;gap:7px}.vacv2-page-controls button{min-width:34px;min-height:34px;border:1px solid #c9d8ec;background:#fff;color:#075bd8;border-radius:8px;font-weight:900;cursor:pointer}.vacv2-page-controls button.active{background:#075bd8;color:#fff}.vacv2-page-controls button:disabled{opacity:.45;cursor:not-allowed}.vacv2-chart-filters{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:14px;margin-bottom:12px}.vacv2-evolucao-grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}.vacv2-chart-wrap{height:255px;position:relative}.vacv2-history-box{background:#f8fbff;border:1px solid #dbe8f7;border-radius:12px;padding:12px}.vacv2-history-box h3{margin:0 0 10px;color:#082b67;font-size:14px;font-weight:950}.vacv2-history-box table{width:100%;min-width:0;border-collapse:collapse}.vacv2-history-box th,.vacv2-history-box td{padding:8px;font-size:12px;border-bottom:1px solid #e2ecf8;color:#09245c;font-weight:800;text-align:left}.vacv2-history-box th{background:#eef5ff}.vacv2-note{margin-top:12px;color:#37557a;font-size:12px;font-weight:700}.vacv2-side{position:sticky;top:92px}.vacv2-side-card{padding:18px;position:relative}.vacv2-side-close{position:absolute;right:14px;top:12px;width:30px;height:30px;border:1px solid #d7e5f6;background:#fff;border-radius:8px;color:#09245c;font-size:20px;cursor:pointer}.vacv2-side-card h2{margin:8px 34px 8px 0;color:#082b67;font-size:19px;font-weight:950}.vacv2-side-card>p{color:#42587a;font-size:12.5px;line-height:1.45;font-weight:700;margin:0 0 14px}.vacv2-student-box,.vacv2-vaccine-box,.vacv2-interpretar{border:1px solid #dbe8f7;border-radius:12px;background:#fff;padding:14px;margin-bottom:14px}.vacv2-student-box h3,.vacv2-vaccine-box h3,.vacv2-interpretar h3{margin:0 0 12px;font-size:14px;color:#082b67;font-weight:950}.vacv2-student-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.vacv2-student-grid div{font-size:12px;color:#42587a}.vacv2-student-grid span{display:block;font-weight:800;margin-bottom:2px}.vacv2-student-grid strong{display:block;color:#09245c;font-weight:950}.vacv2-base-badge{display:inline-flex!important;background:#e8f2ff;color:#075bd8;border-radius:7px;padding:4px 8px}.vacv2-alert-aluno{background:#fff8e8;border:1px solid #ffd794;border-radius:12px;padding:14px;color:#d97706;margin-bottom:14px}.vacv2-alert-aluno strong{display:block;font-size:15px;font-weight:950;margin-bottom:6px}.vacv2-alert-aluno span{font-size:12px;font-weight:800}.vacv2-vaccine-box table{width:100%;min-width:0;border-collapse:collapse}.vacv2-vaccine-box th,.vacv2-vaccine-box td{padding:8px 7px;border-bottom:1px solid #e8eff8;font-size:12px;color:#09245c;font-weight:800;text-align:left}.vacv2-vaccine-box th{background:#f1f6fd;font-weight:950}.vacv2-vac-badge{display:inline-flex;border-radius:7px;padding:4px 8px;font-size:11px;font-weight:950;white-space:nowrap}.vacv2-vac-badge.ok,.vacv2-vaccine-box td.ok{background:#e7f8ed;color:#09834b}.vacv2-vac-badge.pendente,.vacv2-vaccine-box td.pendente{background:#ffe5e5;color:#d90429}.vacv2-vac-badge.fora,.vacv2-vaccine-box td.fora{background:#fff4dc;color:#d97706}.vacv2-vac-badge.branco,.vacv2-vaccine-box td.branco{background:#eef2f7;color:#475569}.vacv2-interpretar{background:#f8fbff}.vacv2-interpretar ul{margin:0;padding-left:18px;color:#09245c;font-size:12px;line-height:1.55;font-weight:700}@media(max-width:1450px){.vacv2-grid-main{grid-template-columns:1fr}.vacv2-side{position:static}.vacv2-filters-grid{grid-template-columns:repeat(3,1fr)}.vacv2-filter-actions{grid-column:span 3}.vacv2-kpis{grid-template-columns:repeat(3,1fr)}}@media(max-width:900px){.vacv2-filters-grid,.vacv2-chart-filters,.vacv2-evolucao-grid{grid-template-columns:1fr}.vacv2-filter-actions{grid-column:auto;justify-content:flex-start}.vacv2-kpis{grid-template-columns:1fr}.vacv2-card-head{flex-direction:column;align-items:flex-start}.vacv2-student-grid{grid-template-columns:1fr}}
@@ -929,9 +540,9 @@ body{overflow-x:hidden!important;}
 
 
 /* =========================================================
-   SIMVE — SITUAÇÃO VACINAL V3 PREMIUM / OPERACIONAL
+   SIMVE â€” SITUAÃ‡ÃƒO VACINAL V3 PREMIUM / OPERACIONAL
    Ajustes finais do modelo: painel lateral amplo, tabela limpa,
-   cabeçalho compacto, linha-meta no gráfico e histórico horizontal.
+   cabeÃ§alho compacto, linha-meta no grÃ¡fico e histÃ³rico horizontal.
    ========================================================= */
 .simve-vacinal-v2{
   --azul:#075BD8;
@@ -975,7 +586,7 @@ body{overflow-x:hidden!important;}
 
 
 /* =========================================================
-   SIMVE V6C — DETALHE INLINE NA TABELA VACINAL
+   SIMVE V6C â€” DETALHE INLINE NA TABELA VACINAL
    Remove o drawer fixo e exibe o detalhe apenas na linha clicada.
    ========================================================= */
 .vacv2-inline-row td {
@@ -1146,8 +757,8 @@ body{overflow-x:hidden!important;}
 
 
 /* =========================================================
-   SIMVE — CORREÇÃO FINAL DO FUNDO DO LOGIN (GitHub/jsDelivr)
-   Mantém a imagem hospedada e evita que blocos responsivos sobrescrevam o fundo.
+   SIMVE â€” CORREÃ‡ÃƒO FINAL DO FUNDO DO LOGIN (GitHub/jsDelivr)
+   MantÃ©m a imagem hospedada e evita que blocos responsivos sobrescrevam o fundo.
    ========================================================= */
 .auth-wrapper.simve-login-vue.simve-bg-final{
   width:100vw!important;
@@ -1166,8 +777,8 @@ body{overflow-x:hidden!important;}
 
 <style>
 /* =========================================================
-   SIMVE — AJUSTE RESPONSIVO REAL DA TELA DE LOGIN
-   Corrige redimensionamento do fundo e posição do card.
+   SIMVE â€” AJUSTE RESPONSIVO REAL DA TELA DE LOGIN
+   Corrige redimensionamento do fundo e posiÃ§Ã£o do card.
    ========================================================= */
 
 .auth-wrapper.simve-login-vue.simve-bg-final {
@@ -1193,7 +804,7 @@ body{overflow-x:hidden!important;}
   position: relative !important;
 }
 
-/* Card do login: posição proporcional e mais estável */
+/* Card do login: posiÃ§Ã£o proporcional e mais estÃ¡vel */
 .simve-card-final {
   position: absolute !important;
   top: 50% !important;
@@ -1212,7 +823,7 @@ body{overflow-x:hidden!important;}
   z-index: 5 !important;
 }
 
-/* Redução proporcional dos elementos internos */
+/* ReduÃ§Ã£o proporcional dos elementos internos */
 .simve-card-final .simve-login-avatar {
   width: clamp(82px, 6vw, 98px) !important;
   height: clamp(82px, 6vw, 98px) !important;
@@ -1318,11 +929,12 @@ body{overflow-x:hidden!important;}
   }
 }
 
-/* Monitor muito largo: não deixa o card fugir para fora da composição */
+/* Monitor muito largo: nÃ£o deixa o card fugir para fora da composiÃ§Ã£o */
 @media (min-width: 1800px) {
   .simve-card-final {
     right: 8.5vw !important;
   }
 }
 </style>
+
 
