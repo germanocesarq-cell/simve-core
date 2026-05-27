@@ -1,0 +1,43 @@
+<style>
+/* Estilos de paginação extraídos de Index.html. */
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #e7edf5;
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: #5d7391;
+  font-weight: 700;
+}
+
+.page-chip {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #dbe7fb;
+  background: white;
+  color: #1f64cf;
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 40px;
+  text-align: center;
+}
+
+.page-chip.active {
+  background: #1f64cf;
+  color: white;
+  border-color: #1f64cf;
+}
+
+.page-chip:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+</style>
