@@ -1663,7 +1663,7 @@
               <label>Código</label>
               <div class="simve-input">
                 <span>&#128290;</span>
-                <input v-model="codigoForm.codigo" type="text" inputmode="numeric" maxlength="6" placeholder="Código" @input="codigoForm.codigo = onlyNumbers(codigoForm.codigo)">
+                <input v-model="codigoForm.codigo" type="text" inputmode="numeric" maxlength="6" placeholder="Código" @input="codigoForm.codigo = window.onlyNumbers(codigoForm.codigo)">
               </div>
             </div>
 
