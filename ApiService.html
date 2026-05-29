@@ -28,6 +28,12 @@
       getDocumentos(...args) {
         return window.apiService.run('getDocumentos', ...args);
       }
+    },
+
+    inicio: {
+      getPainelInicioPorPerfil(...args) {
+        return window.apiService.run('getPainelInicioPorPerfil', ...args);
+      }
     }
   };
 </script>
