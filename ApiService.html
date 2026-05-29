@@ -1,0 +1,33 @@
+<!--
+  ApiService.html
+
+  Camada client-side futura para chamadas ao backend Google Apps Script.
+  Este arquivo é apenas uma estrutura conceitual segura e NÃO altera
+  o comportamento atual do aplicativo.
+
+  Regras observadas:
+  - não altera App.html
+  - não altera Index.html
+  - não altera chamadas existentes
+  - não altera Vue
+  - não altera lógica
+  - não migra getDocumentos ainda
+  - compatível com Apps Script HTML Service
+-->
+<script>
+  window.apiService = window.apiService || {
+    run(method, ...args) {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler(resolve)
+          .withFailureHandler(reject)[method](...args);
+      });
+    },
+
+    documentos: {
+      getDocumentos(...args) {
+        return window.apiService.run('getDocumentos', ...args);
+      }
+    }
+  };
+</script>

@@ -9758,7 +9758,7 @@ this.charts.vacChartSituacaoCompleta = makeStacked(
           this.loading = true;
 
           try {
-            const lista = await this.gas("getDocumentos", this.sessionToken);
+            const lista = await window.apiService.documentos.getDocumentos(this.sessionToken);
             this.documentos = Array.isArray(lista) ? lista : [];
           } catch (err) {
             this.handleError(err);

@@ -1,0 +1,44 @@
+<!--
+  ApiDebug.html
+
+  Camada leve de observabilidade para futura instrumentação do apiService.
+  Este arquivo é apenas preparatório e NÃO altera o comportamento atual do aplicativo.
+
+  Regras observadas:
+  - não altera App.html
+  - não altera ApiService.html
+  - não altera lógica
+  - não altera chamadas
+  - não intercepta requests
+  - não altera runtime
+  - não utiliza console excessivo
+-->
+<script>
+  window.apiDebug = window.apiDebug || {
+    log(...args) {
+      console.log('[apiDebug]', ...args);
+    },
+
+    warn(...args) {
+      console.warn('[apiDebug]', ...args);
+    },
+
+    error(...args) {
+      console.error('[apiDebug]', ...args);
+    },
+
+    timingStart(label) {
+      if (typeof label === 'string' && label) {
+        console.log('[apiDebug] timingStart', label);
+        console.time(`[apiDebug] ${label}`);
+      }
+    },
+
+    timingEnd(label) {
+      if (typeof label === 'string' && label) {
+        console.timeEnd(`[apiDebug] ${label}`);
+        console.log('[apiDebug] timingEnd', label);
+      }
+    }
+  };
+</script>
