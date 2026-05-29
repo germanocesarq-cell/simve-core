@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>SIMVE — Client Utilities</title>
+  <script>
+    /**
+     * ClientUtils.html
+     * 
+     * Camada de helpers client-side puros (browser/Vue/HTML Service).
+     * Objetivo: iniciar isolamento de utilitários reutilizáveis do SIMVE.
+     * 
+     * Status: Em transição.
+     * - Funções aqui espelhadas em AppScript.html
+     * - Gradualmente refatorar chamadas para usar ClientUtils
+     * - Remover duplicatas após validação em produção
+     * 
+     * Referência: HELPERS_MAPEAMENTO_SIMVE.md
+     * Roadmap: ROADMAP_REFATORACAO_SIMVE.md
+     * 
+     * Compatibilidade:
+     * - Sem ES Modules (export/import)
+     * - Funções globais diretas
+     * - Compatível com Google Apps Script HTML Service
+     */
+
+    /**
+     * onlyNumbers
+     * 
+     * Remove tudo que não seja dígito (0-9).
+     * Pura: Sim
+     * Dependências: nenhuma
+     * Risco: Baixo
+     * 
+     * Helper espelhado para futura migração segura.
+     * Versão original: AppScript.html (mantida para compatibilidade)
+     * 
+     * @param {string|any} value - Valor a filtrar
+     * @returns {string} String contendo apenas dígitos
+     */
+    function onlyNumbers(value) {
+      return String(value || "").replace(/\D/g, "");
+    }
+  </script>
+</head>
+<body>
+  <!-- Arquivo de helpers client-side puros do SIMVE -->
+  <!-- Incluir em AppScript.html ou Index.html com: -->
+  <!-- <script src="...ClientUtils.html"></script> -->
+</body>
+</html>
