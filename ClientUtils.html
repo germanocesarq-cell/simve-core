@@ -41,6 +41,24 @@
     function onlyNumbers(value) {
       return String(value || "").replace(/\D/g, "");
     }
+
+    /**
+     * formatNumero
+     * 
+     * Formata número para locale pt-BR (1.234,56).
+     * Pura: Sim
+     * Dependências: nenhuma
+     * Risco: Baixo
+     * 
+     * Helper espelhado para futura migração segura.
+     * Versão original: AppScript.html (mantida para compatibilidade)
+     * 
+     * @param {number|string|any} valor - Valor a formatar
+     * @returns {string} Número formatado para pt-BR
+     */
+    function formatNumero(valor) {
+      return Number(valor || 0).toLocaleString("pt-BR");
+    }
   </script>
 </head>
 <body>
