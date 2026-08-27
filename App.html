@@ -7614,7 +7614,7 @@ canvas {
           this.inicioCarregando = true;
 
           try {
-            const data = await this.gas("getPainelInicioPorPerfil", this.sessionToken);
+            const data = await window.apiService.inicio.getPainelInicioPorPerfil(this.sessionToken);
             this.inicioPerfil = this.normalizarInicioPerfilTerritorial(Object.assign({}, this.inicioPerfil, data || {}));
             await this.completarHomeSaudeComRanking();
           } catch (err) {
