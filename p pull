@@ -1,0 +1,77 @@
+[1mdiff --git a/App.html b/App.html[m
+[1mindex a306d62..0071291 100644[m
+[1m--- a/App.html[m
+[1m+++ b/App.html[m
+[36m@@ -7929,6 +7929,8 @@[m [mcanvas {[m
+               this.sessionInfo.primeiroAcesso = false;[m
+             }[m
+ [m
+[32m+[m[32m            this.authView = "login";[m
+[32m+[m
+             this.primeiroAcessoForm = { senha1: "", senha2: "" };[m
+             const perfilNormalizado = String(this.sessionInfo?.perfil || "")[m
+               .normalize("NFD")[m
+[36m@@ -8879,21 +8881,34 @@[m [mthis.charts.vacChartSituacaoCompleta = makeStacked([m
+             };[m
+ [m
+             const drawVacinas = (vacinas, x, y, w, h) => {[m
+[31m-              // Coordenadas ajustadas ao template-imagem v57.[m
+[31m-              // O template não possui bullets fixos; o SIMVE insere apenas as pendências reais.[m
+[32m+[m[32m              // SIMVE v61 - vacinas compactadas dentro da área reservada.[m
+[32m+[m[32m              // Máximo: 8 vacinas, distribuídas em 2 colunas de até 4 linhas.[m
+               const inicioX = x + w * 0.052;[m
+[31m-              const inicioY = y + h * 0.585;[m
+[32m+[m[32m              const inicioY = y + h * 0.582;[m
+               const colGap = w * 0.265;[m
+[31m-              const rowGap = h * 0.061;[m
+[32m+[m[32m              const rowGap = h * 0.038;[m
+               const maxTextW = w * 0.235;[m
+[32m+[m
+               (vacinas || []).slice(0, 8).forEach((v, i) => {[m
+                 const col = i >= 4 ? 1 : 0;[m
+                 const row = col ? i - 4 : i;[m
+[32m+[m
+                 const bx = inicioX + col * colGap;[m
+                 const by = inicioY + row * rowGap;[m
+[32m+[m
+                 pdf.setFillColor(0, 136, 111);[m
+[31m-                pdf.circle(bx, by - 1.35, 1.15, "F");[m
+[31m-                drawFit(v, bx + 4.0, by, maxTextW, 5.25, 3.35, C.textStrong, "bold");[m
+[32m+[m[32m                pdf.circle(bx, by - 1.05, 0.90, "F");[m
+[32m+[m
+[32m+[m[32m                drawFit([m
+[32m+[m[32m                  v,[m
+[32m+[m[32m                  bx + 3.4,[m
+[32m+[m[32m                  by,[m
+[32m+[m[32m                  maxTextW,[m
+[32m+[m[32m                  4.75,[m
+[32m+[m[32m                  3.20,[m
+[32m+[m[32m                  C.textStrong,[m
+[32m+[m[32m                  "bold"[m
+[32m+[m[32m                );[m
+               });[m
+             };[m
+ [m
+[36m@@ -8905,13 +8920,15 @@[m [mthis.charts.vacChartSituacaoCompleta = makeStacked([m
+               // Os textos ficam dentro das caixas brancas do próprio template.[m
+               // SIMVE v58 - posições recalibradas para o novo template PNG:[m
+               // fontes maiores, texto azul-escuro e centralização visual nos campos.[m
+[31m-              drawCenteredFit(dataAcao || "", x + cardW * 0.102, y + cardH * 0.326, cardW * 0.200, 6.45, 4.15, C.textStrong, "bold");[m
+[31m-              drawCenteredFit(horarioAcao || "", x + cardW * 0.420, y + cardH * 0.326, cardW * 0.172, 6.45, 4.15, C.textStrong, "bold");[m
+[31m-              drawCenteredFit(aluno.escola, x + cardW * 0.705, y + cardH * 0.326, cardW * 0.258, 6.05, 3.75, C.textStrong, "bold");[m
+[31m-[m
+[31m-              drawCenteredFit(aluno.aluno, x + cardW * 0.102, y + cardH * 0.456, cardW * 0.502, 6.15, 3.35, C.textStrong, "bold");[m
+[31m-              drawCenteredFit(aluno.turma, x + cardW * 0.704, y + cardH * 0.456, cardW * 0.106, 5.65, 3.25, C.textStrong, "bold");[m
+[31m-              drawCenteredFit(aluno.idade, x + cardW * 0.881, y + cardH * 0.456, cardW * 0.072, 5.55, 3.10, C.textStrong, "bold");[m
+[32m+[m[32m              // SIMVE v61 - alinhamento fino e compactação das vacinas no comunicado.[m
+[32m+[m[32m              // Ajuste vertical para centralizar os textos dentro dos campos impressos.[m
+[32m+[m[32m              drawCenteredFit(dataAcao || "", x + cardW * 0.102, y + cardH * 0.309, cardW * 0.200, 6.25, 4.15, C.textStrong, "bold");[m
+[32m+[m[32m              drawCenteredFit(horarioAcao || "", x + cardW * 0.420, y + cardH * 0.309, cardW * 0.172, 6.25, 4.15, C.textStrong, "bold");[m
+[32m+[m[32m              drawCenteredFit(aluno.escola, x + cardW * 0.705, y + cardH * 0.300, cardW * 0.258, 5.75, 3.60, C.textStrong, "bold");[m
+[32m+[m
+[32m+[m[32m              drawCenteredFit(aluno.aluno, x + cardW * 0.102, y + cardH * 0.438, cardW * 0.502, 5.95, 3.35, C.textStrong, "bold");[m
+[32m+[m[32m              drawCenteredFit(aluno.turma, x + cardW * 0.704, y + cardH * 0.429, cardW * 0.106, 5.45, 3.20, C.textStrong, "bold");[m
+[32m+[m[32m              drawCenteredFit(aluno.idade, x + cardW * 0.881, y + cardH * 0.429, cardW * 0.072, 5.30, 3.00, C.textStrong, "bold");[m
+ [m
+               drawVacinas(aluno.vacinas, x, y, cardW, cardH);[m
+             };[m

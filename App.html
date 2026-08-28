@@ -1816,7 +1816,8 @@
           <button v-if="isGestor" class="menu-btn" :class="{ active: currentView === 'inicio' }" @click="setView('inicio')">Início</button>
           <button class="menu-btn" :class="{ active: currentView === 'cadastral' }" @click="setView('cadastral')">Situação Cadastral dos Alunos</button>
           <button class="menu-btn" :class="{ active: currentView === 'vacinal' }" @click="setView('vacinal')">Situação Vacinal</button>
-          <button class="menu-btn" :class="{ active: currentView === 'transferencias' }" @click="setView('transferencias')">Transferências <span v-if="transferencias.totalRecebidas" class="simve-menu-badge">{{ transferencias.totalRecebidas }}</span></button>
+          <!-- SIMVE v66 - Transferências visível somente para a base ESCOLAR. -->
+          <button v-if="String(sessionInfo?.base || '').trim().toUpperCase() === 'ESCOLAR'" class="menu-btn" :class="{ active: currentView === 'transferencias' }" @click="setView('transferencias')">Transferências <span v-if="transferencias.totalRecebidas" class="simve-menu-badge">{{ transferencias.totalRecebidas }}</span></button>
           <!-- Aba Ranking removida para os perfis SA&Uacute;DE/ADM.
                O bloco interno de ranking foi mantido porque o perfil EDUCA&Ccedil;&Atilde;O usa essa view como Início da escola. -->
           <button v-if="isAdmin" class="menu-btn" :class="{ active: currentView === 'acessos' }" @click="setView('acessos')">Acessos e Monitoramento</button>
@@ -2228,7 +2229,7 @@
 
                       <div class="vacv2-filter-actions">
                         <button class="vacv2-btn ghost" type="button" @click="limparFiltrosVacinal" :disabled="loading">Limpar filtros</button>
-                        <button class="vacv2-btn primary" type="button" @click="carregarVacinal" :disabled="loading">Aplicar filtros</button>
+                        <button class="vacv2-btn primary" type="button" @click="atualizarVacinalComFeedback({ force: true })" :disabled="loading">Aplicar filtros</button>
                       </div>
                     </div>
                   </div>
@@ -5718,7 +5719,17 @@ canvas {
               escolar: { disponivel: false, totalAlunos: 0, alunosEmAtraso: 0, coberturaGeral: 0 }
             },
             diagnostico: {},
-            _metaEscolas: []
+            _metaEscolas: [],
+
+            // SIMVE v67 - cache em memória para reduzir chamadas repetidas ao Apps Script.
+            // Dura apenas durante a sessão aberta no navegador.
+            _cache: {
+              escolas: null,
+              escolasEm: 0,
+              dados: {},
+              historicos: {},
+              ttlMs: 300000
+            }
           },
 
           cadastral: {
@@ -6288,11 +6299,11 @@ canvas {
         'vacinal.form.escola': async function(novo, antigo) {
           if (!this.isAuthenticated || this.suppressWatchers || novo === antigo || this.currentView !== 'vacinal' || !novo) return;
           this.vacinal.form.turma = "TODAS";
-          await this.carregarVacinal();
+          await this.atualizarVacinalComFeedback();
         },
         'vacinal.form.turma': async function(novo, antigo) {
           if (!this.isAuthenticated || this.suppressWatchers || novo === antigo || this.currentView !== 'vacinal') return;
-          await this.carregarVacinal();
+          await this.atualizarVacinalComFeedback();
         },
         'vacinal.form.vacinaAtraso': function(novo, antigo) {
           if (!this.isAuthenticated || this.suppressWatchers || novo === antigo || this.currentView !== 'vacinal') return;
@@ -6300,7 +6311,7 @@ canvas {
         },
         'vacinal.form.vacinaEvolucao': async function(novo, antigo) {
           if (!this.isAuthenticated || this.suppressWatchers || novo === antigo || this.currentView !== 'vacinal') return;
-          await this.carregarHistoricoEvolucao();
+          await this.atualizarHistoricoVacinalComFeedback();
         },
         'cadastral.form.base': async function(novo, antigo) {
           if (!this.isAuthenticated || this.suppressWatchers || novo === antigo || this.currentView !== 'cadastral') return;
@@ -7351,31 +7362,79 @@ canvas {
           const permitidas = this.obterEscolasPermitidasInicio();
           if (!permitidas.length) return;
 
+          // SIMVE v65:
+          // para perfil SAÚDE, a Home deve sempre exibir TODAS as escolas
+          // cadastradas para aquele usuário na coluna ESCOLA da aba USUARIOS.
+          // Não altera layout; apenas completa a lista territorial.
           let filtradas = this.montarRankingEscolasPermitidasInicio(this.inicioPerfil?.rankingEscolas || []);
 
-          if (!filtradas.length) {
+          const chavesEncontradas = () => new Set(
+            filtradas.map(item => this.normalizarComparacao(this.nomeEscolaInicio(item)))
+          );
+
+          // Antes, o ranking geral só era consultado quando nenhuma escola era encontrada.
+          // Isso fazia um usuário com 4 escolas visualizar apenas 1 caso o retorno inicial
+          // trouxesse uma lista parcial. Agora também completamos quando faltam escolas.
+          if (chavesEncontradas().size < permitidas.length) {
             if (!Array.isArray(this.ranking?.escolasPorCobertura) || !this.ranking.escolasPorCobertura.length) {
               try {
                 const dataRanking = await this.gas("getPainelRankingVacinal", this.sessionToken);
                 this.ranking = Object.assign({}, this.ranking || {}, dataRanking || {});
               } catch (e) {
-                // Mantém a Home sem quebrar caso o ranking ainda não esteja disponível.
+                // Se o ranking não estiver disponível, ainda assim mantemos
+                // todas as escolas vinculadas visíveis na Home.
               }
             }
-            filtradas = this.montarRankingEscolasPermitidasInicio(this.ranking?.escolasPorCobertura || []);
+
+            const complementares = this.montarRankingEscolasPermitidasInicio(
+              this.ranking?.escolasPorCobertura || []
+            );
+
+            const porEscola = new Map();
+
+            // Prioriza os dados já recebidos pela Home.
+            filtradas.forEach(item => {
+              const chave = this.normalizarComparacao(this.nomeEscolaInicio(item));
+              if (chave) porEscola.set(chave, item);
+            });
+
+            // Complementa somente as escolas que ainda não vieram.
+            complementares.forEach(item => {
+              const chave = this.normalizarComparacao(this.nomeEscolaInicio(item));
+              if (chave && !porEscola.has(chave)) porEscola.set(chave, item);
+            });
+
+            filtradas = Array.from(porEscola.values());
           }
 
-          // Último recurso: exibe pelo menos as escolas vinculadas ao usuário,
-          // evitando que a tela mostre “sem escolas” quando o vínculo existe.
-          if (!filtradas.length) {
-            filtradas = permitidas.map(nome => ({
+          // Garante a correspondência 1:1 com a lista de escolas do usuário.
+          // Mantém a ordem cadastrada em USUARIOS e nunca remove uma escola vinculada
+          // só porque ainda não há métricas disponíveis para ela.
+          const dadosPorEscola = new Map(
+            filtradas.map(item => [
+              this.normalizarComparacao(this.nomeEscolaInicio(item)),
+              item
+            ])
+          );
+
+          filtradas = permitidas.map(nome => {
+            const chave = this.normalizarComparacao(nome);
+            const existente = dadosPorEscola.get(chave);
+
+            if (existente) {
+              return Object.assign({}, existente, { escola: nome });
+            }
+
+            return {
               escola: nome,
               total: 0,
+              elegiveis: 0,
               cobertura: 0,
               alunosAtraso: 0,
+              alunosSemInfo: 0,
               situacao: "Atenção"
-            }));
-          }
+            };
+          });
 
           this.inicioPerfil.rankingEscolas = filtradas;
           this.inicioPerfil.resumo = this.inicioPerfil.resumo || {};
@@ -7929,6 +7988,8 @@ canvas {
               this.sessionInfo.primeiroAcesso = false;
             }
 
+            this.authView = "login";
+
             this.primeiroAcessoForm = { senha1: "", senha2: "" };
             const perfilNormalizado = String(this.sessionInfo?.perfil || "")
               .normalize("NFD")
@@ -8142,6 +8203,7 @@ canvas {
               }
               try { await this.carregarEscolasVacinal(); } catch (e) {}
               await this.carregarInicioPerfil({ manterTelaCarregando: true });
+              window.setTimeout(() => this.preCarregarVacinalEmSegundoPlano(), 250);
             }
 
             if (view === "cadastral") {
@@ -8150,12 +8212,14 @@ canvas {
             }
 
             if (view === "vacinal") {
-              await this.carregarEscolasVacinal();
+              // SIMVE v67 - carregarVacinal já reutiliza a lista de escolas em cache.
+              // Ao voltar para a aba com os mesmos filtros, os dados aparecem sem nova espera longa.
               await this.carregarVacinal();
             }
 
             if (view === "ranking") {
               await this.carregarRanking();
+              window.setTimeout(() => this.preCarregarVacinalEmSegundoPlano(), 250);
             }
 
             if (view === "acessos") {
@@ -8198,8 +8262,28 @@ canvas {
           }
         },
 
-        async carregarEscolasVacinal() {
-          const lista = await this.gas("getEscolasPainelVacinal", this.sessionToken);
+        async carregarEscolasVacinal(opcoes = {}) {
+          const force = Boolean(opcoes && opcoes.force);
+          const cache = this.vacinal._cache || {};
+          const agora = Date.now();
+          const ttl = Number(cache.ttlMs || 300000);
+
+          let lista = null;
+          const cacheValido =
+            !force &&
+            Array.isArray(cache.escolas) &&
+            cache.escolas.length >= 0 &&
+            (agora - Number(cache.escolasEm || 0)) < ttl;
+
+          if (cacheValido) {
+            lista = cache.escolas;
+          } else {
+            lista = await this.gas("getEscolasPainelVacinal", this.sessionToken);
+            lista = Array.isArray(lista) ? lista : [];
+            this.vacinal._cache.escolas = lista;
+            this.vacinal._cache.escolasEm = Date.now();
+          }
+
           this.vacinal.filtros.escolas = Array.isArray(lista) ? lista.map(x => x.nome) : [];
           this.vacinal._metaEscolas = Array.isArray(lista) ? lista : [];
 
@@ -8219,6 +8303,38 @@ canvas {
           if (!this.vacinal.filtros.segmentosDisponiveis.includes(this.vacinal.form.segmento)) {
             this.vacinal.form.segmento = this.vacinal.filtros.segmentosDisponiveis[0] || "TODOS";
           }
+
+          return lista;
+        },
+
+        chaveCacheVacinal() {
+          return [
+            String(this.vacinal.form.escola || "").trim(),
+            String(this.vacinal.form.segmento || "TODOS").trim(),
+            String(this.vacinal.form.turma || "TODAS").trim()
+          ].join("||");
+        },
+
+        chaveCacheHistoricoVacinal() {
+          return [
+            this.chaveCacheVacinal(),
+            String(this.vacinal.form.vacinaEvolucao || "TODAS").trim()
+          ].join("||");
+        },
+
+        cacheVacinalValido(entrada) {
+          if (!entrada || !entrada.em) return false;
+          const ttl = Number(this.vacinal?._cache?.ttlMs || 300000);
+          return (Date.now() - Number(entrada.em)) < ttl;
+        },
+
+        clonarDadosCacheVacinal(valor) {
+          if (valor === null || valor === undefined) return valor;
+          try {
+            return JSON.parse(JSON.stringify(valor));
+          } catch (e) {
+            return valor;
+          }
         },
 
         limparFiltrosVacinal() {
@@ -8231,7 +8347,7 @@ canvas {
           this.vacinal.busca = "";
           this.vacinal.pagination.page = 1;
           this.suppressWatchers = false;
-          this.carregarVacinal();
+          this.atualizarVacinalComFeedback();
         },
 
         limparFiltrosCadastral() {
@@ -8245,18 +8361,70 @@ canvas {
         },
 
 
-        async carregarHistoricoEvolucao() {
-          if (!this.vacinal.form.escola) return;
+        async atualizarVacinalComFeedback(opcoes = {}) {
+          // SIMVE v68 - feedback visual durante mudanças de filtros.
+          // Reutiliza o overlay já existente no sistema, sem alterar o layout.
+          const inicioFeedback = Date.now();
+          this.routeLoadingText = "Atualizando situação vacinal...";
+          this.routeLoading = true;
+          await this.$nextTick();
 
           try {
-            const historico = await this.gas(
-              "getHistoricoCobertura",
-              this.sessionToken,
-              this.vacinal.form.escola,
-              this.vacinal.form.segmento,
-              this.vacinal.form.turma,
-              this.vacinal.form.vacinaEvolucao
-            );
+            await this.carregarVacinal(opcoes);
+          } finally {
+            // Evita um piscar imperceptível quando o resultado vem do cache.
+            const decorrido = Date.now() - inicioFeedback;
+            if (decorrido < 300) {
+              await new Promise(resolve => setTimeout(resolve, 300 - decorrido));
+            }
+            this.routeLoading = false;
+          }
+        },
+
+        async atualizarHistoricoVacinalComFeedback(opcoes = {}) {
+          const inicioFeedback = Date.now();
+          this.routeLoadingText = "Atualizando evolução da cobertura vacinal...";
+          this.routeLoading = true;
+          await this.$nextTick();
+
+          try {
+            await this.carregarHistoricoEvolucao(opcoes);
+          } finally {
+            const decorrido = Date.now() - inicioFeedback;
+            if (decorrido < 300) {
+              await new Promise(resolve => setTimeout(resolve, 300 - decorrido));
+            }
+            this.routeLoading = false;
+          }
+        },
+
+        async carregarHistoricoEvolucao(opcoes = {}) {
+          if (!this.vacinal.form.escola) return;
+
+          const force = Boolean(opcoes && opcoes.force);
+          const chave = this.chaveCacheHistoricoVacinal();
+          const entrada = this.vacinal._cache.historicos[chave];
+
+          try {
+            let historico;
+
+            if (!force && this.cacheVacinalValido(entrada)) {
+              historico = this.clonarDadosCacheVacinal(entrada.valor);
+            } else {
+              historico = await this.gas(
+                "getHistoricoCobertura",
+                this.sessionToken,
+                this.vacinal.form.escola,
+                this.vacinal.form.segmento,
+                this.vacinal.form.turma,
+                this.vacinal.form.vacinaEvolucao
+              );
+
+              this.vacinal._cache.historicos[chave] = {
+                em: Date.now(),
+                valor: this.clonarDadosCacheVacinal(historico)
+              };
+            }
 
             this.vacinal.historico = historico || {
               labels: [],
@@ -8273,9 +8441,14 @@ canvas {
           }
         },
 
-        async carregarVacinal() {
+
+        async carregarVacinal(opcoes = {}) {
           this.clearTopMessages();
-          this.loading = true;
+
+          const force = Boolean(opcoes && opcoes.force);
+          const silencioso = Boolean(opcoes && opcoes.silencioso);
+
+          if (!silencioso) this.loading = true;
 
           try {
             if (!this.vacinal.filtros.escolas.length) {
@@ -8296,6 +8469,38 @@ canvas {
 
             if (!this.vacinal.form.escola) return;
 
+            const chaveDados = this.chaveCacheVacinal();
+            const chaveHistorico = this.chaveCacheHistoricoVacinal();
+            const entradaDados = this.vacinal._cache.dados[chaveDados];
+            const entradaHistorico = this.vacinal._cache.historicos[chaveHistorico];
+
+            // SIMVE v67 - retorno instantâneo quando o mesmo conjunto de filtros
+            // já foi carregado recentemente nesta sessão.
+            if (!force && this.cacheVacinalValido(entradaDados)) {
+              const dataCache = this.clonarDadosCacheVacinal(entradaDados.valor) || {};
+
+              if (this.cacheVacinalValido(entradaHistorico)) {
+                dataCache.historico = this.clonarDadosCacheVacinal(entradaHistorico.valor);
+              } else if (!dataCache.historico) {
+                dataCache.historico = {
+                  labels: [],
+                  values: [],
+                  datasets: [],
+                  titulo: "Evolução mensal da cobertura vacinal",
+                  inicioSerie: "Abril"
+                };
+              }
+
+              await this.aplicarDadosVacinal(dataCache, !silencioso);
+
+              // Se apenas o histórico expirou, atualiza-o separadamente sem refazer
+              // todo o painel vacinal.
+              if (!this.cacheVacinalValido(entradaHistorico) && !silencioso) {
+                this.carregarHistoricoEvolucao().catch(() => {});
+              }
+              return;
+            }
+
             const [data, historico] = await Promise.all([
               this.gas(
                 "getPainelVacinalPorEscola",
@@ -8315,14 +8520,56 @@ canvas {
               )
             ]);
 
-            data.historico = historico || { labels: [], values: [], titulo: "Evolução mensal da cobertura vacinal" };
-            await this.aplicarDadosVacinal(data, true);
+            const dadosSeguros = data || {};
+            dadosSeguros.historico = historico || {
+              labels: [],
+              values: [],
+              datasets: [],
+              titulo: "Evolução mensal da cobertura vacinal",
+              inicioSerie: "Abril"
+            };
+
+            this.vacinal._cache.dados[chaveDados] = {
+              em: Date.now(),
+              valor: this.clonarDadosCacheVacinal(dadosSeguros)
+            };
+
+            this.vacinal._cache.historicos[chaveHistorico] = {
+              em: Date.now(),
+              valor: this.clonarDadosCacheVacinal(historico)
+            };
+
+            await this.aplicarDadosVacinal(dadosSeguros, !silencioso);
           } catch (err) {
-            this.handleError(err);
+            if (!silencioso) this.handleError(err);
           } finally {
-            this.loading = false;
+            if (!silencioso) this.loading = false;
           }
         },
+
+        async preCarregarVacinalEmSegundoPlano() {
+          // Pré-carga discreta: não altera a tela atual e não mostra overlay.
+          // É executada após a Home/Ranking para que a primeira entrada na aba
+          // Situação Vacinal tenha grande chance de já estar em cache.
+          if (!this.isAuthenticated) return;
+          if (this.vacinal?._preCarregando) return;
+
+          this.vacinal._preCarregando = true;
+          try {
+            await this.carregarEscolasVacinal();
+            if (!this.vacinal.form.escola) return;
+
+            const chave = this.chaveCacheVacinal();
+            if (!this.cacheVacinalValido(this.vacinal._cache.dados[chave])) {
+              await this.carregarVacinal({ silencioso: true });
+            }
+          } catch (e) {
+            // A pré-carga nunca deve bloquear a navegação.
+          } finally {
+            this.vacinal._preCarregando = false;
+          }
+        },
+
 
         async aplicarDadosVacinal(data, renderCharts = true) {
           this.vacinal.indicadores = data?.indicadores || {
@@ -8830,7 +9077,13 @@ this.charts.vacChartSituacaoCompleta = makeStacked(
             this.routeLoadingText = "Carregando modelo institucional...";
             const templateDataUrl = await carregarImagemComoDataURL(TEMPLATE_COMUNICADO_URL);
 
-            const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4", compress: false });
+            // SIMVE v64 - A4 paisagem forçado em dimensões físicas 297 x 210 mm.
+            const pdf = new jsPDF({
+              orientation: "landscape",
+              unit: "mm",
+              format: [297, 210],
+              compress: false
+            });
             const pageW = 297;
             const pageH = 210;
             const marginX = 3.4;
@@ -8879,22 +9132,53 @@ this.charts.vacChartSituacaoCompleta = makeStacked(
             };
 
             const drawVacinas = (vacinas, x, y, w, h) => {
-              // Coordenadas ajustadas ao template-imagem v57.
-              // O template não possui bullets fixos; o SIMVE insere apenas as pendências reais.
+              // SIMVE v62 - vacinas compactas e reposicionadas para maior respiro visual.
+              // Máximo: 8 vacinas, distribuídas em 2 colunas de até 4 linhas.
               const inicioX = x + w * 0.052;
-              const inicioY = y + h * 0.585;
+              const inicioY = y + h * 0.555;
               const colGap = w * 0.265;
-              const rowGap = h * 0.061;
+              const rowGap = h * 0.038;
               const maxTextW = w * 0.235;
+
               (vacinas || []).slice(0, 8).forEach((v, i) => {
                 const col = i >= 4 ? 1 : 0;
                 const row = col ? i - 4 : i;
+
                 const bx = inicioX + col * colGap;
                 const by = inicioY + row * rowGap;
+
                 pdf.setFillColor(0, 136, 111);
-                pdf.circle(bx, by - 1.35, 1.15, "F");
-                drawFit(v, bx + 4.0, by, maxTextW, 5.25, 3.35, C.textStrong, "bold");
+                pdf.circle(bx, by - 1.05, 0.90, "F");
+
+                drawFit(
+                  v,
+                  bx + 3.4,
+                  by,
+                  maxTextW,
+                  4.75,
+                  3.20,
+                  C.textStrong,
+                  "bold"
+                );
               });
+            };
+
+            const drawCutGuides = () => {
+              // SIMVE v63 - guias centrais tracejadas para recorte em 4 partes.
+              // As linhas passam exatamente pelos espaços entre os quatro comunicados.
+              pdf.saveGraphicsState();
+              pdf.setDrawColor(125, 125, 125);
+              pdf.setLineWidth(0.25);
+              pdf.setLineDashPattern([2.2, 1.8], 0);
+
+              // Divisão vertical da folha.
+              pdf.line(pageW / 2, 0, pageW / 2, pageH);
+
+              // Divisão horizontal da folha.
+              pdf.line(0, pageH / 2, pageW, pageH / 2);
+
+              pdf.setLineDashPattern([], 0);
+              pdf.restoreGraphicsState();
             };
 
             const drawCard = (aluno, x, y) => {
@@ -8905,25 +9189,34 @@ this.charts.vacChartSituacaoCompleta = makeStacked(
               // Os textos ficam dentro das caixas brancas do próprio template.
               // SIMVE v58 - posições recalibradas para o novo template PNG:
               // fontes maiores, texto azul-escuro e centralização visual nos campos.
-              drawCenteredFit(dataAcao || "", x + cardW * 0.102, y + cardH * 0.326, cardW * 0.200, 6.45, 4.15, C.textStrong, "bold");
-              drawCenteredFit(horarioAcao || "", x + cardW * 0.420, y + cardH * 0.326, cardW * 0.172, 6.45, 4.15, C.textStrong, "bold");
-              drawCenteredFit(aluno.escola, x + cardW * 0.705, y + cardH * 0.326, cardW * 0.258, 6.05, 3.75, C.textStrong, "bold");
+              // SIMVE v62 - bloco de vacinas elevado e microajustes de escola/idade.
+              // Ajuste vertical para centralizar os textos dentro dos campos impressos.
+              drawCenteredFit(dataAcao || "", x + cardW * 0.102, y + cardH * 0.309, cardW * 0.200, 6.25, 4.15, C.textStrong, "bold");
+              drawCenteredFit(horarioAcao || "", x + cardW * 0.420, y + cardH * 0.309, cardW * 0.172, 6.25, 4.15, C.textStrong, "bold");
+              drawCenteredFit(aluno.escola, x + cardW * 0.705, y + cardH * 0.294, cardW * 0.258, 5.75, 3.60, C.textStrong, "bold");
 
-              drawCenteredFit(aluno.aluno, x + cardW * 0.102, y + cardH * 0.456, cardW * 0.502, 6.15, 3.35, C.textStrong, "bold");
-              drawCenteredFit(aluno.turma, x + cardW * 0.704, y + cardH * 0.456, cardW * 0.106, 5.65, 3.25, C.textStrong, "bold");
-              drawCenteredFit(aluno.idade, x + cardW * 0.881, y + cardH * 0.456, cardW * 0.072, 5.55, 3.10, C.textStrong, "bold");
+              drawCenteredFit(aluno.aluno, x + cardW * 0.102, y + cardH * 0.438, cardW * 0.502, 5.95, 3.35, C.textStrong, "bold");
+              drawCenteredFit(aluno.turma, x + cardW * 0.704, y + cardH * 0.429, cardW * 0.106, 5.45, 3.20, C.textStrong, "bold");
+              drawCenteredFit(aluno.idade, x + cardW * 0.881, y + cardH * 0.423, cardW * 0.072, 5.30, 3.00, C.textStrong, "bold");
 
               drawVacinas(aluno.vacinas, x, y, cardW, cardH);
             };
 
             alunos.forEach((aluno, idx) => {
-              if (idx > 0 && idx % 4 === 0) pdf.addPage();
+              if (idx > 0 && idx % 4 === 0) pdf.addPage([297, 210], "landscape");
+
               const pos = idx % 4;
               const col = pos % 2;
               const row = Math.floor(pos / 2);
               const x = marginX + col * (cardW + gapX);
               const y = marginY + row * (cardH + gapY);
+
               drawCard(aluno, x, y);
+
+              // Ao finalizar cada página (ou o último aluno), desenha as guias de recorte.
+              if (pos === 3 || idx === alunos.length - 1) {
+                drawCutGuides();
+              }
             });
 
             const blob = pdf.output("blob");
@@ -8932,7 +9225,7 @@ this.charts.vacChartSituacaoCompleta = makeStacked(
             if (!janela) {
               const a = document.createElement("a");
               a.href = url;
-              a.download = "SIMVE_comunicados_template_premium_v58.pdf";
+              a.download = "SIMVE_comunicados_paisagem_forcada_v64.pdf";
               document.body.appendChild(a);
               a.click();
               a.remove();
