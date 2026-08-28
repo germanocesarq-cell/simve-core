@@ -4651,14 +4651,35 @@ function isEnderecoInconsistente_(endereco) {
 }
 
 function logAcesso_(perfil, usuario, escola, acao) {
-  const sh = getSheet_(ABA_LOG);
-  sh.appendRow([
-    new Date(),
-    perfil,
-    usuario,
-    escola,
-    acao
-  ]);
+  try {
+    console.log(
+      "SIMVE - USUARIO EFETIVO: " +
+      Session.getEffectiveUser().getEmail()
+    );
+
+    const sh = getSheet_(ABA_LOG);
+
+    sh.appendRow([
+      new Date(),
+      perfil,
+      usuario,
+      escola,
+      acao
+    ]);
+
+    return true;
+
+  } catch (erro) {
+    console.error(
+      "SIMVE - ERRO LOG_ACESSO | Usuario efetivo: " +
+      Session.getEffectiveUser().getEmail() +
+      " | Erro: " +
+      (erro && erro.message ? erro.message : erro)
+    );
+
+    // O log nunca deve impedir o usuário de entrar no SIMVE.
+    return false;
+  }
 }
 
 function sanitizeFileName_(name) {
