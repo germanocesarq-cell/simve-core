@@ -1816,6 +1816,8 @@
           <button v-if="isGestor" class="menu-btn" :class="{ active: currentView === 'inicio' }" @click="setView('inicio')">Início</button>
           <button class="menu-btn" :class="{ active: currentView === 'cadastral' }" @click="setView('cadastral')">Situação Cadastral dos Alunos</button>
           <button class="menu-btn" :class="{ active: currentView === 'vacinal' }" @click="setView('vacinal')">Situação Vacinal</button>
+          <!-- SIMVE v69 - Atualização Vacinal exclusiva do perfil SAÚDE. -->
+          <button v-if="isSaude" class="menu-btn" :class="{ active: currentView === 'atualizacaoVacinal' }" @click="setView('atualizacaoVacinal')">💉 Atualização Vacinal</button>
           <!-- SIMVE v66 - Transferências visível somente para a base ESCOLAR. -->
           <button v-if="String(sessionInfo?.base || '').trim().toUpperCase() === 'ESCOLAR'" class="menu-btn" :class="{ active: currentView === 'transferencias' }" @click="setView('transferencias')">Transferências <span v-if="transferencias.totalRecebidas" class="simve-menu-badge">{{ transferencias.totalRecebidas }}</span></button>
           <!-- Aba Ranking removida para os perfis SA&Uacute;DE/ADM.
@@ -2066,6 +2068,7 @@
                   <h2 class="home-section-title">⚡ Ações rápidas</h2>
                   <div class="home-shortcut-grid">
                     <button type="button" @click="setView('vacinal')">💉<span>Situação Vacinal<small>Consultar e atualizar registros</small></span></button>
+                    <button v-if="isSaude" type="button" @click="setView('atualizacaoVacinal')">✅<span>Atualização Vacinal<small>Registrar situação diretamente no SIMVE</small></span></button>
                     <button type="button" @click="setView('cadastral')">&#128100;<span>Situação Cadastral<small>Corrigir CPF e endereço</small></span></button>
                     <button v-if="isAdmin" type="button" @click="setView('acessos')">&#128065;&#65039;<span>Monitorar acessos<small>Uso do sistema</small></span></button>
                     <button type="button" @click="setView('documentos')">📁<span>Documentos<small>Materiais de apoio</small></span></button>
@@ -2302,6 +2305,215 @@
                     </div>
                   </div>
                 </div>
+              </div>
+            </section>
+
+
+            <!-- SIMVE v69 - ATUALIZAÇÃO VACINAL | PERFIL SAÚDE -->
+            <section v-if="currentView === 'atualizacaoVacinal' && isSaude" class="section simve-av-v69">
+              <div class="av-header-v69">
+                <div>
+                  <span class="av-eyebrow-v69">PERFIL SAÚDE</span>
+                  <h1>Atualização da Situação Vacinal</h1>
+                  <p>Atualize somente os campos de vacinação. Dados cadastrais permanecem protegidos.</p>
+                </div>
+                <div class="av-secure-v69">
+                  <span>🔒</span>
+                  <div><strong>Atualização segura</strong><small>As regras de idade são validadas novamente pelo servidor antes de salvar.</small></div>
+                </div>
+              </div>
+
+              <div class="av-toolbar-v69">
+                <div class="field av-school-v69">
+                  <label>Escola vinculada</label>
+                  <select v-model="atualizacaoVacinal.escola" @change="carregarAlunosAtualizacaoVacinal" :disabled="atualizacaoVacinal.carregandoAlunos || atualizacaoVacinal.salvando">
+                    <option v-for="escola in atualizacaoVacinal.escolas" :key="'av-escola-' + escola" :value="escola">{{ escola }}</option>
+                  </select>
+                </div>
+
+                <div v-if="!atualizacaoVacinal.alunoSelecionado" class="field av-search-v69">
+                  <label>Buscar aluno</label>
+                  <input v-model="atualizacaoVacinal.busca" @input="atualizacaoVacinal.pagina = 1" type="text" placeholder="Digite nome ou matrícula">
+                </div>
+
+                <button class="av-btn-refresh-v69" type="button" @click="carregarAlunosAtualizacaoVacinal" :disabled="atualizacaoVacinal.carregandoAlunos || !atualizacaoVacinal.escola">
+                  {{ atualizacaoVacinal.carregandoAlunos ? 'Atualizando...' : '↻ Atualizar lista' }}
+                </button>
+              </div>
+
+              <div v-if="!atualizacaoVacinal.alunoSelecionado" class="av-list-card-v69">
+                <div class="av-list-head-v69">
+                  <div>
+                    <h2>Alunos da escola</h2>
+                    <p>A turma aparece apenas como referência. Não é necessário selecioná-la.</p>
+                  </div>
+                  <div class="av-count-v69">
+                    <strong>{{ formatNumero(atualizacaoVacinalAlunosFiltrados.length) }}</strong>
+                    <span>aluno(s)</span>
+                  </div>
+                </div>
+
+                <div v-if="atualizacaoVacinal.carregandoAlunos" class="av-inline-loading-v69">
+                  <span class="av-spinner-v69"></span>
+                  Buscando alunos e regras de vacinação...
+                </div>
+
+                <div v-else class="av-table-wrap-v69">
+                  <table class="av-table-v69">
+                    <thead>
+                      <tr>
+                        <th>Aluno</th>
+                        <th>Turma</th>
+                        <th>Base</th>
+                        <th>Idade</th>
+                        <th>Situação</th>
+                        <th>Ação</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-if="!atualizacaoVacinalAlunosPagina.length">
+                        <td colspan="6" class="empty-state">Nenhum aluno encontrado nesta escola.</td>
+                      </tr>
+                      <tr v-for="item in atualizacaoVacinalAlunosPagina" :key="'av-aluno-' + item.base + '-' + item.matricula">
+                        <td>
+                          <strong class="av-name-v69">{{ item.nome }}</strong>
+                          <small>Matrícula: {{ item.matricula || '-' }}</small>
+                        </td>
+                        <td>{{ item.turma || '-' }}</td>
+                        <td><span class="av-base-v69" :class="String(item.base || '').toLowerCase()">{{ item.base }}</span></td>
+                        <td>{{ item.idadeTexto || ((item.idade ?? '-') + ' anos') }}</td>
+                        <td>
+                          <span class="av-status-v69" :class="classeResumoAlunoAtualizacaoVacinal(item.situacao)">
+                            {{ rotuloResumoAlunoAtualizacaoVacinal(item.situacao) }}
+                          </span>
+                        </td>
+                        <td>
+                          <button class="av-btn-open-v69" type="button" @click="selecionarAlunoAtualizacaoVacinal(item)" :disabled="atualizacaoVacinal.carregandoAluno">
+                            Atualizar
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div v-if="atualizacaoVacinalAlunosFiltrados.length" class="av-pagination-v69">
+                  <div>
+                    Página {{ atualizacaoVacinal.pagina }} de {{ atualizacaoVacinalTotalPaginas }}
+                  </div>
+                  <div>
+                    <button type="button" @click="mudarPaginaAtualizacaoVacinal(atualizacaoVacinal.pagina - 1)" :disabled="atualizacaoVacinal.pagina <= 1">‹</button>
+                    <button type="button" @click="mudarPaginaAtualizacaoVacinal(atualizacaoVacinal.pagina + 1)" :disabled="atualizacaoVacinal.pagina >= atualizacaoVacinalTotalPaginas">›</button>
+                  </div>
+                </div>
+              </div>
+
+              <div v-else class="av-student-card-v69">
+                <div class="av-student-head-v69">
+                  <button class="av-back-v69" type="button" @click="voltarListaAtualizacaoVacinal">← Voltar para alunos</button>
+                  <div class="av-student-title-v69">
+                    <div class="av-avatar-v69">👤</div>
+                    <div>
+                      <h2>{{ atualizacaoVacinal.alunoSelecionado.nome }}</h2>
+                      <div class="av-student-meta-v69">
+                        <span><strong>Matrícula:</strong> {{ atualizacaoVacinal.alunoSelecionado.matricula || '-' }}</span>
+                        <span><strong>Nascimento:</strong> {{ atualizacaoVacinal.alunoSelecionado.dn || '-' }}</span>
+                        <span><strong>Idade:</strong> {{ atualizacaoVacinal.alunoSelecionado.idadeTexto || '-' }}</span>
+                        <span><strong>Turma:</strong> {{ atualizacaoVacinal.alunoSelecionado.turma || '-' }}</span>
+                        <span><strong>Base:</strong> {{ atualizacaoVacinal.alunoSelecionado.base }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div v-if="atualizacaoVacinal.carregandoAluno" class="av-inline-loading-v69">
+                  <span class="av-spinner-v69"></span>
+                  Verificando idade e situação vacinal...
+                </div>
+
+                <template v-else>
+                  <div class="av-rule-note-v69">
+                    <span>🔒</span>
+                    <div>
+                      <strong>Proteção por idade ativa</strong>
+                      <small>Vacinas fora da faixa etária ficam bloqueadas e não oferecem opções de marcação.</small>
+                    </div>
+                  </div>
+
+                  <div class="av-table-wrap-v69">
+                    <table class="av-table-v69 av-vaccine-table-v69">
+                      <thead>
+                        <tr>
+                          <th>Vacina</th>
+                          <th>Situação atual</th>
+                          <th>Nova situação</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="vacina in atualizacaoVacinal.alunoSelecionado.vacinas" :key="'av-vac-' + vacina.chave" :class="{ 'av-row-locked-v69': vacina.bloqueada }">
+                          <td>
+                            <strong>{{ vacina.rotulo }}</strong>
+                            <small v-if="vacina.regraTexto">{{ vacina.regraTexto }}</small>
+                          </td>
+                          <td>
+                            <span class="av-status-v69" :class="classeSituacaoAtualizacaoVacinal(vacina.situacaoAtual)">
+                              {{ rotuloSituacaoAtualizacaoVacinal(vacina.situacaoAtual) }}
+                            </span>
+                          </td>
+                          <td>
+                            <div v-if="vacina.bloqueada" class="av-locked-v69">
+                              <span>🔒</span>
+                              <div><strong>NÃO TEM IDADE</strong><small>{{ vacina.motivoBloqueio || 'Vacina não indicada para a idade atual.' }}</small></div>
+                            </div>
+
+                            <div v-else class="av-options-v69">
+                              <label :class="{ selected: valorVisualVacinaAtualizacaoVacinal(vacina) === 'SIM' }">
+                                <input type="radio" :name="'av-' + vacina.chave" value="SIM" :checked="valorVisualVacinaAtualizacaoVacinal(vacina) === 'SIM'" @change="marcarVacinaAtualizacaoVacinal(vacina, 'SIM')">
+                                <span>✓ SIM</span>
+                              </label>
+                              <label :class="{ selected: valorVisualVacinaAtualizacaoVacinal(vacina) === 'NAO' }">
+                                <input type="radio" :name="'av-' + vacina.chave" value="NAO" :checked="valorVisualVacinaAtualizacaoVacinal(vacina) === 'NAO'" @change="marcarVacinaAtualizacaoVacinal(vacina, 'NAO')">
+                                <span>✕ NÃO</span>
+                              </label>
+                              <label :class="{ selected: valorVisualVacinaAtualizacaoVacinal(vacina) === 'NAO_AVALIADO' }">
+                                <input type="radio" :name="'av-' + vacina.chave" value="NAO_AVALIADO" :checked="valorVisualVacinaAtualizacaoVacinal(vacina) === 'NAO_AVALIADO'" @change="marcarVacinaAtualizacaoVacinal(vacina, 'NAO_AVALIADO')">
+                                <span>— NÃO AVALIADO</span>
+                              </label>
+                            </div>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td><strong>Outras Vacinas</strong><small>Campo complementar da base</small></td>
+                          <td colspan="2">
+                            <textarea
+                              class="av-other-v69"
+                              maxlength="500"
+                              :value="Object.prototype.hasOwnProperty.call(atualizacaoVacinal.alteracoes, 'OUTRAS_VACINAS') ? atualizacaoVacinal.alteracoes.OUTRAS_VACINAS : (atualizacaoVacinal.alunoSelecionado.outrasVacinas || '')"
+                              @input="alterarOutrasVacinasAtualizacaoVacinal($event.target.value)"
+                              placeholder="Digite outras vacinas, se necessário..."></textarea>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="av-actions-v69">
+                    <div class="av-change-count-v69">
+                      <strong>{{ atualizacaoVacinalQuantidadeAlteracoes }}</strong>
+                      <span>alteração(ões) preparada(s)</span>
+                    </div>
+                    <button class="av-cancel-v69" type="button" @click="voltarListaAtualizacaoVacinal" :disabled="atualizacaoVacinal.salvando">Cancelar</button>
+                    <button class="av-save-v69" type="button" @click="salvarAtualizacaoVacinal" :disabled="!atualizacaoVacinalPodeSalvar">
+                      {{ atualizacaoVacinal.salvando ? 'Salvando...' : 'Salvar alterações' }}
+                    </button>
+                  </div>
+                </template>
+              </div>
+
+              <div class="av-footer-note-v69">
+                <span>🛡️</span>
+                <div><strong>Dados cadastrais protegidos.</strong> Nome, CPF, data de nascimento, matrícula, escola e turma não podem ser alterados nesta tela.</div>
               </div>
             </section>
 
@@ -5657,6 +5869,22 @@ canvas {
             alunosSemEndereco: 0
           },
 
+          // SIMVE v69 - Estado da atualização vacinal operacional do perfil SAÚDE.
+          atualizacaoVacinal: {
+            escolas: [],
+            escola: "",
+            alunos: [],
+            busca: "",
+            alunoSelecionado: null,
+            alteracoes: {},
+            atualizadoEm: "",
+            carregandoAlunos: false,
+            carregandoAluno: false,
+            salvando: false,
+            pagina: 1,
+            porPagina: 20
+          },
+
           vacinal: {
             form: {
               escola: "",
@@ -5925,6 +6153,14 @@ canvas {
           return !!this.sessionToken && !!this.sessionInfo;
         },
 
+        isSaude() {
+          const perfil = String(this.sessionInfo?.perfil || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toUpperCase();
+          return perfil === "SAUDE";
+        },
+
         isGestor() {
           const perfil = String(this.sessionInfo?.perfil || "")
             .normalize("NFD")
@@ -5941,6 +6177,47 @@ canvas {
           return perfil === "ADM";
         },
 
+        atualizacaoVacinalAlunosFiltrados() {
+          const busca = this.normalizeText(this.atualizacaoVacinal.busca || "");
+          const lista = Array.isArray(this.atualizacaoVacinal.alunos) ? this.atualizacaoVacinal.alunos : [];
+          if (!busca) return lista;
+          return lista.filter(item => {
+            const texto = [
+              item?.nome,
+              item?.matricula,
+              item?.turma,
+              item?.base,
+              item?.cpf
+            ].map(v => this.normalizeText(v || "")).join(" ");
+            return texto.includes(busca);
+          });
+        },
+
+        atualizacaoVacinalTotalPaginas() {
+          const total = this.atualizacaoVacinalAlunosFiltrados.length;
+          const porPagina = Math.max(1, Number(this.atualizacaoVacinal.porPagina || 20));
+          return Math.max(1, Math.ceil(total / porPagina));
+        },
+
+        atualizacaoVacinalAlunosPagina() {
+          const totalPaginas = this.atualizacaoVacinalTotalPaginas;
+          const pagina = Math.min(Math.max(1, Number(this.atualizacaoVacinal.pagina || 1)), totalPaginas);
+          const porPagina = Math.max(1, Number(this.atualizacaoVacinal.porPagina || 20));
+          const inicio = (pagina - 1) * porPagina;
+          return this.atualizacaoVacinalAlunosFiltrados.slice(inicio, inicio + porPagina);
+        },
+
+        atualizacaoVacinalQuantidadeAlteracoes() {
+          return Object.keys(this.atualizacaoVacinal.alteracoes || {}).length;
+        },
+
+        atualizacaoVacinalPodeSalvar() {
+          return this.isSaude &&
+            !!this.atualizacaoVacinal.alunoSelecionado &&
+            this.atualizacaoVacinalQuantidadeAlteracoes > 0 &&
+            !this.atualizacaoVacinal.salvando;
+        },
+
         escolasPermitidasLabel() {
           const lista = this.sessionInfo?.escolasPermitidas || [];
           return lista.length ? lista : ["Todas as escolas permitidas pela base"];
@@ -5950,6 +6227,7 @@ canvas {
           const map = {
             inicio: "Resumo operacional e desempenho vacinal",
             vacinal: "Consulta e acompanhamento da situação vacinal",
+            atualizacaoVacinal: "Atualização segura da situação vacinal dos alunos",
             transferencias: "Solicitação, aceite e vínculo de turma",
             gestao: "Resumo executivo para tomada de decisão",
             ranking: this.isGestor ? "Central de desempenho e análise comparativa" : "Início da escola",
@@ -5964,6 +6242,7 @@ canvas {
 
         currentBaseLabel() {
           if (this.currentView === "vacinal") return this.vacinal.form.segmento || "-";
+          if (this.currentView === "atualizacaoVacinal") return this.atualizacaoVacinal.alunoSelecionado?.base || "SAÚDE";
           if (this.currentView === "ranking") return this.isGestor ? "RANKING" : "DESEMPENHO";
           if (this.currentView === "acessos") return "ACESSOS";
           if (this.currentView === "admin") return "ADMIN";
@@ -7851,6 +8130,21 @@ canvas {
           this.vacinal.historico = { labels: [], values: [], datasets: [], titulo: "Evolução mensal da cobertura vacinal", inicioSerie: "Abril" };
           this.vacinal.pagination.page = 1;
 
+          this.atualizacaoVacinal = {
+            escolas: [],
+            escola: "",
+            alunos: [],
+            busca: "",
+            alunoSelecionado: null,
+            alteracoes: {},
+            atualizadoEm: "",
+            carregandoAlunos: false,
+            carregandoAluno: false,
+            salvando: false,
+            pagina: 1,
+            porPagina: 20
+          };
+
           this.cadastralNovo.lista = [];
           this.cadastralNovo.pagina = 1;
           this.cadastralNovo.resumo = { totalAlunos: 0, semCpf: 0, semEndereco: 0, totalInconsistencias: 0 };
@@ -8160,8 +8454,259 @@ canvas {
           }
         },
 
+        normalizarSituacaoAtualizacaoVacinal(valor) {
+          const texto = String(valor || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .trim()
+            .toUpperCase();
+
+          if (texto === "SIM") return "SIM";
+          if (texto === "NAO") return "NAO";
+          if (texto === "NAO TEM IDADE") return "NAO_TEM_IDADE";
+          return "NAO_AVALIADO";
+        },
+
+        rotuloSituacaoAtualizacaoVacinal(valor) {
+          const v = this.normalizarSituacaoAtualizacaoVacinal(valor);
+          if (v === "SIM") return "SIM";
+          if (v === "NAO") return "NÃO";
+          if (v === "NAO_TEM_IDADE") return "NÃO TEM IDADE";
+          return "NÃO AVALIADO";
+        },
+
+        classeSituacaoAtualizacaoVacinal(valor) {
+          const v = this.normalizarSituacaoAtualizacaoVacinal(valor);
+          if (v === "SIM") return "av-status-sim";
+          if (v === "NAO") return "av-status-nao";
+          if (v === "NAO_TEM_IDADE") return "av-status-bloqueado";
+          return "av-status-naoavaliado";
+        },
+
+        classeResumoAlunoAtualizacaoVacinal(valor) {
+          const v = String(valor || "").toUpperCase();
+          if (v === "ATUALIZADA") return "av-status-sim";
+          if (v === "PENDENTE") return "av-status-nao";
+          if (v === "NAO_ELEGIVEL") return "av-status-bloqueado";
+          return "av-status-naoavaliado";
+        },
+
+        rotuloResumoAlunoAtualizacaoVacinal(valor) {
+          const v = String(valor || "").toUpperCase();
+          if (v === "ATUALIZADA") return "Atualizada";
+          if (v === "PENDENTE") return "Pendente";
+          if (v === "NAO_ELEGIVEL") return "Não elegível";
+          return "Não avaliado";
+        },
+
+        valorVisualVacinaAtualizacaoVacinal(vacina) {
+          if (!vacina) return "NAO_AVALIADO";
+          const chave = vacina.chave;
+          if (Object.prototype.hasOwnProperty.call(this.atualizacaoVacinal.alteracoes || {}, chave)) {
+            return this.atualizacaoVacinal.alteracoes[chave];
+          }
+          return this.normalizarSituacaoAtualizacaoVacinal(vacina.situacaoAtual);
+        },
+
+        marcarVacinaAtualizacaoVacinal(vacina, valor) {
+          if (!vacina || vacina.bloqueada || vacina.editavel === false) return;
+          const normalizado = this.normalizarSituacaoAtualizacaoVacinal(valor);
+          if (normalizado === "NAO_TEM_IDADE") return;
+
+          const atual = this.normalizarSituacaoAtualizacaoVacinal(vacina.situacaoAtual);
+          const alteracoes = Object.assign({}, this.atualizacaoVacinal.alteracoes || {});
+
+          if (normalizado === atual) {
+            delete alteracoes[vacina.chave];
+          } else {
+            alteracoes[vacina.chave] = normalizado;
+          }
+
+          this.atualizacaoVacinal.alteracoes = alteracoes;
+        },
+
+        alterarOutrasVacinasAtualizacaoVacinal(valor) {
+          const aluno = this.atualizacaoVacinal.alunoSelecionado;
+          if (!aluno) return;
+
+          const atual = String(aluno.outrasVacinas || "");
+          const novo = String(valor || "").slice(0, 500);
+          const alteracoes = Object.assign({}, this.atualizacaoVacinal.alteracoes || {});
+
+          if (novo === atual) {
+            delete alteracoes.OUTRAS_VACINAS;
+          } else {
+            alteracoes.OUTRAS_VACINAS = novo;
+          }
+
+          this.atualizacaoVacinal.alteracoes = alteracoes;
+        },
+
+        async carregarAtualizacaoVacinal() {
+          if (!this.isSaude) {
+            this.topError = "Acesso restrito ao perfil SAÚDE.";
+            return;
+          }
+
+          this.clearTopMessages();
+          const meta = await this.gas("getEscolasPainelVacinal", this.sessionToken);
+          const escolas = (Array.isArray(meta) ? meta : [])
+            .map(item => typeof item === "string" ? item : item?.nome)
+            .filter(Boolean);
+
+          this.atualizacaoVacinal.escolas = escolas;
+
+          if (!escolas.length) {
+            this.atualizacaoVacinal.escola = "";
+            this.atualizacaoVacinal.alunos = [];
+            this.topError = "Nenhuma escola vinculada foi encontrada para este usuário.";
+            return;
+          }
+
+          if (!escolas.includes(this.atualizacaoVacinal.escola)) {
+            this.atualizacaoVacinal.escola = escolas[0];
+          }
+
+          await this.carregarAlunosAtualizacaoVacinal();
+        },
+
+        async carregarAlunosAtualizacaoVacinal() {
+          const escola = String(this.atualizacaoVacinal.escola || "").trim();
+          if (!escola || !this.isSaude) return;
+
+          this.clearTopMessages();
+          this.atualizacaoVacinal.carregandoAlunos = true;
+          this.atualizacaoVacinal.alunoSelecionado = null;
+          this.atualizacaoVacinal.alteracoes = {};
+          this.atualizacaoVacinal.pagina = 1;
+
+          try {
+            const resposta = await this.gas(
+              "getAlunosAtualizacaoVacinal",
+              this.sessionToken,
+              escola
+            );
+
+            this.atualizacaoVacinal.alunos = Array.isArray(resposta?.alunos) ? resposta.alunos : [];
+            this.atualizacaoVacinal.atualizadoEm = resposta?.atualizadoEm || "";
+          } catch (err) {
+            this.handleError(err);
+          } finally {
+            this.atualizacaoVacinal.carregandoAlunos = false;
+          }
+        },
+
+        async selecionarAlunoAtualizacaoVacinal(item) {
+          if (!item || !this.isSaude) return;
+
+          this.clearTopMessages();
+          this.atualizacaoVacinal.carregandoAluno = true;
+          this.atualizacaoVacinal.alteracoes = {};
+
+          try {
+            const aluno = await this.gas(
+              "getAlunoAtualizacaoVacinal",
+              this.sessionToken,
+              this.atualizacaoVacinal.escola,
+              item.base,
+              item.matricula
+            );
+
+            this.atualizacaoVacinal.alunoSelecionado = aluno || null;
+          } catch (err) {
+            this.handleError(err);
+          } finally {
+            this.atualizacaoVacinal.carregandoAluno = false;
+          }
+        },
+
+        voltarListaAtualizacaoVacinal() {
+          if (this.atualizacaoVacinalQuantidadeAlteracoes > 0) {
+            const sair = window.confirm("Existem alterações não salvas. Deseja voltar e descartá-las?");
+            if (!sair) return;
+          }
+          this.atualizacaoVacinal.alunoSelecionado = null;
+          this.atualizacaoVacinal.alteracoes = {};
+        },
+
+        async salvarAtualizacaoVacinal() {
+          const aluno = this.atualizacaoVacinal.alunoSelecionado;
+          if (!aluno || !this.atualizacaoVacinalPodeSalvar) return;
+
+          const qtd = this.atualizacaoVacinalQuantidadeAlteracoes;
+          const confirmou = window.confirm(
+            "Confirmar " + qtd + " alteração(ões) na situação vacinal de " + String(aluno.nome || "este aluno") + "?"
+          );
+          if (!confirmou) return;
+
+          this.clearTopMessages();
+          this.atualizacaoVacinal.salvando = true;
+
+          try {
+            const payload = {
+              escola: this.atualizacaoVacinal.escola,
+              base: aluno.base,
+              matricula: aluno.matricula,
+              alteracoes: Object.assign({}, this.atualizacaoVacinal.alteracoes || {}),
+              usuario: String(this.sessionInfo?.usuario || ""),
+              unidade: String(
+                this.sessionInfo?.unidade ||
+                this.sessionInfo?.nomeUnidade ||
+                this.inicioPerfil?.contexto?.unidade ||
+                this.inicioPerfil?.contexto?.nomeUnidade ||
+                ""
+              )
+            };
+
+            const resposta = await this.gas(
+              "salvarAtualizacaoVacinal",
+              this.sessionToken,
+              payload
+            );
+
+            this.atualizacaoVacinal.alteracoes = {};
+            this.topSuccess = resposta?.mensagem || "Situação vacinal atualizada com sucesso.";
+
+            const resultadosAtualizados = await Promise.all([
+              this.gas(
+                "getAlunoAtualizacaoVacinal",
+                this.sessionToken,
+                this.atualizacaoVacinal.escola,
+                aluno.base,
+                aluno.matricula
+              ),
+              this.gas(
+                "getAlunosAtualizacaoVacinal",
+                this.sessionToken,
+                this.atualizacaoVacinal.escola
+              )
+            ]);
+
+            const atualizado = resultadosAtualizados[0];
+            const listaAtualizada = resultadosAtualizados[1] || {};
+            this.atualizacaoVacinal.alunoSelecionado = atualizado || aluno;
+            this.atualizacaoVacinal.alunos = Array.isArray(listaAtualizada.alunos) ? listaAtualizada.alunos : this.atualizacaoVacinal.alunos;
+            this.atualizacaoVacinal.atualizadoEm = listaAtualizada.atualizadoEm || this.atualizacaoVacinal.atualizadoEm;
+          } catch (err) {
+            this.handleError(err);
+          } finally {
+            this.atualizacaoVacinal.salvando = false;
+          }
+        },
+
+        mudarPaginaAtualizacaoVacinal(pagina) {
+          const total = this.atualizacaoVacinalTotalPaginas;
+          this.atualizacaoVacinal.pagina = Math.min(Math.max(1, Number(pagina || 1)), total);
+        },
+
         async setView(view) {
           this.clearTopMessages();
+
+          // SIMVE v69 - Atualização Vacinal é exclusiva do perfil SAÚDE.
+          if (view === "atualizacaoVacinal" && !this.isSaude) {
+            this.topError = "Acesso restrito ao perfil SAÚDE.";
+            return;
+          }
 
           // Ranking foi removido do menu para SAÚDE/ADM.
           // Mantém a view ranking apenas para EDUCAÇÃO, pois ela usa essa tela como "Início da escola".
@@ -8174,6 +8719,7 @@ canvas {
             ranking: "Carregando início da escola...",
             cadastral: "Carregando situação cadastral...",
             vacinal: "Carregando situação vacinal...",
+            atualizacaoVacinal: "Carregando atualização vacinal...",
             transferencias: "Carregando transferências...",
             acessos: "Carregando monitoramento de acessos...",
             admin: "Carregando administração...",
@@ -8182,7 +8728,7 @@ canvas {
           };
 
           const viewAnterior = this.currentView;
-          const deveCarregar = ["inicio", "ranking", "cadastral", "vacinal", "transferencias", "acessos", "admin", "documentos"].includes(view);
+          const deveCarregar = ["inicio", "ranking", "cadastral", "vacinal", "atualizacaoVacinal", "transferencias", "acessos", "admin", "documentos"].includes(view);
           const inicio = Date.now();
 
           if (deveCarregar) {
@@ -8215,6 +8761,10 @@ canvas {
               // SIMVE v67 - carregarVacinal já reutiliza a lista de escolas em cache.
               // Ao voltar para a aba com os mesmos filtros, os dados aparecem sem nova espera longa.
               await this.carregarVacinal();
+            }
+
+            if (view === "atualizacaoVacinal") {
+              await this.carregarAtualizacaoVacinal();
             }
 
             if (view === "ranking") {
@@ -11356,4 +11906,92 @@ this.charts.vacChartSituacaoCompleta = makeStacked(
   .transfer-observacao-cell{white-space:normal!important;line-height:1.25!important}.transfer-sem-observacao{color:#94a3b8!important;font-style:italic!important}
   @media(max-width:1300px){.tr-kpi-grid-v37{grid-template-columns:repeat(2,minmax(180px,1fr))}.tr-work-grid-v37{grid-template-columns:1fr!important}.tr-flow-v37{grid-template-columns:1fr}.tr-flow-v37 b{display:none}.tr-work-table-v37{min-width:900px!important}.tr-work-card-v37{overflow-x:auto!important}}
   @media(max-width:760px){.tr-work-header-v37{flex-direction:column!important}.tr-refresh-box-v37{align-items:stretch;width:100%}.tr-kpi-grid-v37{grid-template-columns:1fr}.tr-info-banner-v37{align-items:flex-start}.tr-work-table-v37{min-width:760px!important}}
+</style>
+
+
+<style id="simve-atualizacao-vacinal-v69">
+/* =========================================================
+   SIMVE v69 - Atualização da Situação Vacinal | Perfil SAÚDE
+   ========================================================= */
+.simve-av-v69{--av-blue:#0b5bd3;--av-navy:#082b67;--av-green:#16a34a;--av-red:#dc2626;--av-orange:#d97706;--av-border:#d9e7fb;--av-soft:#f8fbff;color:var(--av-navy)}
+.av-header-v69{display:flex;justify-content:space-between;gap:22px;align-items:flex-start;margin-bottom:18px}
+.av-header-v69 h1{margin:4px 0 6px;font-size:28px;font-weight:950;letter-spacing:-.5px;color:var(--av-navy)}
+.av-header-v69 p{margin:0;color:#52647f;font-weight:700;line-height:1.45}
+.av-eyebrow-v69{font-size:11px;font-weight:950;letter-spacing:.11em;color:var(--av-blue)}
+.av-secure-v69{width:min(390px,100%);display:flex;gap:12px;align-items:flex-start;background:#f0fff6;border:1px solid #bdebd0;border-radius:16px;padding:14px 16px}
+.av-secure-v69>span{font-size:24px}
+.av-secure-v69 strong,.av-secure-v69 small{display:block}
+.av-secure-v69 strong{color:#0f6b35;font-size:14px;margin-bottom:3px}
+.av-secure-v69 small{color:#35624a;font-weight:750;line-height:1.35}
+.av-toolbar-v69{display:grid;grid-template-columns:minmax(300px,1fr) minmax(280px,1fr) auto;gap:14px;align-items:end;background:#fff;border:1px solid var(--av-border);border-radius:18px;padding:16px;margin-bottom:16px;box-shadow:0 10px 28px rgba(8,43,103,.055)}
+.av-toolbar-v69 .field{margin:0}
+.av-toolbar-v69 .field label{font-size:13px!important;font-weight:950!important;color:var(--av-navy)!important}
+.av-toolbar-v69 select,.av-toolbar-v69 input{min-height:44px!important;border:1px solid #cfdff7!important;border-radius:11px!important;background:#fff!important;font-weight:800!important;color:var(--av-navy)!important}
+.av-btn-refresh-v69{min-height:44px;border:1px solid #c8dcff;background:#fff;color:var(--av-blue);border-radius:11px;padding:10px 16px;font-weight:950;cursor:pointer;white-space:nowrap}
+.av-btn-refresh-v69:disabled{opacity:.6;cursor:not-allowed}
+.av-list-card-v69,.av-student-card-v69{background:#fff;border:1px solid var(--av-border);border-radius:18px;padding:18px;box-shadow:0 10px 28px rgba(8,43,103,.055)}
+.av-list-head-v69{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:14px}
+.av-list-head-v69 h2{margin:0 0 4px;font-size:21px;color:var(--av-navy)}
+.av-list-head-v69 p{margin:0;color:#64748b;font-size:12.5px;font-weight:750}
+.av-count-v69{display:flex;align-items:baseline;gap:7px;background:#eef6ff;border:1px solid #d1e4ff;border-radius:13px;padding:9px 13px;color:var(--av-blue)}
+.av-count-v69 strong{font-size:20px}.av-count-v69 span{font-size:12px;font-weight:850}
+.av-table-wrap-v69{width:100%;overflow-x:auto;border:1px solid #e2ecf8;border-radius:14px}
+.av-table-v69{width:100%;min-width:820px;border-collapse:collapse;background:#fff}
+.av-table-v69 thead th{position:static!important;background:#f4f8ff!important;color:var(--av-navy)!important;font-size:12.5px!important;font-weight:950!important;padding:12px 13px!important;cursor:default!important}
+.av-table-v69 tbody td{padding:12px 13px!important;border-bottom:1px solid #e8f0fb!important;color:#16385f!important;font-size:13px!important;vertical-align:middle!important}
+.av-table-v69 tbody tr:last-child td{border-bottom:0!important}
+.av-table-v69 tbody tr:hover{background:#fbfdff}
+.av-table-v69 small{display:block;margin-top:4px;color:#64748b;font-size:11px;font-weight:750}
+.av-name-v69{display:block;color:var(--av-navy);font-weight:950}
+.av-base-v69{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:950;background:#eef6ff;color:var(--av-blue)}
+.av-base-v69.infantil{background:#eefcf3;color:#15803d}
+.av-status-v69{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:950;white-space:nowrap}
+.av-status-sim{background:#e7f8ed;color:#15803d}
+.av-status-nao{background:#ffe5e5;color:#dc2626}
+.av-status-naoavaliado{background:#fff4dc;color:#b76d00}
+.av-status-bloqueado{background:#eef2f7;color:#64748b}
+.av-btn-open-v69{border:1px solid #bcd5ff;background:#fff;color:var(--av-blue);border-radius:9px;padding:8px 12px;font-weight:950;cursor:pointer}
+.av-btn-open-v69:hover{background:#eef6ff}
+.av-pagination-v69{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;color:#52647f;font-size:12px;font-weight:850}
+.av-pagination-v69>div:last-child{display:flex;gap:8px}
+.av-pagination-v69 button{width:36px;height:34px;border:1px solid #c8dcff;background:#fff;color:var(--av-blue);border-radius:9px;font-size:18px;font-weight:950;cursor:pointer}
+.av-pagination-v69 button:disabled{opacity:.4;cursor:not-allowed}
+.av-inline-loading-v69{display:flex;align-items:center;justify-content:center;gap:10px;padding:28px;color:var(--av-blue);font-weight:900}
+.av-spinner-v69{width:22px;height:22px;border:3px solid #dbeafe;border-top-color:var(--av-blue);border-radius:50%;animation:avSpinV69 .75s linear infinite}
+@keyframes avSpinV69{to{transform:rotate(360deg)}}
+.av-student-head-v69{border-bottom:1px solid #e6eef8;padding-bottom:16px;margin-bottom:16px}
+.av-back-v69{border:0;background:transparent;color:var(--av-blue);font-weight:950;cursor:pointer;padding:0 0 14px}
+.av-student-title-v69{display:flex;gap:14px;align-items:center}
+.av-avatar-v69{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#e8f2ff;font-size:26px;flex:0 0 54px}
+.av-student-title-v69 h2{margin:0 0 7px;color:var(--av-navy);font-size:22px}
+.av-student-meta-v69{display:flex;gap:8px 16px;flex-wrap:wrap;color:#52647f;font-size:12px;font-weight:750}
+.av-rule-note-v69{display:flex;gap:12px;align-items:flex-start;background:#fffaf0;border:1px solid #f6ddb0;border-radius:14px;padding:12px 14px;margin-bottom:14px}
+.av-rule-note-v69>span{font-size:20px}
+.av-rule-note-v69 strong,.av-rule-note-v69 small{display:block}
+.av-rule-note-v69 strong{color:#8a5a00;font-size:13px;margin-bottom:2px}.av-rule-note-v69 small{color:#735700;font-weight:750}
+.av-vaccine-table-v69{min-width:880px}
+.av-vaccine-table-v69 th:nth-child(1){width:34%}.av-vaccine-table-v69 th:nth-child(2){width:18%}.av-vaccine-table-v69 th:nth-child(3){width:48%}
+.av-row-locked-v69{background:#fafbfd!important}
+.av-locked-v69{display:flex;gap:9px;align-items:center;color:#64748b}
+.av-locked-v69>span{font-size:20px}.av-locked-v69 strong,.av-locked-v69 small{display:block}.av-locked-v69 strong{font-size:11px}.av-locked-v69 small{font-size:10.5px;margin-top:2px}
+.av-options-v69{display:flex;gap:8px;flex-wrap:wrap}
+.av-options-v69 label{display:inline-flex;align-items:center;cursor:pointer}
+.av-options-v69 input{position:absolute;opacity:0;pointer-events:none}
+.av-options-v69 label span{display:inline-flex;align-items:center;min-height:34px;padding:7px 10px;border:1px solid #d9e3f0;border-radius:9px;background:#fff;color:#52647f;font-size:11px;font-weight:950;transition:.15s}
+.av-options-v69 label:hover span{border-color:#9fc0ff;background:#f8fbff}
+.av-options-v69 label.selected:nth-child(1) span{border-color:#8bd3a9;background:#eefcf3;color:#15803d}
+.av-options-v69 label.selected:nth-child(2) span{border-color:#f5b0b0;background:#fff1f1;color:#dc2626}
+.av-options-v69 label.selected:nth-child(3) span{border-color:#f1d29b;background:#fff8e8;color:#b76d00}
+.av-other-v69{width:100%;min-height:70px;resize:vertical;border:1px solid #cfdff7;border-radius:10px;padding:10px 12px;font:inherit;color:var(--av-navy);outline:none}
+.av-other-v69:focus{border-color:var(--av-blue);box-shadow:0 0 0 3px rgba(11,91,211,.08)}
+.av-actions-v69{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:16px}
+.av-change-count-v69{margin-right:auto;display:flex;align-items:baseline;gap:6px;color:#52647f;font-size:12px;font-weight:850}
+.av-change-count-v69 strong{color:var(--av-blue);font-size:20px}
+.av-cancel-v69,.av-save-v69{min-height:42px;border-radius:11px;padding:10px 17px;font-weight:950;cursor:pointer}
+.av-cancel-v69{border:1px solid #c8dcff;background:#fff;color:var(--av-blue)}
+.av-save-v69{border:1px solid var(--av-green);background:var(--av-green);color:#fff;box-shadow:0 10px 22px rgba(22,163,74,.15)}
+.av-save-v69:disabled,.av-cancel-v69:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.av-footer-note-v69{display:flex;gap:10px;align-items:flex-start;background:#eef6ff;border:1px solid #d1e4ff;border-radius:14px;padding:12px 14px;margin-top:14px;color:#0f3b75;font-size:12px;font-weight:800}
+@media(max-width:1050px){.av-toolbar-v69{grid-template-columns:1fr 1fr}.av-btn-refresh-v69{grid-column:1/-1}.av-header-v69{flex-direction:column}.av-secure-v69{width:100%}}
+@media(max-width:700px){.av-toolbar-v69{grid-template-columns:1fr}.av-list-head-v69,.av-actions-v69{align-items:stretch;flex-direction:column}.av-change-count-v69{margin-right:0}.av-cancel-v69,.av-save-v69{width:100%}}
 </style>
