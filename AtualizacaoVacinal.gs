@@ -1,19 +1,20 @@
 /**
  * ============================================================
- * SIMVE v70 - ATUALIZAÇÃO DA SITUAÇÃO VACINAL | PERFIL SAÚDE
+ * SIMVE v71 - ATUALIZAÇÃO DA SITUAÇÃO VACINAL | PERFIL SAÚDE
  * ============================================================
  *
  * Arquivo adicional do projeto Apps Script.
  * Não substitui o Code.gs atual.
  *
  * Funções públicas usadas pelo App.html:
+ *   - getEscolasAtualizacaoVacinal(token)
  *   - getAlunosAtualizacaoVacinal(token, escola)
- *   - getAlunoAtualizacaoVacinal(token, escola, base, matricula)
+ *   - getAlunoAtualizacaoVacinal(token, escola, base, matricula, linha)
  *   - salvarAtualizacaoVacinal(token, payload)
  *
  * Segurança:
  *   1) Reaproveita a sessão atual do SIMVE.
- *   2) Reaproveita getEscolasPainelVacinal() para validar a escola permitida.
+ *   2) Valida as escolas pela sessão + CONFIG_PLANILHAS_ESCOLAS, sem reler as bases completas.
  *   3) Exige contexto de gestão (SAÚDE/ADM) no servidor.
  *   4) Recalcula a elegibilidade por data de nascimento antes de salvar.
  *   5) Só permite alterar cabeçalhos vacinais conhecidos.
@@ -21,7 +22,7 @@
  */
 
 var SIMVE_AV_V69 = {
-  VERSAO: '70.0',
+  VERSAO: '71.0',
   ABA_BASE: 'BASE_GERAL',
   ABA_HISTORICO: 'HISTORICO_VACINAL',
   CACHE_SEGUNDOS: 21600,
@@ -166,6 +167,25 @@ var SIMVE_AV_REGRAS_V69 = {
  * FUNÇÕES PÚBLICAS
  * ============================================================ */
 
+/**
+ * Lista leve de escolas da Atualização Vacinal.
+ *
+ * Diferente de getEscolasPainelVacinal(), esta rotina NÃO lê BASE_INFANTIL e
+ * BASE_ESCOLAR inteiras. Ela cruza apenas a sessão do usuário com a pequena
+ * CONFIG_PLANILHAS_ESCOLAS, reduzindo bastante o tempo para abrir esta tela.
+ */
+function getEscolasAtualizacaoVacinal(token) {
+  simveAV_validarAcessoEscrita_(token);
+  var session = requireSession_(token) || {};
+  return simveAV_resolverEscolasPermitidasConfig_(session).map(function(item) {
+    return {
+      nome: item.nome,
+      infantil: !!item.infantil,
+      escolar: !!item.escolar
+    };
+  });
+}
+
 function getAlunosAtualizacaoVacinal(token, escola) {
   var contexto = simveAV_validarAcessoEscrita_(token);
   var escolaPermitida = simveAV_validarEscolaPermitida_(token, escola);
@@ -222,14 +242,14 @@ function getAlunosAtualizacaoVacinal(token, escola) {
     atualizadoEm: simveAV_formatarDataHora_(new Date()),
     contexto: simveAV_contextoPublico_(contexto),
     diagnostico: {
-      versao: SIMVE_AV_V69.VERSAO || '70.0',
+      versao: SIMVE_AV_V69.VERSAO || '71.0',
       bases: bases,
       fontesConsultadas: fontesConsultadas.length
     }
   };
 }
 
-function getAlunoAtualizacaoVacinal(token, escola, base, matricula) {
+function getAlunoAtualizacaoVacinal(token, escola, base, matricula, linha) {
   simveAV_validarAcessoEscrita_(token);
   var escolaPermitida = simveAV_validarEscolaPermitida_(token, escola);
   var nomeEscola = escolaPermitida.nome;
@@ -248,7 +268,8 @@ function getAlunoAtualizacaoVacinal(token, escola, base, matricula) {
       nomeEscola,
       baseNorm,
       matricula,
-      fontes[i].sheetName
+      fontes[i].sheetName,
+      linha
     );
   }
 
@@ -271,6 +292,7 @@ function salvarAtualizacaoVacinal(token, payload) {
     var escola = escolaPermitida.nome;
     var base = simveAV_normalizarBase_(payload.base);
     var matricula = String(payload.matricula || '').trim();
+    var linha = Number(payload.linha || 0);
     var alteracoes = payload.alteracoes || {};
 
     if (SIMVE_AV_V69.BASES.indexOf(base) < 0) {
@@ -293,7 +315,8 @@ function salvarAtualizacaoVacinal(token, payload) {
         escola,
         base,
         matricula,
-        fontes[i].sheetName
+        fontes[i].sheetName,
+        linha
       );
       if (registro) fonteUsada = fontes[i];
     }
@@ -455,28 +478,142 @@ function simveAV_validarAcessoEscrita_(token) {
 }
 
 function simveAV_validarEscolaPermitida_(token, escola) {
-  if (typeof getEscolasPainelVacinal !== 'function') {
-    throw new Error('Função de escolas permitidas do SIMVE não encontrada.');
-  }
-
   var alvo = simveAV_norm_(escola);
   if (!alvo) throw new Error('Selecione uma escola.');
 
-  var lista = getEscolasPainelVacinal(token);
-  lista = Array.isArray(lista) ? lista : [];
+  // Os chamadores públicos já exigem perfil SAÚDE. Aqui recuperamos a sessão
+  // do cache e fazemos apenas a validação leve de escola/configuração.
+  var session = requireSession_(token) || {};
+  var lista = simveAV_resolverEscolasPermitidasConfig_(session);
 
   for (var i = 0; i < lista.length; i++) {
     var item = lista[i];
-    var nome = typeof item === 'string' ? item : item.nome;
-    if (simveAV_norm_(nome) === alvo) {
+    if (simveAV_norm_(item.nome) === alvo) {
       return {
-        nome: String(nome || escola).trim(),
-        meta: typeof item === 'object' && item ? item : {}
+        nome: String(item.nome || escola).trim(),
+        meta: item
       };
     }
   }
 
   throw new Error('Esta escola não está vinculada ao usuário logado.');
+}
+
+function simveAV_escolasSessao_(session) {
+  session = session || {};
+  var lista = [];
+
+  function adicionar(valor) {
+    String(valor || '')
+      .split(/[;,]/)
+      .map(function(x) { return String(x || '').trim(); })
+      .filter(Boolean)
+      .forEach(function(x) { lista.push(x); });
+  }
+
+  if (Array.isArray(session.escolasPermitidas)) {
+    session.escolasPermitidas.forEach(adicionar);
+  }
+  if (session.escola) adicionar(session.escola);
+
+  var usadas = {};
+  return lista.filter(function(nome) {
+    var chave = simveAV_norm_(nome);
+    if (!chave || usadas[chave]) return false;
+    usadas[chave] = true;
+    return true;
+  });
+}
+
+function simveAV_resolverEscolasPermitidasConfig_(session) {
+  var escolasUsuario = simveAV_escolasSessao_(session);
+  if (!escolasUsuario.length) return [];
+
+  var configuradas = simveAV_lerMapaConfigPlanilhas_();
+  var nomesConfigurados = Object.keys(configuradas).map(function(chave) {
+    return configuradas[chave].nome;
+  });
+  var saida = [];
+  var usadas = {};
+
+  escolasUsuario.forEach(function(escolaUsuario) {
+    var item = configuradas[simveAV_norm_(escolaUsuario)] || null;
+
+    if (!item && typeof encontrarMelhorEscolaNaBase_ === 'function') {
+      var aproximada = encontrarMelhorEscolaNaBase_(escolaUsuario, nomesConfigurados);
+      if (aproximada) item = configuradas[simveAV_norm_(aproximada)] || null;
+    }
+
+    if (!item) return;
+    var chave = simveAV_norm_(item.nome);
+    if (usadas[chave]) return;
+    usadas[chave] = true;
+    saida.push(item);
+  });
+
+  return saida.sort(function(a, b) {
+    return String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR');
+  });
+}
+
+
+function simveAV_lerMapaConfigPlanilhas_() {
+  if (typeof ID_PLANILHA === 'undefined' || !ID_PLANILHA) {
+    throw new Error('ID da BASE MUNICIPAL não configurado no projeto.');
+  }
+
+  var ss = SpreadsheetApp.openById(ID_PLANILHA);
+  var sh = ss.getSheetByName('CONFIG_PLANILHAS_ESCOLAS');
+  if (!sh) throw new Error('Aba CONFIG_PLANILHAS_ESCOLAS não encontrada.');
+
+  var data = sh.getDataRange().getValues();
+  if (data.length < 2) return {};
+
+  var headers = data[0].map(function(h) { return simveAV_norm_(h); });
+  var idxEscola = headers.indexOf('ESCOLA');
+  var idxBase = headers.indexOf('TIPO_BASE');
+  var idxId = headers.indexOf('ID_PLANILHA');
+  var idxAba = headers.indexOf('ABA_ORIGEM');
+  var idxAtivo = headers.indexOf('ATIVO');
+  var idxTipoPlanilha = headers.indexOf('TIPO_PLANILHA');
+  var idxUnidade = headers.indexOf('UNIDADE');
+
+  if (idxEscola < 0 || idxId < 0) {
+    throw new Error('CONFIG_PLANILHAS_ESCOLAS precisa ter ESCOLA e ID_PLANILHA.');
+  }
+
+  var mapa = {};
+  for (var i = 1; i < data.length; i++) {
+    var escola = String(data[i][idxEscola] || '').trim();
+    var id = String(data[i][idxId] || '').trim();
+    if (!escola || !id) continue;
+
+    if (idxAtivo >= 0) {
+      var ativo = simveAV_norm_(data[i][idxAtivo]);
+      if (ativo && ativo !== 'SIM' && ativo !== 'S' && ativo !== 'ATIVO') continue;
+    }
+
+    var base = idxBase >= 0 ? simveAV_normalizarBase_(data[i][idxBase]) : '';
+    var chave = simveAV_norm_(escola);
+    if (!mapa[chave]) {
+      mapa[chave] = { nome: escola, infantil: false, escolar: false, fontes: {} };
+    }
+
+    if (base === 'INFANTIL' || base === 'ESCOLAR') {
+      if (base === 'INFANTIL') mapa[chave].infantil = true;
+      if (base === 'ESCOLAR') mapa[chave].escolar = true;
+      mapa[chave].fontes[base] = {
+        id: id,
+        sheetName: idxAba >= 0 ? (String(data[i][idxAba] || '').trim() || SIMVE_AV_V69.ABA_BASE) : SIMVE_AV_V69.ABA_BASE,
+        base: base,
+        escola: escola,
+        tipoPlanilha: idxTipoPlanilha >= 0 ? String(data[i][idxTipoPlanilha] || '').trim() : '',
+        unidade: idxUnidade >= 0 ? String(data[i][idxUnidade] || '').trim() : ''
+      };
+    }
+  }
+
+  return mapa;
 }
 
 
@@ -500,10 +637,21 @@ function simveAV_resolverFontesEscolaBase_(escola, base, meta) {
     throw new Error('Escola/base inválida para localizar a planilha de origem.');
   }
 
-  // FONTE OFICIAL DO PROJETO:
-  // a aba CONFIG_PLANILHAS_ESCOLAS já é lida por getPlanilhaEscolaDestino_.
-  // Não fazemos busca por nome de arquivo no Drive, porque o título da planilha
-  // não é uma chave confiável e isso era a causa da lista vazia.
+  // v71: quando a validação de acesso já leu CONFIG_PLANILHAS_ESCOLAS,
+  // reaproveita a fonte resolvida e evita reler a configuração.
+  var fonteMeta = meta && meta.fontes && meta.fontes[base] ? meta.fontes[base] : null;
+  if (fonteMeta && fonteMeta.id) {
+    return [{
+      id: String(fonteMeta.id || '').trim(),
+      sheetName: String(fonteMeta.sheetName || SIMVE_AV_V69.ABA_BASE).trim() || SIMVE_AV_V69.ABA_BASE,
+      base: base,
+      escola: fonteMeta.escola || escola,
+      tipoPlanilha: fonteMeta.tipoPlanilha || '',
+      unidade: fonteMeta.unidade || ''
+    }];
+  }
+
+  // Fallback compatível com a arquitetura anterior.
   if (typeof getPlanilhaEscolaDestino_ !== 'function') {
     throw new Error('Função getPlanilhaEscolaDestino_ não encontrada no backend atual.');
   }
@@ -526,23 +674,9 @@ function simveAV_resolverFontesEscolaBase_(escola, base, meta) {
     throw new Error('ID_PLANILHA não informado em CONFIG_PLANILHAS_ESCOLAS para ' + escola + ' / ' + base + '.');
   }
 
-  // Teste explícito de acesso. Antes os erros eram engolidos e a tela apenas
-  // mostrava 0 alunos, dificultando o diagnóstico.
-  var ss;
-  try {
-    ss = SpreadsheetApp.openById(id);
-  } catch (eAbrir) {
-    throw new Error(
-      'Não foi possível abrir a planilha configurada para ' + escola + ' / ' + base +
-      '. A conta que executa o Web App precisa ter acesso ao arquivo. Detalhe: ' +
-      (eAbrir && eAbrir.message ? eAbrir.message : eAbrir)
-    );
-  }
-
-  var sh = ss.getSheetByName(sheetName);
-  if (!sh) {
-    throw new Error('A aba configurada "' + sheetName + '" não existe na planilha de ' + escola + ' / ' + base + '.');
-  }
+  // A abertura efetiva acontece na rotina de leitura. Evitamos abrir o mesmo
+  // arquivo duas vezes na mesma requisição; os erros de acesso/aba continuam
+  // sendo retornados com contexto pela função de leitura.
 
   return [{
     id: id,
@@ -649,10 +783,11 @@ function simveAV_lerRegistrosArquivo_(arquivoId, escola, base, detalhado, sheetN
   try {
     ss = SpreadsheetApp.openById(arquivoId);
   } catch (eAbrir) {
-    throw new Error('Não foi possível abrir a planilha da escola. Detalhe: ' + (eAbrir && eAbrir.message ? eAbrir.message : eAbrir));
+    throw new Error('Não foi possível abrir a planilha configurada para ' + escola + ' / ' + base + '. Detalhe: ' + (eAbrir && eAbrir.message ? eAbrir.message : eAbrir));
   }
-  var sh = ss.getSheetByName(sheetName || SIMVE_AV_V69.ABA_BASE);
-  if (!sh) return [];
+  var nomeAba = sheetName || SIMVE_AV_V69.ABA_BASE;
+  var sh = ss.getSheetByName(nomeAba);
+  if (!sh) throw new Error('A aba configurada "' + nomeAba + '" não existe na planilha de ' + escola + ' / ' + base + '.');
 
   var headerRow = simveAV_encontrarLinhaCabecalho_(sh);
   if (!headerRow) return [];
@@ -694,34 +829,63 @@ function simveAV_lerRegistrosArquivo_(arquivoId, escola, base, detalhado, sheetN
 }
 
 
-function simveAV_buscarAlunoNoArquivo_(arquivoId, escola, base, matricula, sheetName) {
+function simveAV_buscarAlunoNoArquivo_(arquivoId, escola, base, matricula, sheetName, linhaPreferida) {
   var ss;
   try {
     ss = SpreadsheetApp.openById(arquivoId);
   } catch (eAbrir) {
-    throw new Error('Não foi possível abrir a planilha da escola. Detalhe: ' + (eAbrir && eAbrir.message ? eAbrir.message : eAbrir));
+    throw new Error('Não foi possível abrir a planilha configurada para ' + escola + ' / ' + base + '. Detalhe: ' + (eAbrir && eAbrir.message ? eAbrir.message : eAbrir));
   }
-  var sh = ss.getSheetByName(sheetName || SIMVE_AV_V69.ABA_BASE);
-  if (!sh) return null;
+
+  var nomeAba = sheetName || SIMVE_AV_V69.ABA_BASE;
+  var sh = ss.getSheetByName(nomeAba);
+  if (!sh) throw new Error('A aba configurada "' + nomeAba + '" não existe na planilha de ' + escola + ' / ' + base + '.');
 
   var headerRow = simveAV_encontrarLinhaCabecalho_(sh);
   if (!headerRow) return null;
 
   var lastRow = sh.getLastRow();
   var lastCol = sh.getLastColumn();
-  if (lastRow <= headerRow) return null;
+  if (lastRow <= headerRow || !lastCol) return null;
 
   var cabecalhos = sh.getRange(headerRow, 1, 1, lastCol).getDisplayValues()[0];
   var indices = simveAV_indicesPrincipais_(cabecalhos);
 
-  var rows = lastRow - headerRow;
-  var range = sh.getRange(headerRow + 1, 1, rows, lastCol);
-  var values = range.getValues();
-  var display = range.getDisplayValues();
+  if (indices.escola < 0 || indices.base < 0 || indices.matricula < 0 || indices.aluno < 0) {
+    return null;
+  }
 
   var escolaNorm = simveAV_norm_(escola);
   var baseNorm = simveAV_normalizarBase_(base);
   var matNorm = String(matricula || '').trim();
+
+  // Caminho rápido v71: a lista já informa a linha física do aluno.
+  // A linha recebida do cliente NUNCA é confiada cegamente: escola, base,
+  // matrícula e situação ativa são validadas antes de o registro ser usado.
+  var linha = Number(linhaPreferida || 0);
+  if (linha && Math.floor(linha) === linha && linha > headerRow && linha <= lastRow) {
+    var rangeLinha = sh.getRange(linha, 1, 1, lastCol);
+    var valueLinha = rangeLinha.getValues()[0];
+    var displayLinha = rangeLinha.getDisplayValues()[0];
+
+    if (
+      simveAV_norm_(displayLinha[indices.escola]) === escolaNorm &&
+      simveAV_normalizarBase_(displayLinha[indices.base]) === baseNorm &&
+      String(displayLinha[indices.matricula] || '').trim() === matNorm &&
+      !simveAV_registroInativo_(displayLinha, cabecalhos)
+    ) {
+      return simveAV_montarRegistro_(
+        arquivoId, sh, linha, cabecalhos, indices, valueLinha, displayLinha
+      );
+    }
+  }
+
+  // Fallback seguro: se a planilha tiver sido ordenada/movida depois que a
+  // lista foi carregada, procura pela matrícula no conjunto completo.
+  var rows = lastRow - headerRow;
+  var range = sh.getRange(headerRow + 1, 1, rows, lastCol);
+  var values = range.getValues();
+  var display = range.getDisplayValues();
 
   for (var i = 0; i < rows; i++) {
     var d = display[i];
@@ -737,7 +901,6 @@ function simveAV_buscarAlunoNoArquivo_(arquivoId, escola, base, matricula, sheet
 
   return null;
 }
-
 
 function simveAV_montarRegistro_(arquivoId, sh, row, cabecalhos, indices, values, display) {
   var dnDate = simveAV_parseDate_(values[indices.dn], display[indices.dn]);
@@ -772,7 +935,8 @@ function simveAV_montarResumoAluno_(registro) {
     dn: detalhe.dn,
     idade: detalhe.idade,
     idadeTexto: detalhe.idadeTexto,
-    situacao: detalhe.situacao
+    situacao: detalhe.situacao,
+    linha: registro.row
   };
 }
 
@@ -833,6 +997,7 @@ function simveAV_montarAlunoDetalhado_(registro) {
     idade: idade.valida ? idade.anos : '',
     idadeTexto: simveAV_idadeTexto_(idade),
     situacao: situacaoGeral,
+    linha: registro.row,
     vacinas: vacinas,
     outrasVacinas: idxOutras >= 0 ? String(registro.display[idxOutras] || '') : ''
   };

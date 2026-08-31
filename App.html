@@ -2336,9 +2336,46 @@
                   <input v-model="atualizacaoVacinal.busca" @input="atualizacaoVacinal.pagina = 1" type="text" placeholder="Digite nome ou matrícula">
                 </div>
 
+                <div v-if="!atualizacaoVacinal.alunoSelecionado" class="field av-situation-v71">
+                  <label>Situação</label>
+                  <select v-model="atualizacaoVacinal.situacao" @change="atualizacaoVacinal.pagina = 1" :disabled="atualizacaoVacinal.carregandoAlunos">
+                    <option value="TODAS">Todas</option>
+                    <option value="ATUALIZADA">Atualizada</option>
+                    <option value="PENDENTE">Pendente</option>
+                    <option value="NAO_AVALIADO">Não avaliado</option>
+                    <option value="NAO_ELEGIVEL">Não elegível</option>
+                  </select>
+                </div>
+
                 <button class="av-btn-refresh-v69" type="button" @click="carregarAlunosAtualizacaoVacinal" :disabled="atualizacaoVacinal.carregandoAlunos || !atualizacaoVacinal.escola">
                   {{ atualizacaoVacinal.carregandoAlunos ? 'Atualizando...' : '↻ Atualizar lista' }}
                 </button>
+              </div>
+
+              <div v-if="!atualizacaoVacinal.alunoSelecionado && !atualizacaoVacinal.carregandoAlunos" class="av-status-filters-v71" aria-label="Filtros por situação">
+                <button type="button" class="av-filter-chip-v71 av-filter-all-v71" :class="{ active: atualizacaoVacinal.situacao === 'TODAS' }" @click="selecionarFiltroSituacaoAtualizacaoVacinal('TODAS')">
+                  <span class="av-filter-icon-v71">▦</span> Todas <strong>({{ formatNumero(atualizacaoVacinalContadoresSituacao.TODAS) }})</strong>
+                </button>
+                <button type="button" class="av-filter-chip-v71 av-filter-pendente-v71" :class="{ active: atualizacaoVacinal.situacao === 'PENDENTE' }" @click="selecionarFiltroSituacaoAtualizacaoVacinal('PENDENTE')">
+                  <span class="av-filter-dot-v71"></span> Pendente <strong>({{ formatNumero(atualizacaoVacinalContadoresSituacao.PENDENTE) }})</strong>
+                </button>
+                <button type="button" class="av-filter-chip-v71 av-filter-na-v71" :class="{ active: atualizacaoVacinal.situacao === 'NAO_AVALIADO' }" @click="selecionarFiltroSituacaoAtualizacaoVacinal('NAO_AVALIADO')">
+                  <span class="av-filter-dot-v71"></span> Não avaliado <strong>({{ formatNumero(atualizacaoVacinalContadoresSituacao.NAO_AVALIADO) }})</strong>
+                </button>
+                <button type="button" class="av-filter-chip-v71 av-filter-ok-v71" :class="{ active: atualizacaoVacinal.situacao === 'ATUALIZADA' }" @click="selecionarFiltroSituacaoAtualizacaoVacinal('ATUALIZADA')">
+                  <span class="av-filter-dot-v71"></span> Atualizada <strong>({{ formatNumero(atualizacaoVacinalContadoresSituacao.ATUALIZADA) }})</strong>
+                </button>
+                <button type="button" class="av-filter-chip-v71 av-filter-block-v71" :class="{ active: atualizacaoVacinal.situacao === 'NAO_ELEGIVEL' }" @click="selecionarFiltroSituacaoAtualizacaoVacinal('NAO_ELEGIVEL')">
+                  <span class="av-filter-dot-v71"></span> Não elegível <strong>({{ formatNumero(atualizacaoVacinalContadoresSituacao.NAO_ELEGIVEL) }})</strong>
+                </button>
+              </div>
+
+              <div v-if="!atualizacaoVacinal.alunoSelecionado && atualizacaoVacinal.carregandoAluno" class="av-opening-banner-v71">
+                <span class="av-spinner-v69"></span>
+                <div>
+                  <strong>Carregando situação vacinal de {{ atualizacaoVacinal.alunoAbrindoNome || 'aluno' }}...</strong>
+                  <small>Abrindo o registro selecionado. Aguarde alguns segundos.</small>
+                </div>
               </div>
 
               <div v-if="!atualizacaoVacinal.alunoSelecionado" class="av-list-card-v69">
@@ -2346,6 +2383,7 @@
                   <div>
                     <h2>Alunos da escola</h2>
                     <p>A turma aparece apenas como referência. Não é necessário selecioná-la.</p>
+                    <span v-if="atualizacaoVacinal.situacao !== 'TODAS'" class="av-filter-current-v71">Exibindo: {{ atualizacaoVacinalFiltroRotulo }}</span>
                   </div>
                   <div class="av-count-v69">
                     <strong>{{ formatNumero(atualizacaoVacinalAlunosFiltrados.length) }}</strong>
@@ -2374,7 +2412,7 @@
                       <tr v-if="!atualizacaoVacinalAlunosPagina.length">
                         <td colspan="6" class="empty-state">Nenhum aluno encontrado nesta escola.</td>
                       </tr>
-                      <tr v-for="item in atualizacaoVacinalAlunosPagina" :key="'av-aluno-' + item.base + '-' + item.matricula">
+                      <tr v-for="item in atualizacaoVacinalAlunosPagina" :key="'av-aluno-' + item.base + '-' + item.matricula" :class="{ 'av-row-opening-v71': atualizacaoVacinal.carregandoAluno && atualizacaoVacinal.alunoAbrindoChave === (String(item.base || '') + '||' + String(item.matricula || '')) }">
                         <td>
                           <strong class="av-name-v69">{{ item.nome }}</strong>
                           <small>Matrícula: {{ item.matricula || '-' }}</small>
@@ -2388,8 +2426,11 @@
                           </span>
                         </td>
                         <td>
-                          <button class="av-btn-open-v69" type="button" @click="selecionarAlunoAtualizacaoVacinal(item)" :disabled="atualizacaoVacinal.carregandoAluno">
-                            Atualizar
+                          <button class="av-btn-open-v69" :class="{ 'opening': atualizacaoVacinal.carregandoAluno && atualizacaoVacinal.alunoAbrindoChave === (String(item.base || '') + '||' + String(item.matricula || '')) }" type="button" @click="selecionarAlunoAtualizacaoVacinal(item)" :disabled="atualizacaoVacinal.carregandoAluno">
+                            <template v-if="atualizacaoVacinal.carregandoAluno && atualizacaoVacinal.alunoAbrindoChave === (String(item.base || '') + '||' + String(item.matricula || ''))">
+                              <span class="av-btn-spinner-v71"></span> Abrindo...
+                            </template>
+                            <template v-else>Atualizar</template>
                           </button>
                         </td>
                       </tr>
@@ -5875,7 +5916,10 @@ canvas {
             escola: "",
             alunos: [],
             busca: "",
+            situacao: "TODAS",
             alunoSelecionado: null,
+            alunoAbrindoChave: "",
+            alunoAbrindoNome: "",
             alteracoes: {},
             atualizadoEm: "",
             carregandoAlunos: false,
@@ -6177,11 +6221,49 @@ canvas {
           return perfil === "ADM";
         },
 
+        atualizacaoVacinalContadoresSituacao() {
+          const lista = Array.isArray(this.atualizacaoVacinal.alunos) ? this.atualizacaoVacinal.alunos : [];
+          const contadores = {
+            TODAS: lista.length,
+            ATUALIZADA: 0,
+            PENDENTE: 0,
+            NAO_AVALIADO: 0,
+            NAO_ELEGIVEL: 0
+          };
+
+          lista.forEach(item => {
+            const situacao = String(item?.situacao || "").toUpperCase();
+            if (Object.prototype.hasOwnProperty.call(contadores, situacao) && situacao !== "TODAS") {
+              contadores[situacao]++;
+            }
+          });
+
+          return contadores;
+        },
+
+        atualizacaoVacinalFiltroRotulo() {
+          const rotulos = {
+            TODAS: "Todos os alunos",
+            ATUALIZADA: "Atualizados",
+            PENDENTE: "Pendentes",
+            NAO_AVALIADO: "Não avaliados",
+            NAO_ELEGIVEL: "Não elegíveis"
+          };
+          return rotulos[String(this.atualizacaoVacinal.situacao || "TODAS")] || "Todos os alunos";
+        },
+
         atualizacaoVacinalAlunosFiltrados() {
           const busca = this.normalizeText(this.atualizacaoVacinal.busca || "");
+          const situacao = String(this.atualizacaoVacinal.situacao || "TODAS").toUpperCase();
           const lista = Array.isArray(this.atualizacaoVacinal.alunos) ? this.atualizacaoVacinal.alunos : [];
-          if (!busca) return lista;
+
           return lista.filter(item => {
+            if (situacao !== "TODAS" && String(item?.situacao || "").toUpperCase() !== situacao) {
+              return false;
+            }
+
+            if (!busca) return true;
+
             const texto = [
               item?.nome,
               item?.matricula,
@@ -8135,7 +8217,10 @@ canvas {
             escola: "",
             alunos: [],
             busca: "",
+            situacao: "TODAS",
             alunoSelecionado: null,
+            alunoAbrindoChave: "",
+            alunoAbrindoNome: "",
             alteracoes: {},
             atualizadoEm: "",
             carregandoAlunos: false,
@@ -8549,7 +8634,7 @@ canvas {
           }
 
           this.clearTopMessages();
-          const meta = await this.gas("getEscolasPainelVacinal", this.sessionToken);
+          const meta = await this.gas("getEscolasAtualizacaoVacinal", this.sessionToken);
           const escolas = (Array.isArray(meta) ? meta : [])
             .map(item => typeof item === "string" ? item : item?.nome)
             .filter(Boolean);
@@ -8577,6 +8662,8 @@ canvas {
           this.clearTopMessages();
           this.atualizacaoVacinal.carregandoAlunos = true;
           this.atualizacaoVacinal.alunoSelecionado = null;
+          this.atualizacaoVacinal.alunoAbrindoChave = "";
+          this.atualizacaoVacinal.alunoAbrindoNome = "";
           this.atualizacaoVacinal.alteracoes = {};
           this.atualizacaoVacinal.pagina = 1;
 
@@ -8601,6 +8688,8 @@ canvas {
 
           this.clearTopMessages();
           this.atualizacaoVacinal.carregandoAluno = true;
+          this.atualizacaoVacinal.alunoAbrindoChave = String(item.base || "") + "||" + String(item.matricula || "");
+          this.atualizacaoVacinal.alunoAbrindoNome = String(item.nome || "Aluno");
           this.atualizacaoVacinal.alteracoes = {};
 
           try {
@@ -8609,7 +8698,8 @@ canvas {
               this.sessionToken,
               this.atualizacaoVacinal.escola,
               item.base,
-              item.matricula
+              item.matricula,
+              item.linha || 0
             );
 
             this.atualizacaoVacinal.alunoSelecionado = aluno || null;
@@ -8617,6 +8707,8 @@ canvas {
             this.handleError(err);
           } finally {
             this.atualizacaoVacinal.carregandoAluno = false;
+            this.atualizacaoVacinal.alunoAbrindoChave = "";
+            this.atualizacaoVacinal.alunoAbrindoNome = "";
           }
         },
 
@@ -8647,6 +8739,7 @@ canvas {
               escola: this.atualizacaoVacinal.escola,
               base: aluno.base,
               matricula: aluno.matricula,
+              linha: aluno.linha || 0,
               alteracoes: Object.assign({}, this.atualizacaoVacinal.alteracoes || {}),
               usuario: String(this.sessionInfo?.usuario || ""),
               unidade: String(
@@ -8667,31 +8760,52 @@ canvas {
             this.atualizacaoVacinal.alteracoes = {};
             this.topSuccess = resposta?.mensagem || "Situação vacinal atualizada com sucesso.";
 
-            const resultadosAtualizados = await Promise.all([
-              this.gas(
-                "getAlunoAtualizacaoVacinal",
-                this.sessionToken,
-                this.atualizacaoVacinal.escola,
-                aluno.base,
-                aluno.matricula
-              ),
-              this.gas(
-                "getAlunosAtualizacaoVacinal",
-                this.sessionToken,
-                this.atualizacaoVacinal.escola
-              )
-            ]);
+            const atualizado = await this.gas(
+              "getAlunoAtualizacaoVacinal",
+              this.sessionToken,
+              this.atualizacaoVacinal.escola,
+              aluno.base,
+              aluno.matricula,
+              aluno.linha || 0
+            );
 
-            const atualizado = resultadosAtualizados[0];
-            const listaAtualizada = resultadosAtualizados[1] || {};
             this.atualizacaoVacinal.alunoSelecionado = atualizado || aluno;
-            this.atualizacaoVacinal.alunos = Array.isArray(listaAtualizada.alunos) ? listaAtualizada.alunos : this.atualizacaoVacinal.alunos;
-            this.atualizacaoVacinal.atualizadoEm = listaAtualizada.atualizadoEm || this.atualizacaoVacinal.atualizadoEm;
+            this.atualizacaoVacinal.atualizadoEm = resposta?.atualizadoEm || this.atualizacaoVacinal.atualizadoEm;
+
+            if (atualizado) {
+              const indiceLista = this.atualizacaoVacinal.alunos.findIndex(item =>
+                String(item?.base || "") === String(atualizado.base || "") &&
+                String(item?.matricula || "") === String(atualizado.matricula || "")
+              );
+
+              if (indiceLista >= 0) {
+                const resumoAtualizado = Object.assign({}, this.atualizacaoVacinal.alunos[indiceLista], {
+                  nome: atualizado.nome,
+                  matricula: atualizado.matricula,
+                  cpf: atualizado.cpf,
+                  turma: atualizado.turma,
+                  base: atualizado.base,
+                  dn: atualizado.dn,
+                  idade: atualizado.idade,
+                  idadeTexto: atualizado.idadeTexto,
+                  situacao: atualizado.situacao,
+                  linha: atualizado.linha || this.atualizacaoVacinal.alunos[indiceLista].linha
+                });
+                this.atualizacaoVacinal.alunos.splice(indiceLista, 1, resumoAtualizado);
+              }
+            }
           } catch (err) {
             this.handleError(err);
           } finally {
             this.atualizacaoVacinal.salvando = false;
           }
+        },
+
+        selecionarFiltroSituacaoAtualizacaoVacinal(situacao) {
+          const permitido = ["TODAS", "ATUALIZADA", "PENDENTE", "NAO_AVALIADO", "NAO_ELEGIVEL"];
+          const valor = String(situacao || "TODAS").toUpperCase();
+          this.atualizacaoVacinal.situacao = permitido.includes(valor) ? valor : "TODAS";
+          this.atualizacaoVacinal.pagina = 1;
         },
 
         mudarPaginaAtualizacaoVacinal(pagina) {
@@ -11923,7 +12037,7 @@ this.charts.vacChartSituacaoCompleta = makeStacked(
 .av-secure-v69 strong,.av-secure-v69 small{display:block}
 .av-secure-v69 strong{color:#0f6b35;font-size:14px;margin-bottom:3px}
 .av-secure-v69 small{color:#35624a;font-weight:750;line-height:1.35}
-.av-toolbar-v69{display:grid;grid-template-columns:minmax(300px,1fr) minmax(280px,1fr) auto;gap:14px;align-items:end;background:#fff;border:1px solid var(--av-border);border-radius:18px;padding:16px;margin-bottom:16px;box-shadow:0 10px 28px rgba(8,43,103,.055)}
+.av-toolbar-v69{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(240px,1fr) minmax(165px,.55fr) auto;gap:14px;align-items:end;background:#fff;border:1px solid var(--av-border);border-radius:18px;padding:16px;margin-bottom:16px;box-shadow:0 10px 28px rgba(8,43,103,.055)}
 .av-toolbar-v69 .field{margin:0}
 .av-toolbar-v69 .field label{font-size:13px!important;font-weight:950!important;color:var(--av-navy)!important}
 .av-toolbar-v69 select,.av-toolbar-v69 input{min-height:44px!important;border:1px solid #cfdff7!important;border-radius:11px!important;background:#fff!important;font-weight:800!important;color:var(--av-navy)!important}
@@ -11950,8 +12064,29 @@ this.charts.vacChartSituacaoCompleta = makeStacked(
 .av-status-nao{background:#ffe5e5;color:#dc2626}
 .av-status-naoavaliado{background:#fff4dc;color:#b76d00}
 .av-status-bloqueado{background:#eef2f7;color:#64748b}
-.av-btn-open-v69{border:1px solid #bcd5ff;background:#fff;color:var(--av-blue);border-radius:9px;padding:8px 12px;font-weight:950;cursor:pointer}
+.av-btn-open-v69{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:94px;border:1px solid #bcd5ff;background:#fff;color:var(--av-blue);border-radius:9px;padding:8px 12px;font-weight:950;cursor:pointer}
 .av-btn-open-v69:hover{background:#eef6ff}
+.av-btn-open-v69:disabled{opacity:.65;cursor:not-allowed}
+.av-btn-open-v69.opening{background:#eef6ff;border-color:#8cb8ff;color:#0b5bd3}
+.av-btn-spinner-v71{width:13px;height:13px;border:2px solid #cfe0fb;border-top-color:var(--av-blue);border-radius:50%;animation:avSpinV69 .7s linear infinite}
+.av-row-opening-v71{background:#f3f8ff!important;box-shadow:inset 4px 0 0 var(--av-blue)}
+.av-opening-banner-v71{display:flex;align-items:center;gap:13px;margin:-2px 0 14px;padding:13px 16px;border:1px solid #bcd5ff;border-radius:14px;background:#f3f8ff;color:var(--av-navy);box-shadow:0 8px 22px rgba(11,91,211,.06)}
+.av-opening-banner-v71 .av-spinner-v69{width:20px;height:20px;flex:0 0 20px}
+.av-opening-banner-v71 strong,.av-opening-banner-v71 small{display:block}
+.av-opening-banner-v71 strong{font-size:13px;font-weight:950;color:var(--av-blue)}
+.av-opening-banner-v71 small{margin-top:2px;font-size:11.5px;font-weight:750;color:#52647f}
+.av-status-filters-v71{display:flex;gap:10px;flex-wrap:wrap;margin:-4px 0 14px}
+.av-filter-chip-v71{display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:8px 13px;border:1px solid #d8e3f1;border-radius:11px;background:#fff;color:#52647f;font-size:12px;font-weight:900;cursor:pointer;transition:.15s}
+.av-filter-chip-v71 strong{font-weight:950}
+.av-filter-chip-v71:hover{background:#f8fbff;border-color:#bcd5ff}
+.av-filter-chip-v71.active{border-color:#8cb8ff;background:#eef6ff;color:var(--av-blue);box-shadow:0 4px 12px rgba(11,91,211,.08)}
+.av-filter-icon-v71{font-size:14px;color:var(--av-blue)}
+.av-filter-dot-v71{width:10px;height:10px;border-radius:50%;border:2px solid currentColor;display:inline-block}
+.av-filter-pendente-v71{color:#dc2626}.av-filter-pendente-v71.active{background:#fff1f1;border-color:#f5b0b0;color:#dc2626}
+.av-filter-na-v71{color:#b76d00}.av-filter-na-v71.active{background:#fff8e8;border-color:#f1d29b;color:#b76d00}
+.av-filter-ok-v71{color:#15803d}.av-filter-ok-v71.active{background:#eefcf3;border-color:#8bd3a9;color:#15803d}
+.av-filter-block-v71{color:#64748b}.av-filter-block-v71.active{background:#f1f5f9;border-color:#cbd5e1;color:#475569}
+.av-filter-current-v71{display:inline-flex;margin-top:7px;padding:5px 9px;border-radius:999px;background:#eef6ff;color:var(--av-blue);font-size:11px;font-weight:950}
 .av-pagination-v69{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;color:#52647f;font-size:12px;font-weight:850}
 .av-pagination-v69>div:last-child{display:flex;gap:8px}
 .av-pagination-v69 button{width:36px;height:34px;border:1px solid #c8dcff;background:#fff;color:var(--av-blue);border-radius:9px;font-size:18px;font-weight:950;cursor:pointer}
@@ -11992,6 +12127,7 @@ this.charts.vacChartSituacaoCompleta = makeStacked(
 .av-save-v69{border:1px solid var(--av-green);background:var(--av-green);color:#fff;box-shadow:0 10px 22px rgba(22,163,74,.15)}
 .av-save-v69:disabled,.av-cancel-v69:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
 .av-footer-note-v69{display:flex;gap:10px;align-items:flex-start;background:#eef6ff;border:1px solid #d1e4ff;border-radius:14px;padding:12px 14px;margin-top:14px;color:#0f3b75;font-size:12px;font-weight:800}
-@media(max-width:1050px){.av-toolbar-v69{grid-template-columns:1fr 1fr}.av-btn-refresh-v69{grid-column:1/-1}.av-header-v69{flex-direction:column}.av-secure-v69{width:100%}}
+@media(max-width:1200px){.av-toolbar-v69{grid-template-columns:1fr 1fr}.av-btn-refresh-v69{grid-column:auto}.av-header-v69{flex-direction:column}.av-secure-v69{width:100%}}
+@media(max-width:850px){.av-btn-refresh-v69{grid-column:1/-1}}
 @media(max-width:700px){.av-toolbar-v69{grid-template-columns:1fr}.av-list-head-v69,.av-actions-v69{align-items:stretch;flex-direction:column}.av-change-count-v69{margin-right:0}.av-cancel-v69,.av-save-v69{width:100%}}
 </style>
