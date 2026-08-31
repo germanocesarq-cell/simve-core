@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * SIMVE v71 - ATUALIZAÇÃO DA SITUAÇÃO VACINAL | PERFIL SAÚDE
+ * SIMVE v71.1 - ATUALIZAÇÃO DA SITUAÇÃO VACINAL | PERFIL SAÚDE
  * ============================================================
  *
  * Arquivo adicional do projeto Apps Script.
@@ -22,7 +22,7 @@
  */
 
 var SIMVE_AV_V69 = {
-  VERSAO: '71.0',
+  VERSAO: '71.1',
   ABA_BASE: 'BASE_GERAL',
   ABA_HISTORICO: 'HISTORICO_VACINAL',
   CACHE_SEGUNDOS: 21600,
@@ -564,58 +564,172 @@ function simveAV_lerMapaConfigPlanilhas_() {
 
   var ss = SpreadsheetApp.openById(ID_PLANILHA);
   var sh = ss.getSheetByName('CONFIG_PLANILHAS_ESCOLAS');
-  if (!sh) throw new Error('Aba CONFIG_PLANILHAS_ESCOLAS não encontrada.');
+
+  if (!sh) {
+    throw new Error('Aba CONFIG_PLANILHAS_ESCOLAS não encontrada.');
+  }
 
   var data = sh.getDataRange().getValues();
-  if (data.length < 2) return {};
+  if (!data || !data.length) return {};
 
-  var headers = data[0].map(function(h) { return simveAV_norm_(h); });
-  var idxEscola = headers.indexOf('ESCOLA');
-  var idxBase = headers.indexOf('TIPO_BASE');
-  var idxId = headers.indexOf('ID_PLANILHA');
-  var idxAba = headers.indexOf('ABA_ORIGEM');
-  var idxAtivo = headers.indexOf('ATIVO');
-  var idxTipoPlanilha = headers.indexOf('TIPO_PLANILHA');
-  var idxUnidade = headers.indexOf('UNIDADE');
+  /**
+   * v71.1
+   * Normaliza o nome dos cabeçalhos para aceitar pequenas variações como:
+   * ID_PLANILHA, ID PLANILHA, id-planilha, etc.
+   */
+  function normHeader_(valor) {
+    return simveAV_norm_(valor).replace(/[^A-Z0-9]/g, '');
+  }
+
+  /**
+   * Localiza automaticamente a linha real do cabeçalho.
+   * A configuração pode ter título, observações ou linhas vazias acima.
+   */
+  var headerRow = -1;
+  var headers = [];
+  var limiteBusca = Math.min(data.length, 20);
+
+  for (var r = 0; r < limiteBusca; r++) {
+    var candidatos = data[r].map(function(h) {
+      return normHeader_(h);
+    });
+
+    var temEscola =
+      candidatos.indexOf('ESCOLA') >= 0 ||
+      candidatos.indexOf('NOMEESCOLA') >= 0;
+
+    var temIdPlanilha =
+      candidatos.indexOf('IDPLANILHA') >= 0 ||
+      candidatos.indexOf('PLANILHAID') >= 0 ||
+      candidatos.indexOf('IDARQUIVO') >= 0;
+
+    if (temEscola && temIdPlanilha) {
+      headerRow = r;
+      headers = candidatos;
+      break;
+    }
+  }
+
+  if (headerRow < 0) {
+    throw new Error(
+      'Não foi possível localizar o cabeçalho da CONFIG_PLANILHAS_ESCOLAS. ' +
+      'Verifique se existem as colunas ESCOLA e ID_PLANILHA nas primeiras 20 linhas.'
+    );
+  }
+
+  function indice_(alternativas) {
+    for (var i = 0; i < alternativas.length; i++) {
+      var idx = headers.indexOf(alternativas[i]);
+      if (idx >= 0) return idx;
+    }
+    return -1;
+  }
+
+  var idxEscola = indice_([
+    'ESCOLA',
+    'NOMEESCOLA'
+  ]);
+
+  var idxBase = indice_([
+    'TIPOBASE',
+    'BASE'
+  ]);
+
+  var idxId = indice_([
+    'IDPLANILHA',
+    'PLANILHAID',
+    'IDARQUIVO'
+  ]);
+
+  var idxAba = indice_([
+    'ABAORIGEM',
+    'ABA',
+    'NOMEABA'
+  ]);
+
+  var idxAtivo = indice_([
+    'ATIVO',
+    'STATUS'
+  ]);
+
+  var idxTipoPlanilha = indice_([
+    'TIPOPLANILHA'
+  ]);
+
+  var idxUnidade = indice_([
+    'UNIDADE',
+    'UBS',
+    'UNIDADESAUDE'
+  ]);
 
   if (idxEscola < 0 || idxId < 0) {
-    throw new Error('CONFIG_PLANILHAS_ESCOLAS precisa ter ESCOLA e ID_PLANILHA.');
+    throw new Error(
+      'CONFIG_PLANILHAS_ESCOLAS precisa possuir as colunas ESCOLA e ID_PLANILHA.'
+    );
   }
 
   var mapa = {};
-  for (var i = 1; i < data.length; i++) {
-    var escola = String(data[i][idxEscola] || '').trim();
-    var id = String(data[i][idxId] || '').trim();
+
+  // Começa exatamente após a linha de cabeçalho encontrada.
+  for (var linha = headerRow + 1; linha < data.length; linha++) {
+    var escola = String(data[linha][idxEscola] || '').trim();
+    var id = String(data[linha][idxId] || '').trim();
+
     if (!escola || !id) continue;
 
     if (idxAtivo >= 0) {
-      var ativo = simveAV_norm_(data[i][idxAtivo]);
-      if (ativo && ativo !== 'SIM' && ativo !== 'S' && ativo !== 'ATIVO') continue;
+      var ativo = simveAV_norm_(data[linha][idxAtivo]);
+
+      if (
+        ativo &&
+        ativo !== 'SIM' &&
+        ativo !== 'S' &&
+        ativo !== 'ATIVO' &&
+        ativo !== 'TRUE' &&
+        ativo !== '1'
+      ) {
+        continue;
+      }
     }
 
-    var base = idxBase >= 0 ? simveAV_normalizarBase_(data[i][idxBase]) : '';
+    var base = idxBase >= 0
+      ? simveAV_normalizarBase_(data[linha][idxBase])
+      : '';
+
     var chave = simveAV_norm_(escola);
+
     if (!mapa[chave]) {
-      mapa[chave] = { nome: escola, infantil: false, escolar: false, fontes: {} };
+      mapa[chave] = {
+        nome: escola,
+        infantil: false,
+        escolar: false,
+        fontes: {}
+      };
     }
 
     if (base === 'INFANTIL' || base === 'ESCOLAR') {
       if (base === 'INFANTIL') mapa[chave].infantil = true;
       if (base === 'ESCOLAR') mapa[chave].escolar = true;
+
       mapa[chave].fontes[base] = {
         id: id,
-        sheetName: idxAba >= 0 ? (String(data[i][idxAba] || '').trim() || SIMVE_AV_V69.ABA_BASE) : SIMVE_AV_V69.ABA_BASE,
+        sheetName: idxAba >= 0
+          ? (String(data[linha][idxAba] || '').trim() || SIMVE_AV_V69.ABA_BASE)
+          : SIMVE_AV_V69.ABA_BASE,
         base: base,
         escola: escola,
-        tipoPlanilha: idxTipoPlanilha >= 0 ? String(data[i][idxTipoPlanilha] || '').trim() : '',
-        unidade: idxUnidade >= 0 ? String(data[i][idxUnidade] || '').trim() : ''
+        tipoPlanilha: idxTipoPlanilha >= 0
+          ? String(data[linha][idxTipoPlanilha] || '').trim()
+          : '',
+        unidade: idxUnidade >= 0
+          ? String(data[linha][idxUnidade] || '').trim()
+          : ''
       };
     }
   }
 
   return mapa;
 }
-
 
 function simveAV_contextoPublico_(contexto) {
   return {
