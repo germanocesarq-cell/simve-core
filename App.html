@@ -1773,10 +1773,6 @@
 
     <!-- APP -->
     <div v-else id="appArea">
-
-      <div class="simve-test-env" aria-label="Ambiente de testes">
-        🧪 AMBIENTE DE TESTES
-      </div>
       <div class="layout">
         <aside class="sidebar">
           <div class="simve-sidebar-logo-v18" aria-label="SIMVE - Sistema de Monitoramento Vacinal Escolar">
@@ -5196,54 +5192,6 @@ canvas {
     }
   }
 </style>
-
-
-<style id="simve-v37-ambiente-testes">
-  /* SIMVE v37 — Identificação fixa do ambiente de testes */
-  #appArea .simve-test-env {
-    position: fixed !important;
-    top: 12px !important;
-    right: 18px !important;
-    z-index: 9999999 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
-    min-height: 36px !important;
-    padding: 9px 15px !important;
-    border-radius: 999px !important;
-    background: rgba(220, 38, 38, .96) !important;
-    color: #ffffff !important;
-    border: 2px solid rgba(255,255,255,.25) !important;
-    box-shadow: 0 12px 32px rgba(220, 38, 38, .28) !important;
-    font-size: 12px !important;
-    font-weight: 950 !important;
-    letter-spacing: .04em !important;
-    line-height: 1 !important;
-    white-space: nowrap !important;
-    pointer-events: none !important;
-    backdrop-filter: blur(6px) !important;
-    -webkit-backdrop-filter: blur(6px) !important;
-  }
-
-  @media (max-width: 760px) {
-    #appArea .simve-test-env {
-      top: 8px !important;
-      right: 8px !important;
-      min-height: 30px !important;
-      padding: 7px 10px !important;
-      font-size: 10px !important;
-    }
-  }
-
-  @media print {
-    #appArea .simve-test-env {
-      display: none !important;
-    }
-  }
-</style>
-
-
 <style id="simve-transferencias-modelo-b">
   /* SIMVE — Transferências Modelo B: envio + aceite + vínculo de turma */
   .simve-menu-badge{
